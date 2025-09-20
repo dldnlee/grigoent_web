@@ -37,72 +37,59 @@ export default function Hero() {
     visible: {
       opacity: 1,
       transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.2
+        delayChildren: 0.2,
+        staggerChildren: 0.15
       }
     }
   };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6
-      }
-    }
+    visible: { y: 0, opacity: 1 }
   };
 
   const statsVariants = {
-    hidden: { scale: 0.8, opacity: 0 },
-    visible: {
-      scale: 1,
-      opacity: 1,
-      transition: {
-        duration: 0.5,
-        delay: 1.2
-      }
-    }
+    hidden: { scale: 0.9, opacity: 0 },
+    visible: { scale: 1, opacity: 1 }
   };
 
   return (
-    <section className="min-h-screen bg-primary text-primary-foreground flex items-center relative overflow-hidden">
+    <section className="min-h-screen bg-primary text-primary-foreground flex items-center relative overflow-hidden w-full">
       {/* Gradient Background Effect */}
       <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-10 left-4 w-48 h-48 sm:w-64 sm:h-64 lg:top-20 lg:left-20 lg:w-96 lg:h-96 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full blur-2xl lg:blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-10 right-8 w-40 h-40 sm:w-56 sm:h-56 lg:bottom-20 lg:right-20 lg:w-80 lg:h-80 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl lg:blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full blur-2xl lg:blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
       <div className="container mx-auto px-6 lg:px-12">
-        <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[80vh]">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
           {/* Left Side - Content */}
           <motion.div
-            className="space-y-8"
+            className="space-y-8 w-full overflow-hidden"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             {/* Company Info */}
             <motion.div className="text-gray-400" variants={itemVariants}>
-              <p className="text-xl md:text-2xl lg:text-3xl">GRIGO 엔터테인먼트 | A Global Dance Company</p>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">GRIGO 엔터테인먼트 | A Global Dance Company</p>
             </motion.div>
 
             {/* Main Heading */}
-            <motion.h1 className="leading-none" variants={itemVariants}>
+            <motion.h1 className="leading-none overflow-hidden" variants={itemVariants}>
               <motion.p
-                className='font-light text-5xl sm:text-6xl md:text-7xl lg:text-[3rem] xl:text-[7rem]'
-                initial={{ x: -50, opacity: 0 }}
+                className='font-light text-3xl sm:text-4xl md:text-5xl lg:text-[3rem] xl:text-[7rem] whitespace-nowrap overflow-hidden'
+                initial={{ x: -30, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
               >
                 DANCE WITH
               </motion.p>
               <motion.p
-                className="text-primary-foreground font-extrabold text-7xl sm:text-9xl md:text-[7rem] lg:text-[10rem] xl:text-[12rem]"
-                initial={{ x: -50, opacity: 0 }}
+                className="text-primary-foreground font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[10rem] xl:text-[12rem] whitespace-nowrap overflow-hidden"
+                initial={{ x: -30, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
               >
                 PASSION
               </motion.p>
@@ -110,42 +97,54 @@ export default function Hero() {
 
             {/* Stats */}
             <motion.div
-              className="flex flex-wrap gap-8 md:gap-12 text-base font-medium"
+              className="grid grid-cols-2 gap-4 sm:gap-6 lg:flex lg:gap-12 text-base font-medium"
               variants={statsVariants}
               initial="hidden"
               animate="visible"
             >
               <motion.div
-                className="text-left"
+                className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <AnimatedCounter value={100} suffix="+" delay={1200} />
-                <div className="text-gray-400 text-lg md:text-xl">아티스트</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
+                  <AnimatedCounter value={100} suffix="+" delay={1200} />
+                </div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">아티스트</div>
               </motion.div>
               <motion.div
-                className="text-left"
+                className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <AnimatedCounter value={500} suffix="+" delay={1400} />
-                <div className="text-gray-400 text-lg md:text-xl">프로젝트</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
+                  <AnimatedCounter value={500} suffix="+" delay={1400} />
+                </div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">프로젝트</div>
               </motion.div>
               <motion.div
-                className="text-left"
+                className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <AnimatedCounter value={30} suffix="+" delay={1600} />
-                <div className="text-gray-400 text-lg md:text-xl">국가</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
+                  <AnimatedCounter value={30} suffix="+" delay={1600} />
+                </div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">국가</div>
               </motion.div>
               <motion.div
-                className="text-left"
+                className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.98 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <AnimatedCounter value={15} suffix="+" delay={1800} />
-                <div className="text-gray-400 text-lg md:text-xl">년 경력</div>
+                <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
+                  <AnimatedCounter value={15} suffix="+" delay={1800} />
+                </div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">년 경력</div>
               </motion.div>
             </motion.div>
 
@@ -155,7 +154,7 @@ export default function Hero() {
               variants={itemVariants}
             >
               <motion.button
-                className="border border-primary-foreground/30 text-primary-foreground px-10 py-4 md:px-12 md:py-5 rounded-full hover:bg-primary-foreground hover:text-primary transition-all duration-300 font-medium text-lg md:text-xl"
+                className="border border-primary-foreground/30 text-primary-foreground px-8 py-4 sm:px-10 sm:py-4 md:px-12 md:py-5 rounded-full hover:bg-primary-foreground hover:text-primary active:bg-primary-foreground/90 transition-all duration-300 font-medium text-base sm:text-lg md:text-xl min-h-[44px] w-full sm:w-auto"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -167,23 +166,23 @@ export default function Hero() {
 
           {/* Right Side - Placeholder for 3D Design */}
           <motion.div
-            className="relative flex items-center justify-center"
-            initial={{ x: 50, opacity: 0 }}
+            className="relative flex items-center justify-center order-first lg:order-last"
+            initial={{ x: 30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
           >
             <motion.div
-              className="w-full h-96 lg:h-[500px] bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl border border-primary-foreground/10 flex items-center justify-center"
+              className="w-full h-64 sm:h-80 lg:h-[500px] bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl border border-primary-foreground/10 flex items-center justify-center"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
               <div className="text-gray-400 text-center">
                 <motion.div
-                  className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-pink-500 to-blue-500 rounded-full opacity-50"
+                  className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-4 bg-gradient-to-br from-pink-500 to-blue-500 rounded-full opacity-50"
                   animate={{ rotate: 360 }}
                   transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                 ></motion.div>
-                <p>3D Design Placeholder</p>
+                <p className="text-sm sm:text-base">3D Design Placeholder</p>
               </div>
             </motion.div>
           </motion.div>
@@ -193,12 +192,12 @@ export default function Hero() {
       {/* Scroll Down Indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-center"
-        initial={{ y: 20, opacity: 0 }}
+        initial={{ y: 15, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 1.5 }}
+        transition={{ duration: 0.5, delay: 1.2 }}
       >
-        <p className="text-gray-400 text-xl mb-2">SCROLL DOWN</p>
-        <ChevronDown className="w-10 h-10 text-gray-400 mx-auto animate-bounce" />
+        <p className="text-gray-400 text-sm sm:text-base lg:text-xl mb-2">SCROLL DOWN</p>
+        <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-gray-400 mx-auto animate-bounce" />
       </motion.div>
     </section>
   );

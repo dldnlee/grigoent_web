@@ -480,6 +480,52 @@ Successfully applied the new brand color scheme throughout the entire project us
 
 The entire project now uses the unified #1A1A1A/#F7F7F7 color scheme, providing a cohesive and professional brand experience across all sections while maintaining accessibility standards.
 
+## Hero Section Mobile Optimization - PLANNED
+
+### User Requirements Analysis
+User requested optimization of the Hero section for mobile view while maintaining the existing desktop design:
+- **Current Hero**: `/app/components/sections/Hero.tsx`
+- **Desktop Design**: Two-column layout with content left (company info, large "DANCE WITH PASSION" text, stats, CTA button) and 3D placeholder right
+- **Mobile Issues**: Large text too big, two-column layout doesn't work well, stats need better organization, gradient effects need adjustment, touch targets need optimization
+- **Requirements**: Maintain desktop layout, create optimal mobile experience, preserve animations, ensure readability, maintain brand consistency
+
+### Implementation Plan Created
+- **Plan Location**: `.claude/doc/hero_mobile_optimization_plan.md`
+- **Current Component**: `/app/components/sections/Hero.tsx` with Framer Motion animations
+- **Typography Strategy**: Mobile-first responsive scaling with reduced text sizes
+- **Layout Approach**: Single column on mobile, preserve two-column on desktop
+- **Performance Focus**: Optimized animations and background effects for mobile
+
+### Technical Strategy
+1. **Typography Scaling**: Mobile-first approach with proper responsive breakpoints
+2. **Layout Restructuring**: Single column flow on mobile with reordered elements
+3. **Stats Grid**: 2x2 grid layout on mobile, horizontal flex on desktop
+4. **Touch Optimization**: 44px minimum touch targets, active states for mobile
+5. **Animation Performance**: Reduced complexity and duration for mobile devices
+6. **Background Effects**: Smaller gradients and optimized blur effects
+
+### Responsive Breakpoints Plan
+- `base` (< 640px): Single column, optimized typography, 2x2 stats grid
+- `sm` (640px+): Improved spacing, larger touch targets
+- `md` (768px+): Increased sizes, maintains single column
+- `lg` (1024px+): Switch to two-column layout, desktop animations
+- `xl` (1280px+): Maximum sizes for large screens
+
+### Expected Improvements
+- **Typography**: Proper mobile text sizes preventing overflow
+- **Layout**: Clean single-column flow on mobile devices
+- **Touch Targets**: Minimum 44px targets following mobile guidelines
+- **Performance**: 60fps animations optimized for mobile devices
+- **User Experience**: Better readability and interaction patterns
+
+### Next Steps
+1. Implement mobile-first typography scaling
+2. Restructure layout for single column mobile experience
+3. Optimize stats section with responsive grid layout
+4. Enhance touch targets and mobile interactions
+5. Test performance across mobile devices
+6. Verify accessibility compliance
+
 ## Navigation Bar Redesign - PLANNED
 
 ### User Requirements Analysis

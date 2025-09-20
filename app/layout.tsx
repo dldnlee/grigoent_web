@@ -20,9 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="overflow-x-hidden">
       <body
-        className={`${roboto.variable} antialiased`}
+        className={`${roboto.variable} antialiased overflow-x-hidden`}
       >
         <TopNavBar />
         {children}
