@@ -1,8 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
 export default function RecentWorks() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, amount: 0.1 });
   const videos = [
     {
       id: 1,
@@ -48,33 +51,90 @@ export default function RecentWorks() {
 
   const [selectedVideo, setSelectedVideo] = useState(videos[0]);
 
+  const headerVariants = {
+    hidden: { opacity: 0, y: 30 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  const playerVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: { opacity: 1, x: 0 }
+  };
+
+  const listVariants = {
+    hidden: { opacity: 0, x: 50 },
+    visible: { opacity: 1, x: 0 }
+  };
+
+  const listItemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <section className="py-24 bg-secondary" id="works">
+    <section className="py-24 bg-secondary" id="works" ref={ref}>
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-secondary-foreground mb-6">
+        <motion.div
+          className="text-center mb-16"
+          variants={headerVariants}
+          initial="hidden"
+          animate={isInView ? "visible" : "hidden"}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <motion.h2
+            className="text-5xl md:text-6xl font-bold text-secondary-foreground mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
             RECENT WORKS
-          </h2>
-          <p className="text-lg text-secondary-foreground/70 max-w-3xl mx-auto leading-relaxed">
+          </motion.h2>
+          <motion.p
+            className="text-lg text-secondary-foreground/70 max-w-3xl mx-auto leading-relaxed"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
             우리 댄서들이 참여한 다양한 프로젝트들을 확인해보세요. 각각의 작품은<br />
             열정과 창의성이 담긴 결과물입니다.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* Video Player and List Layout */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Video Player - Left Side */}
-          <div className="lg:col-span-2">
-            <div className="aspect-video bg-gray-300 rounded-2xl overflow-hidden relative">
+          <motion.div
+            className="lg:col-span-2"
+            variants={playerVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <motion.div
+              className="aspect-video bg-gray-300 rounded-2xl overflow-hidden relative"
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
               {/* Video Placeholder */}
               <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center">
-                <div className="text-6xl text-gray-600">▶</div>
+                <motion.div
+                  className="text-6xl text-gray-600"
+                  whileHover={{ scale: 1.1 }}
+                  transition={{ type: "spring", stiffness: 400 }}
+                >
+                  ▶
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Selected Video Info */}
-            <div className="mt-6">
+            <motion.div
+              className="mt-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+            >
               <h3 className="text-2xl font-bold text-secondary-foreground mb-2 leading-tight">
                 {selectedVideo.title}
               </h3>
@@ -82,15 +142,26 @@ export default function RecentWorks() {
                 <span>{selectedVideo.views}</span>
                 <span>{selectedVideo.date}</span>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Video List - Right Side */}
-          <div className="lg:col-span-1">
-            <div className="h-[600px] overflow-y-auto bg-white rounded-2xl p-4 border">
+          <motion.div
+            className="lg:col-span-1"
+            variants={listVariants}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            transition={{ duration: 0.8, delay: 0.5 }}
+          >
+            <motion.div
+              className="h-[600px] overflow-y-auto bg-white rounded-2xl p-4 border"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
               <div className="space-y-4">
-                {videos.map((video) => (
-                  <div
+                {videos.map((video, index) => (
+                  <motion.div
                     key={video.id}
                     onClick={() => setSelectedVideo(video)}
                     className={`cursor-pointer p-3 rounded-xl transition-all duration-200 ${
@@ -98,12 +169,28 @@ export default function RecentWorks() {
                         ? 'border-2 border-black bg-gray-50'
                         : 'border border-gray-200 hover:border-gray-300'
                     }`}
+                    variants={listItemVariants}
+                    initial="hidden"
+                    animate={isInView ? "visible" : "hidden"}
+                    transition={{
+                      duration: 0.4,
+                      delay: 0.7 + index * 0.1
+                    }}
+                    whileHover={{
+                      scale: 1.02,
+                      y: -2,
+                      transition: { type: "spring", stiffness: 300, damping: 20 }
+                    }}
+                    whileTap={{ scale: 0.98 }}
                   >
                     <div className="flex gap-3">
                       {/* Video Thumbnail */}
-                      <div className="w-24 h-16 bg-gray-300 rounded-lg flex-shrink-0 flex items-center justify-center">
+                      <motion.div
+                        className="w-24 h-16 bg-gray-300 rounded-lg flex-shrink-0 flex items-center justify-center"
+                        whileHover={{ scale: 1.05 }}
+                      >
                         <span className="text-gray-500 text-sm">▶</span>
-                      </div>
+                      </motion.div>
 
                       {/* Video Info */}
                       <div className="flex-1 min-w-0">
@@ -119,11 +206,11 @@ export default function RecentWorks() {
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
