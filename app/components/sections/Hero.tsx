@@ -1,7 +1,35 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
+import { useEffect, useRef } from 'react';
+
+function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suffix?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const isInView = useInView(ref, { once: true });
+  const count = useMotionValue(0);
+  const rounded = useTransform(count, (latest) => Math.round(latest));
+
+  useEffect(() => {
+    if (isInView) {
+      const timer = setTimeout(() => {
+        const controls = animate(count, value, {
+          duration: 2,
+          ease: "easeOut",
+        });
+        return controls.stop;
+      }, delay);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, count, value, delay]);
+
+  return (
+    <motion.div ref={ref} className="text-4xl md:text-5xl lg:text-6xl font-light">
+      <motion.span>{rounded}</motion.span>{suffix}
+    </motion.div>
+  );
+}
 
 export default function Hero() {
   const containerVariants = {
@@ -86,7 +114,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-light">100+</div>
+                <AnimatedCounter value={100} suffix="+" delay={1200} />
                 <div className="text-gray-400 text-lg md:text-xl">아티스트</div>
               </motion.div>
               <motion.div
@@ -94,7 +122,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-light">500+</div>
+                <AnimatedCounter value={500} suffix="+" delay={1400} />
                 <div className="text-gray-400 text-lg md:text-xl">프로젝트</div>
               </motion.div>
               <motion.div
@@ -102,7 +130,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-light">30+</div>
+                <AnimatedCounter value={30} suffix="+" delay={1600} />
                 <div className="text-gray-400 text-lg md:text-xl">국가</div>
               </motion.div>
               <motion.div
@@ -110,7 +138,7 @@ export default function Hero() {
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
-                <div className="text-4xl md:text-5xl lg:text-6xl font-light">15+</div>
+                <AnimatedCounter value={15} suffix="+" delay={1800} />
                 <div className="text-gray-400 text-lg md:text-xl">년 경력</div>
               </motion.div>
             </motion.div>
@@ -163,8 +191,8 @@ export default function Hero() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, delay: 1.5 }}
       >
-        <p className="text-gray-400 text-sm mb-2">SCROLL DOWN</p>
-        <ChevronDown className="w-6 h-6 text-gray-400 mx-auto animate-bounce" />
+        <p className="text-gray-400 text-xl mb-2">SCROLL DOWN</p>
+        <ChevronDown className="w-10 h-10 text-gray-400 mx-auto animate-bounce" />
       </motion.div>
     </section>
   );
