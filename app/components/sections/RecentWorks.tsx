@@ -83,7 +83,7 @@ export default function RecentWorks() {
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <motion.h2
-            className="text-5xl md:text-6xl font-bold text-secondary-foreground mb-6"
+            className="text-5xl md:text-6xl font-normal text-secondary-foreground mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.6, delay: 0.2 }}

@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
+import { Music, Video, Tv, Globe, Zap, Trophy } from 'lucide-react';
 
 export default function Services() {
   const ref = useRef(null);
@@ -11,27 +12,33 @@ export default function Services() {
   const services = [
     {
       title: "K-POP & 앨범 안무 제작",
-      description: "아이돌 그룹, 솔로 아티스트의 타이틀곡 및 수록곡 안무 제작"
+      description: "아이돌 그룹, 솔로 아티스트의 타이틀곡 및 수록곡 안무 제작",
+      icon: Music
     },
     {
       title: "영화 & 광고 안무",
-      description: "영화, 드라마, 광고 CF 안무 제작 및 출연"
+      description: "영화, 드라마, 광고 CF 안무 제작 및 출연",
+      icon: Video
     },
     {
       title: "방송 & 행사 출연",
-      description: "TV 프로그램, 콘서트, 행사 댄서 및 팀 섭외"
+      description: "TV 프로그램, 콘서트, 행사 댄서 및 팀 섭외",
+      icon: Tv
     },
     {
       title: "해외 & 국내 워크샵",
-      description: "전 세계 K-POP 댄스 레슨 및 워크샵 진행"
+      description: "전 세계 K-POP 댄스 레슨 및 워크샵 진행",
+      icon: Globe
     },
     {
       title: "댄스 챌린지",
-      description: "제품, 공감, 릴레이 홍보를 위한 댄스 챌린지 제작"
+      description: "제품, 공감, 릴레이 홍보를 위한 댄스 챌린지 제작",
+      icon: Zap
     },
     {
       title: "댄스 대회 & 행사",
-      description: "댄스 대회 주최, 운영 및 다양한 행사 기획"
+      description: "댄스 대회 주최, 운영 및 다양한 행사 기획",
+      icon: Trophy
     }
   ];
 
@@ -68,7 +75,7 @@ export default function Services() {
   };
 
   return (
-    <section className="py-24 bg-secondary flex flex-col items-center" id="about" ref={ref}>
+    <section className="py-30 bg-secondary flex flex-col items-center" id="about" ref={ref}>
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <motion.div
@@ -79,7 +86,7 @@ export default function Services() {
         >
           <div className="mb-8 lg:mb-0 w-full">
             <motion.p
-              className="text-sm font-medium text-secondary-foreground/60 mb-4 tracking-wide"
+              className="text-lg font-medium text-secondary-foreground/60 mb-4 tracking-wide"
               initial={{ opacity: 0, x: -20 }}
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -96,7 +103,7 @@ export default function Services() {
                 WHAT DO WE DO?
               </motion.h2>
               <motion.p
-                className="text-lg text-secondary-foreground/70 leading-relaxed"
+                className="text-xl text-secondary-foreground/70 leading-relaxed"
                 initial={{ opacity: 0, x: 30 }}
                 animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
@@ -128,21 +135,23 @@ export default function Services() {
               }}
               whileTap={{ scale: 0.98 }}
             >
-              {/* Icon Placeholder */}
+              {/* Service Icon */}
               <motion.div
-                className="w-12 h-12 bg-gray-400 rounded-full mb-6"
-                initial={{ scale: 0 }}
-                animate={isInView ? { scale: 1 } : { scale: 0 }}
+                className="w-12 h-12 bg-primary rounded-full mb-6 flex items-center justify-center"
+                initial={{ scale: 0, rotate: -180 }}
+                animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
                 transition={{
-                  duration: 0.4,
+                  duration: 0.6,
                   delay: 0.5 + index * 0.1,
                   type: "spring",
                   stiffness: 200
                 }}
-              ></motion.div>
+              >
+                <service.icon className="w-6 h-6 text-primary-foreground" />
+              </motion.div>
 
               <motion.h3
-                className="text-lg font-bold text-secondary-foreground mb-3 leading-tight"
+                className="text-2xl font-bold text-secondary-foreground mb-3 leading-tight"
                 initial={{ opacity: 0, y: 10 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
@@ -150,7 +159,7 @@ export default function Services() {
                 {service.title}
               </motion.h3>
               <motion.p
-                className="text-sm text-secondary-foreground/70 leading-relaxed"
+                className="text-md text-secondary-foreground/70 leading-relaxed"
                 initial={{ opacity: 0, y: 10 }}
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
