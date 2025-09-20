@@ -88,7 +88,7 @@ export default function Services() {
             </motion.p>
             <div className="flex justify-between items-center">
               <motion.h2
-                className="text-5xl md:text-6xl lg:text-7xl font-bold text-secondary-foreground leading-tight mr-12"
+                className="text-5xl md:text-6xl lg:text-7xl font-normal text-secondary-foreground leading-tight mr-12"
                 initial={{ opacity: 0, x: -30 }}
                 animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
