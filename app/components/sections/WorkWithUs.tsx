@@ -21,12 +21,12 @@ export default function WorkWithUs() {
   ];
 
   return (
-    <section className="py-32 bg-black text-white">
+    <section className="py-32 bg-primary text-primary-foreground">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-24">
-          <p className="text-base text-gray-400 mb-6 tracking-wide">프로젝트 제안</p>
-          <h2 className="text-6xl md:text-8xl font-bold mb-8">
+          <p className="text-lg text-gray-400 mb-6 tracking-wide">프로젝트 제안</p>
+          <h2 className="text-6xl md:text-8xl font-light mb-2">
             Work With Us
           </h2>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
@@ -39,15 +39,15 @@ export default function WorkWithUs() {
           {opportunities.map((opportunity, index) => (
             <div
               key={index}
-              className={`bg-white rounded-3xl p-12 text-center shadow-2xl ${opportunity.shadowColor} hover:scale-105 transition-all duration-300`}
+              className={`bg-secondary rounded-3xl p-12 text-start shadow-2xl ${opportunity.shadowColor} hover:scale-105 transition-all duration-300`}
             >
-              <h3 className="text-4xl font-bold text-black mb-8">
+              <h3 className="text-4xl font-bold text-secondary-foreground mb-8">
                 {opportunity.title}
               </h3>
-              <p className="text-xl text-gray-600 mb-12 leading-relaxed whitespace-pre-line">
+              <p className="text-xl text-secondary-foreground/70 mb-12 leading-relaxed whitespace-pre-line">
                 {opportunity.description}
               </p>
-              <button className="w-full bg-black hover:bg-gray-800 text-white py-6 rounded-2xl font-semibold text-lg transition-all duration-300">
+              <button className="w-full bg-primary hover:bg-primary/80 text-primary-foreground py-6 rounded-2xl font-semibold text-lg transition-all duration-300">
                 {opportunity.action}
               </button>
             </div>

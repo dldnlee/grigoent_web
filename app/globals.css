@@ -1,17 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --primary: #171717;
-  --primary-foreground: #ffffff;
-  --secondary: #f5f5f5;
-  --secondary-foreground: #171717;
-  --accent: #f5f5f5;
-  --accent-foreground: #171717;
+  --background: #F7F7F7;
+  --foreground: #1A1A1A;
+  --primary: #1A1A1A;
+  --primary-foreground: #F7F7F7;
+  --secondary: #F7F7F7;
+  --secondary-foreground: #1A1A1A;
+  --accent: #F7F7F7;
+  --accent-foreground: #1A1A1A;
   --border: #e5e5e5;
   --input: #e5e5e5;
-  --ring: #171717;
+  --ring: #1A1A1A;
 }
 
 @theme inline {
@@ -31,17 +31,17 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    --primary: #171717;
-    --primary-foreground: #0a0a0a;
-    --secondary: #1a1a1a;
-    --secondary-foreground: #ededed;
-    --accent: #1a1a1a;
-    --accent-foreground: #ededed;
+    --background: #1A1A1A;
+    --foreground: #F7F7F7;
+    --primary: #1A1A1A;
+    --primary-foreground: #F7F7F7;
+    --secondary: #F7F7F7;
+    --secondary-foreground: #1A1A1A;
+    --accent: #F7F7F7;
+    --accent-foreground: #1A1A1A;
     --border: #2a2a2a;
     --input: #2a2a2a;
-    --ring: #ededed;
+    --ring: #F7F7F7;
   }
 }
 

@@ -433,6 +433,53 @@ Successfully updated the WorkWithUs component to match the exact dark-themed lay
 
 The Work With Us section now perfectly matches the reference design with the exact three-card layout, colored borders, and Korean content as specified in the image.
 
+## Global Color Scheme Update - COMPLETED
+
+### Overview
+Successfully applied the new brand color scheme throughout the entire project using #1A1A1A as primary and #F7F7F7 as secondary colors for both light and dark themes.
+
+### Color Scheme Implementation
+- **Primary Color**: #1A1A1A (Dark charcoal - used for text, backgrounds, buttons)
+- **Secondary Color**: #F7F7F7 (Light gray - used for backgrounds, cards, accents)
+- **Universal Application**: Both colors work consistently in light and dark theme modes
+
+### Changes Made
+1. **CSS Variables Update** (`/app/globals.css`):
+   - Updated `:root` variables for light theme
+   - Updated `@media (prefers-color-scheme: dark)` for dark theme
+   - Set `--primary: #1A1A1A` and `--secondary: #F7F7F7`
+   - Configured foreground colors with proper contrast
+
+2. **Component Updates**:
+   - **Hero Section**: Changed from `bg-black` to `bg-primary`, updated text colors to use `text-primary-foreground`
+   - **About Us Section**: Changed from `bg-gray-50` to `bg-secondary`, updated text to `text-secondary-foreground`
+   - **Recent Works**: Applied secondary background and proper foreground colors
+   - **Contact Section**: Updated from `bg-black` to `bg-primary` with semantic color classes
+   - **Work With Us**: Applied primary background and updated card colors to use secondary theme
+
+### Semantic Color Usage
+- **Backgrounds**: `bg-primary`, `bg-secondary` instead of hardcoded colors
+- **Text**: `text-primary-foreground`, `text-secondary-foreground` for proper contrast
+- **Opacity Variants**: Used `/70`, `/60`, `/50` suffixes for subtle text variations
+- **Hover States**: Applied semantic hover colors with proper contrast
+
+### Benefits of New Color Scheme
+- ✅ Consistent brand identity across all sections
+- ✅ Proper contrast ratios for accessibility
+- ✅ Semantic color naming for maintainability
+- ✅ Automatic dark/light theme support
+- ✅ Professional, modern aesthetic
+- ✅ Easy future color modifications
+
+### Technical Implementation
+- Used Tailwind CSS custom property integration
+- Maintained existing functionality while updating colors
+- Ensured proper contrast ratios throughout
+- Zero breaking changes to component logic
+- Build completed successfully with no errors
+
+The entire project now uses the unified #1A1A1A/#F7F7F7 color scheme, providing a cohesive and professional brand experience across all sections while maintaining accessibility standards.
+
 ## Navigation Bar Redesign - PLANNED
 
 ### User Requirements Analysis

@@ -27,7 +27,7 @@ export default function Contact() {
   };
 
   return (
-    <section className="py-24 bg-black text-white" id="contact">
+    <section className="py-24 bg-primary text-primary-foreground" id="contact">
       <div className="container mx-auto px-6 lg:px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           {/* Left Side - Contact Info */}
@@ -51,7 +51,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Address</p>
-                  <p className="text-white">서울특별시 마포구 상지길 55, 3층</p>
+                  <p className="text-primary-foreground">서울특별시 마포구 상지길 55, 3층</p>
                 </div>
               </div>
 
@@ -61,7 +61,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Email</p>
-                  <p className="text-white">contact@grigoent.co.kr</p>
+                  <p className="text-primary-foreground">contact@grigoent.co.kr</p>
                 </div>
               </div>
 
@@ -71,7 +71,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Phone</p>
-                  <p className="text-white">+82) 02-6299-9229</p>
+                  <p className="text-primary-foreground">+82) 02-6299-9229</p>
                 </div>
               </div>
 
@@ -81,7 +81,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <p className="text-gray-400 text-sm mb-1">Business Hours</p>
-                  <div className="text-white space-y-1">
+                  <div className="text-primary-foreground space-y-1">
                     <p>월-금: 09:00 - 18:00</p>
                     <p>토-일: 10:00 - 16:00</p>
                   </div>

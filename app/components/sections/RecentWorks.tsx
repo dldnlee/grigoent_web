@@ -49,14 +49,14 @@ export default function RecentWorks() {
   const [selectedVideo, setSelectedVideo] = useState(videos[0]);
 
   return (
-    <section className="py-24 bg-gray-50" id="works">
+    <section className="py-24 bg-secondary" id="works">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-bold text-black mb-6">
+          <h2 className="text-5xl md:text-6xl font-bold text-secondary-foreground mb-6">
             RECENT WORKS
           </h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-lg text-secondary-foreground/70 max-w-3xl mx-auto leading-relaxed">
             우리 댄서들이 참여한 다양한 프로젝트들을 확인해보세요. 각각의 작품은<br />
             열정과 창의성이 담긴 결과물입니다.
           </p>
@@ -75,10 +75,10 @@ export default function RecentWorks() {
 
             {/* Selected Video Info */}
             <div className="mt-6">
-              <h3 className="text-2xl font-bold text-black mb-2 leading-tight">
+              <h3 className="text-2xl font-bold text-secondary-foreground mb-2 leading-tight">
                 {selectedVideo.title}
               </h3>
-              <div className="flex justify-between items-center text-gray-600">
+              <div className="flex justify-between items-center text-secondary-foreground/70">
                 <span>{selectedVideo.views}</span>
                 <span>{selectedVideo.date}</span>
               </div>
@@ -107,13 +107,13 @@ export default function RecentWorks() {
 
                       {/* Video Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs text-gray-500 mb-1 font-medium">
+                        <div className="text-xs text-secondary-foreground/60 mb-1 font-medium">
                           {video.category}
                         </div>
-                        <h4 className="text-sm font-semibold text-black leading-tight mb-2 line-clamp-2">
+                        <h4 className="text-sm font-semibold text-secondary-foreground leading-tight mb-2 line-clamp-2">
                           {video.title}
                         </h4>
-                        <div className="text-xs text-gray-500 space-y-1">
+                        <div className="text-xs text-secondary-foreground/60 space-y-1">
                           <div>{video.views}</div>
                           <div>{video.date}</div>
                         </div>

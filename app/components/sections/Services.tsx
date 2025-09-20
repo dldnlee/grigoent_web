@@ -27,17 +27,17 @@ export default function Services() {
   ];
 
   return (
-    <section className="py-24 bg-gray-50" id="about">
+    <section className="py-24 bg-secondary" id="about">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row w-full mb-20">
           <div className="mb-8 lg:mb-0 w-full">
-            <p className="text-sm font-medium text-gray-500 mb-4 tracking-wide">ABOUT US</p>
+            <p className="text-sm font-medium text-secondary-foreground/60 mb-4 tracking-wide">ABOUT US</p>
             <div className="flex justify-between items-center">
-              <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-black leading-tight mr-12">
+              <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold text-secondary-foreground leading-tight mr-12">
                 WHAT DO WE DO?
               </h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
+              <p className="text-lg text-secondary-foreground/70 leading-relaxed">
                 저희는 세계적인 안무가들과 댄서들을 연결하여<br />
                 혁신적이고 감동적인 공연을 만들어갑니다.
               </p>
@@ -56,10 +56,10 @@ export default function Services() {
               {/* Icon Placeholder */}
               <div className="w-16 h-16 bg-gray-400 rounded-full mb-8"></div>
 
-              <h3 className="text-xl font-bold text-black mb-4 leading-tight">
+              <h3 className="text-xl font-bold text-secondary-foreground mb-4 leading-tight">
                 {service.title}
               </h3>
-              <p className="text-gray-700 leading-relaxed max-w-[300px]">
+              <p className="text-secondary-foreground/70 leading-relaxed max-w-[300px]">
                 {service.description}
               </p>
             </div>
