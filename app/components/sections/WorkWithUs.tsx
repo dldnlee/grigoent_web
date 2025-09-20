@@ -25,7 +25,7 @@ export default function WorkWithUs() {
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-24">
-          <p className="text-lg text-gray-400 mb-6 tracking-wide">프로젝트 제안</p>
+          <p className="text-2xl text-gray-400 mb-2 tracking-wide">프로젝트 제안</p>
           <h2 className="text-6xl md:text-8xl font-light mb-2">
             Work With Us
           </h2>

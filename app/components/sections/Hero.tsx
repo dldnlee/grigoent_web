@@ -14,7 +14,7 @@ export default function Hero() {
 
             {/* Main Heading */}
             <h1 className="leading-none">
-              <p className='font-light text-6xl sm:text-8xl md:text-9xl lg:text-[8rem] xl:text-[10rem]'>DANCE WITH</p>
+              <p className='font-light text-5xl sm:text-6xl md:text-7xl lg:text-[3rem] xl:text-[7rem]'>DANCE WITH</p>
               <p className="text-primary-foreground font-extrabold text-7xl sm:text-9xl md:text-[7rem] lg:text-[10rem] xl:text-[12rem]">
                 PASSION
               </p>
@@ -23,19 +23,19 @@ export default function Hero() {
             {/* Stats */}
             <div className="flex flex-wrap gap-8 md:gap-12 text-base font-medium">
               <div className="text-left">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold">100+</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-light">100+</div>
                 <div className="text-gray-400 text-lg md:text-xl">아티스트</div>
               </div>
               <div className="text-left">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold">500+</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-light">500+</div>
                 <div className="text-gray-400 text-lg md:text-xl">프로젝트</div>
               </div>
               <div className="text-left">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold">30+</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-light">30+</div>
                 <div className="text-gray-400 text-lg md:text-xl">국가</div>
               </div>
               <div className="text-left">
-                <div className="text-4xl md:text-5xl lg:text-6xl font-bold">15+</div>
+                <div className="text-4xl md:text-5xl lg:text-6xl font-light">15+</div>
                 <div className="text-gray-400 text-lg md:text-xl">년 경력</div>
               </div>
             </div>

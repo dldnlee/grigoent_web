@@ -27,7 +27,7 @@ export default function Services() {
   ];
 
   return (
-    <section className="py-24 bg-secondary" id="about">
+    <section className="py-24 bg-secondary flex flex-col items-center" id="about">
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <div className="flex flex-col lg:flex-row w-full mb-20">
@@ -43,23 +43,23 @@ export default function Services() {
               </p>
             </div>
           </div>
-          </div>
         </div>
+      </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:px-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:px-12 max-w-[90%]">
           {services.map((service, index) => (
             <div
               key={index}
-              className="bg-gray-200 rounded-3xl p-8 hover:bg-gray-300 transition-all duration-300"
+              className="bg-gray-200 rounded-2xl p-6 hover:bg-gray-300 transition-all duration-300"
             >
               {/* Icon Placeholder */}
-              <div className="w-16 h-16 bg-gray-400 rounded-full mb-8"></div>
+              <div className="w-12 h-12 bg-gray-400 rounded-full mb-6"></div>
 
-              <h3 className="text-xl font-bold text-secondary-foreground mb-4 leading-tight">
+              <h3 className="text-lg font-bold text-secondary-foreground mb-3 leading-tight">
                 {service.title}
               </h3>
-              <p className="text-secondary-foreground/70 leading-relaxed max-w-[300px]">
+              <p className="text-sm text-secondary-foreground/70 leading-relaxed">
                 {service.description}
               </p>
             </div>
