@@ -137,7 +137,7 @@ export default function Services() {
             >
               {/* Service Icon */}
               <motion.div
-                className="w-12 h-12 bg-primary rounded-full mb-6 flex items-center justify-center"
+                className="w-12 h-12 rounded-full mb-6 flex items-center justify-center"
                 initial={{ scale: 0, rotate: -180 }}
                 animate={isInView ? { scale: 1, rotate: 0 } : { scale: 0, rotate: -180 }}
                 transition={{
@@ -147,7 +147,7 @@ export default function Services() {
                   stiffness: 200
                 }}
               >
-                <service.icon className="w-6 h-6 text-primary-foreground" />
+                <service.icon className="w-10 h-10 text-primary" />
               </motion.div>
 
               <motion.h3

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Globe, User } from 'lucide-react';
+import { Languages, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import AnimatedHamburger from './AnimatedHamburger';
 import MobileMenu from './MobileMenu';
@@ -61,7 +61,7 @@ export default function TopNavBar() {
                   aria-label="Change language to English"
                 >
                   <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Globe className="w-4 h-4 text-gray-600" />
+                    <Languages className="w-4 h-4 text-gray-600" />
                   </div>
                   <span className="text-sm font-medium">EN</span>
                 </button>
@@ -71,11 +71,7 @@ export default function TopNavBar() {
                   className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Sign in to your account"
                 >
-                  <Avatar className="w-6 h-6">
-                    <AvatarFallback className="bg-gray-100">
-                      <User className="w-4 h-4 text-gray-600" />
-                    </AvatarFallback>
-                  </Avatar>
+                      <UserCircle className="w-6 h-6 text-gray-600" />
                   <span className="text-sm font-medium">Sign In</span>
                 </button>
 
@@ -95,7 +91,7 @@ export default function TopNavBar() {
                   className="p-2 text-gray-600 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Change language"
                 >
-                  <Globe className="w-5 h-5" />
+                  <Languages className="w-5 h-5" />
                 </button>
 
                 {/* Mobile User Icon */}
@@ -103,7 +99,7 @@ export default function TopNavBar() {
                   className="p-2 text-gray-600 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="User account"
                 >
-                  <User className="w-5 h-5" />
+                  <UserCircle className="w-5 h-5" />
                 </button>
 
                 {/* Animated Hamburger */}
