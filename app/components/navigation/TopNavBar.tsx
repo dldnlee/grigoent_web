@@ -60,9 +60,9 @@ export default function TopNavBar() {
                   className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Change language to English"
                 >
-                  <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
-                    <Languages className="w-4 h-4 text-gray-600" />
-                  </div>
+                  <Languages className="w-5 h-5 text-gray-600" />
+                  {/* <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
+                  </div> */}
                   <span className="text-sm font-medium">EN</span>
                 </button>
 
@@ -71,7 +71,7 @@ export default function TopNavBar() {
                   className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label="Sign in to your account"
                 >
-                      <UserCircle className="w-6 h-6 text-gray-600" />
+                      <UserCircle className="w-5 h-5 text-gray-600" />
                   <span className="text-sm font-medium">Sign In</span>
                 </button>
 
