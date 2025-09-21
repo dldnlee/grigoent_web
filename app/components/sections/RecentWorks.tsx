@@ -1,55 +1,105 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { motion, useInView } from 'framer-motion';
+import Image from 'next/image';
+import { fetchPlaylistVideos, getVideoStats, processYouTubeVideos, ProcessedVideo } from '@/app/lib/youtube';
 
 export default function RecentWorks() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
-  const videos = [
+
+  // Fallback videos for when API is not available or loading
+  const fallbackVideos: ProcessedVideo[] = [
     {
-      id: 1,
+      id: "1",
+      videoId: "ktWrP16ZpTk",
       title: "[BOYS II PLANET K] 유메키 YUMEKI @시그널송 '올라(HOLA SOLAR)' 개인 무대 평가",
-      views: "2,476,925 views",
-      date: "Jun 13, 2025",
+      views: "2.5M views",
+      date: "Jun 13, 2023",
       category: "BROADCAST",
-      thumbnail: "/placeholder-video.jpg"
+      thumbnail: "https://img.youtube.com/vi/ktWrP16ZpTk/mqdefault.jpg"
     },
     {
-      id: 2,
-      title: "[BOYS II PLANET K] 유메키 YUMEKI @시그널송 '올라(HOLA SOLAR)' 개인 무대 평가",
-      views: "2,476,925 views",
-      date: "Jun 13, 2025",
-      category: "BROADCAST",
-      thumbnail: "/placeholder-video.jpg"
-    },
-    {
-      id: 3,
+      id: "2",
+      videoId: "ktWrP16ZpTk",
       title: "[MUSIC VIDEO] K-POP 안무 제작 비하인드",
-      views: "1,234,567 views",
-      date: "May 20, 2025",
+      views: "1.2M views",
+      date: "May 20, 2023",
       category: "BROADCAST",
-      thumbnail: "/placeholder-video.jpg"
+      thumbnail: "https://img.youtube.com/vi/ktWrP16ZpTk/mqdefault.jpg"
     },
     {
-      id: 4,
+      id: "3",
+      videoId: "ktWrP16ZpTk",
       title: "[WORKSHOP] 글로벌 댄스 워크샵 하이라이트",
-      views: "987,654 views",
-      date: "Apr 15, 2025",
+      views: "987K views",
+      date: "Apr 15, 2023",
       category: "BROADCAST",
-      thumbnail: "/placeholder-video.jpg"
+      thumbnail: "https://img.youtube.com/vi/ktWrP16ZpTk/mqdefault.jpg"
     },
     {
-      id: 5,
+      id: "4",
+      videoId: "ktWrP16ZpTk",
       title: "[CHALLENGE] 바이럴 댄스 챌린지 모음",
-      views: "3,456,789 views",
-      date: "Mar 10, 2025",
+      views: "3.5M views",
+      date: "Mar 10, 2023",
       category: "BROADCAST",
-      thumbnail: "/placeholder-video.jpg"
+      thumbnail: "https://img.youtube.com/vi/ktWrP16ZpTk/mqdefault.jpg"
+    },
+    {
+      id: "5",
+      videoId: "ktWrP16ZpTk",
+      title: "[LIVE] 댄스 배틀 챔피언십 2023",
+      views: "2.1M views",
+      date: "Feb 25, 2023",
+      category: "BROADCAST",
+      thumbnail: "https://img.youtube.com/vi/ktWrP16ZpTk/mqdefault.jpg"
     }
   ];
 
-  const [selectedVideo, setSelectedVideo] = useState(videos[0]);
+  const [videos, setVideos] = useState<ProcessedVideo[]>(fallbackVideos);
+  const [selectedVideo, setSelectedVideo] = useState<ProcessedVideo>(fallbackVideos[0]);
+
+  // YouTube API configuration
+  const YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+  const PLAYLIST_ID = process.env.NEXT_PUBLIC_YOUTUBE_PLAYLIST_ID;
+
+  useEffect(() => {
+    const loadYouTubeVideos = async () => {
+      // Only load from API if both API key and playlist ID are available
+      if (!YOUTUBE_API_KEY || !PLAYLIST_ID) {
+        console.log('YouTube API key or playlist ID not configured, using fallback videos');
+        return;
+      }
+
+      try {
+        const youtubeVideos = await fetchPlaylistVideos(PLAYLIST_ID, YOUTUBE_API_KEY);
+
+        if (youtubeVideos.length > 0) {
+          // Get video stats for each video
+          const videoStatsPromises = youtubeVideos.map(video =>
+            getVideoStats(video.videoId, YOUTUBE_API_KEY)
+          );
+
+          const videoStatsArray = await Promise.all(videoStatsPromises);
+          const videoStats = youtubeVideos.reduce((acc, video, index) => {
+            acc[video.videoId] = videoStatsArray[index];
+            return acc;
+          }, {} as Record<string, { viewCount: string }>);
+
+          const processedVideos = processYouTubeVideos(youtubeVideos, videoStats);
+          setVideos(processedVideos);
+          setSelectedVideo(processedVideos[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load YouTube videos:', error);
+        // Keep using fallback videos
+      }
+    };
+
+    loadYouTubeVideos();
+  }, [YOUTUBE_API_KEY, PLAYLIST_ID]);
 
   const headerVariants = {
     hidden: { opacity: 0, y: 30 },
@@ -116,16 +166,14 @@ export default function RecentWorks() {
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              {/* Video Placeholder */}
-              <div className="w-full h-full bg-gradient-to-br from-gray-400 to-gray-500 flex items-center justify-center">
-                <motion.div
-                  className="text-6xl text-gray-600"
-                  whileHover={{ scale: 1.1 }}
-                  transition={{ type: "spring", stiffness: 400 }}
-                >
-                  ▶
-                </motion.div>
-              </div>
+              {/* YouTube Video Embed */}
+              <iframe
+                className="w-full h-full border-0"
+                src={`https://www.youtube.com/embed/${selectedVideo.videoId}?rel=0&modestbranding=1`}
+                title={selectedVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </motion.div>
 
             {/* Selected Video Info */}
@@ -186,10 +234,25 @@ export default function RecentWorks() {
                     <div className="flex gap-3">
                       {/* Video Thumbnail */}
                       <motion.div
-                        className="w-24 h-16 bg-gray-300 rounded-lg flex-shrink-0 flex items-center justify-center"
+                        className="w-24 h-16 bg-gray-300 rounded-lg flex-shrink-0 overflow-hidden relative"
                         whileHover={{ scale: 1.05 }}
                       >
-                        <span className="text-gray-500 text-sm">▶</span>
+                        <Image
+                          src={video.thumbnail}
+                          alt={video.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 96px, 96px"
+                          onError={() => {
+                            // Fallback handled by the parent container
+                            console.log('Failed to load thumbnail for video:', video.title);
+                          }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="w-6 h-6 bg-black/70 rounded-full flex items-center justify-center">
+                            <span className="text-white text-xs">▶</span>
+                          </div>
+                        </div>
                       </motion.div>
 
                       {/* Video Info */}
