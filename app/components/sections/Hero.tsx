@@ -86,7 +86,7 @@ export default function Hero() {
                 DANCE WITH
               </motion.p>
               <motion.p
-                className="text-primary-foreground font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[10rem] xl:text-[12rem] whitespace-nowrap overflow-hidden"
+                className="text-primary-foreground font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[8rem] xl:text-[10rem] "
                 initial={{ x: -30, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -164,27 +164,24 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Right Side - Placeholder for 3D Design */}
+          {/* Right Side - YouTube Video */}
           <motion.div
             className="relative flex items-center justify-center order-first lg:order-last"
             initial={{ x: 30, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
           >
-            <motion.div
-              className="w-full h-64 sm:h-80 lg:h-[500px] bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-blue-500/20 rounded-3xl border border-primary-foreground/10 flex items-center justify-center"
-              whileHover={{ scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
+            <div
+              className="w-full h-60 sm:h-80 lg:h-[400px] overflow-hidden shadow-2xl"
             >
-              <div className="text-gray-400 text-center">
-                <motion.div
-                  className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mx-auto mb-4 bg-gradient-to-br from-pink-500 to-blue-500 rounded-full opacity-50"
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                ></motion.div>
-                <p className="text-sm sm:text-base">3D Design Placeholder</p>
-              </div>
-            </motion.div>
+              <iframe
+                className="w-full h-full border-0"
+                src="https://www.youtube.com/embed/ktWrP16ZpTk?autoplay=1&mute=1&loop=1&playlist=ktWrP16ZpTk&controls=0&showinfo=0&rel=0&iv_load_policy=3&modestbranding=1&disablekb=1&fs=0"
+                title="GRIGO Entertainment Dance Video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                style={{ pointerEvents: 'none' }}
+              />
+            </div>
           </motion.div>
         </div>
       </div>
