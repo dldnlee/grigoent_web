@@ -4,6 +4,7 @@ import Artists from './components/sections/Artists';
 import RecentWorks from './components/sections/RecentWorks';
 import Contact from './components/sections/Contact';
 import WorkWithUs from './components/sections/WorkWithUs';
+import Footer from './components/sections/Footer';
 
 export default function Home() {
   return (
@@ -15,6 +16,7 @@ export default function Home() {
       <Contact />
       <hr className="w-[90%] mx-auto border-white"/>
       <WorkWithUs />
+      <Footer />
     </main>
   );
 }
