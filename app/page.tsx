@@ -14,7 +14,6 @@ export default function Home() {
       <Artists />
       <RecentWorks />
       <Contact />
-      <hr className="w-[90%] mx-auto border-white"/>
       <WorkWithUs />
       <Footer />
     </main>

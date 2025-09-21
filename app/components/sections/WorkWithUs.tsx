@@ -43,7 +43,7 @@ export default function WorkWithUs() {
   };
 
   return (
-    <section className="py-32 bg-primary text-primary-foreground" ref={ref}>
+    <section className="py-32 bg-primary text-primary-foreground border-t" ref={ref}>
       <div className="container mx-auto px-6 lg:px-12">
         {/* Section Header */}
         <motion.div
