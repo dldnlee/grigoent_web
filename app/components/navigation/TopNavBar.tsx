@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Languages, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import AnimatedHamburger from './AnimatedHamburger';
@@ -10,18 +11,24 @@ export default function TopNavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
-    { name: 'Home', href: '#' },
-    { name: 'About Us', href: '#about' },
-    { name: 'Artists', href: '#artists' },
-    { name: 'Our Works', href: '#works' },
-    { name: 'Contact Us', href: '#contact' }
+    { name: 'Home', href: '/', type: 'route' },
+    { name: 'About Us', href: '#about', type: 'anchor' },
+    { name: 'Artists', href: '/artists', type: 'route' },
+    { name: 'Our Works', href: '#works', type: 'anchor' },
+    { name: 'Contact Us', href: '#contact', type: 'anchor' }
   ];
 
-  const handleNavClick = (href: string) => {
-    // Smooth scroll to section
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const router = useRouter();
+
+  const handleNavClick = (href: string, type: string) => {
+    if (type === 'route') {
+      router.push(href);
+    } else {
+      // Smooth scroll to section
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -42,7 +49,7 @@ export default function TopNavBar() {
                     {navItems.map((item) => (
                       <button
                         key={item.name}
-                        onClick={() => handleNavClick(item.href)}
+                        onClick={() => handleNavClick(item.href, item.type)}
                         className="text-gray-700 hover:text-black transition-colors duration-200 font-light rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gray-300"
                         aria-label={`Navigate to ${item.name}`}
                       >

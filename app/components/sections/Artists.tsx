@@ -59,9 +59,9 @@ export default function Artists() {
 
         {/* View More Button */}
         <div className="text-center mt-12">
-          <button className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
+          <a href="/artists" className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
             View All Artists
-          </button>
+          </a>
         </div>
       </div>
     </section>

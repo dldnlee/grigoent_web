@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Globe, User, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
@@ -9,7 +10,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
-  navItems: Array<{ name: string; href: string }>;
+  navItems: Array<{ name: string; href: string; type: string }>;
 }
 
 export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProps) {
@@ -29,12 +30,18 @@ export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProp
     visible: { x: 0, opacity: 1 }
   };
 
-  const handleNavClick = (href: string) => {
+  const router = useRouter();
+
+  const handleNavClick = (href: string, type: string) => {
     onClose();
-    // Smooth scroll to section
-    const element = document.querySelector(href);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+    if (type === 'route') {
+      router.push(href);
+    } else {
+      // Smooth scroll to section
+      const element = document.querySelector(href);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -73,7 +80,7 @@ export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProp
                 <motion.button
                   key={item.name}
                   variants={itemVariants}
-                  onClick={() => handleNavClick(item.href)}
+                  onClick={() => handleNavClick(item.href, item.type)}
                   className="w-full text-left py-4 px-4 rounded-lg text-lg font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200 active:scale-[0.98]"
                   whileTap={{ scale: 0.98 }}
                 >

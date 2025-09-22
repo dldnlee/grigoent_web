@@ -96,18 +96,31 @@ body {
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
+  /* Spotify-inspired colors */
+  --spotify-green: #1DB954;
+  --spotify-black: #191414;
+  --spotify-dark-gray: #121212;
+  --spotify-gray: #282828;
+  --spotify-light-gray: #B3B3B3;
+  --spotify-white: #FFFFFF;
+
+  /* Background gradients */
+  --gradient-primary: linear-gradient(135deg, #1e3c72, #2a5298);
+  --gradient-card: linear-gradient(145deg, rgba(40,40,40,0.9), rgba(25,20,20,0.95));
+
+  /* Enhanced dark theme with Spotify colors */
+  --background: var(--spotify-dark-gray);
+  --foreground: var(--spotify-white);
+  --card: var(--spotify-gray);
+  --card-foreground: var(--spotify-white);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: var(--spotify-green);
+  --primary-foreground: var(--spotify-black);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: var(--spotify-light-gray);
   --accent: oklch(0.269 0 0);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
