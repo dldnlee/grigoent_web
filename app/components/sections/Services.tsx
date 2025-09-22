@@ -4,40 +4,42 @@ import { motion } from 'framer-motion';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Music, Video, Tv, Globe, Zap, Trophy } from 'lucide-react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function Services() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1 });
+  const { t } = useLanguage();
 
   const services = [
     {
-      title: "K-POP & 앨범 안무 제작",
-      description: "아이돌 그룹, 솔로 아티스트의 타이틀곡 및 수록곡 안무 제작",
+      titleKey: "services.kpop.title",
+      descriptionKey: "services.kpop.description",
       icon: Music
     },
     {
-      title: "영화 & 광고 안무",
-      description: "영화, 드라마, 광고 CF 안무 제작 및 출연",
+      titleKey: "services.movie.title",
+      descriptionKey: "services.movie.description",
       icon: Video
     },
     {
-      title: "방송 & 행사 출연",
-      description: "TV 프로그램, 콘서트, 행사 댄서 및 팀 섭외",
+      titleKey: "services.broadcast.title",
+      descriptionKey: "services.broadcast.description",
       icon: Tv
     },
     {
-      title: "해외 & 국내 워크샵",
-      description: "전 세계 K-POP 댄스 레슨 및 워크샵 진행",
+      titleKey: "services.workshop.title",
+      descriptionKey: "services.workshop.description",
       icon: Globe
     },
     {
-      title: "댄스 챌린지",
-      description: "제품, 공감, 릴레이 홍보를 위한 댄스 챌린지 제작",
+      titleKey: "services.challenge.title",
+      descriptionKey: "services.challenge.description",
       icon: Zap
     },
     {
-      title: "댄스 대회 & 행사",
-      description: "댄스 대회 주최, 운영 및 다양한 행사 기획",
+      titleKey: "services.competition.title",
+      descriptionKey: "services.competition.description",
       icon: Trophy
     }
   ];
@@ -91,7 +93,7 @@ export default function Services() {
               animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
               transition={{ duration: 0.6, delay: 0.2 }}
             >
-              ABOUT US
+              {t('services.aboutUs')}
             </motion.p>
             <div className="flex justify-between items-center">
               <motion.h2
@@ -100,7 +102,7 @@ export default function Services() {
                 animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
-                WHAT DO WE DO?
+                {t('services.whatDoWeDo')}
               </motion.h2>
               <motion.p
                 className="text-xl text-secondary-foreground/70 leading-relaxed"
@@ -108,8 +110,12 @@ export default function Services() {
                 animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
                 transition={{ duration: 0.8, delay: 0.4 }}
               >
-                저희는 세계적인 안무가들과 댄서들을 연결하여<br />
-                혁신적이고 감동적인 공연을 만들어갑니다.
+                {t('services.description').split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    {index < t('services.description').split('\n').length - 1 && <br />}
+                  </span>
+                ))}
               </motion.p>
             </div>
           </div>
@@ -156,7 +162,7 @@ export default function Services() {
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
               >
-                {service.title}
+                {t(service.titleKey)}
               </motion.h3>
               <motion.p
                 className="text-md text-secondary-foreground/70 leading-relaxed"
@@ -164,7 +170,7 @@ export default function Services() {
                 animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
                 transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
               >
-                {service.description}
+                {t(service.descriptionKey)}
               </motion.p>
             </motion.div>
           ))}

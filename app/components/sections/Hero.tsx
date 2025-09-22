@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suffix?: string; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -32,6 +33,8 @@ function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suf
 }
 
 export default function Hero() {
+  const { t } = useLanguage();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -72,7 +75,7 @@ export default function Hero() {
           >
             {/* Company Info */}
             <motion.div className="text-gray-400" variants={itemVariants}>
-              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">GRIGO 엔터테인먼트 | A Global Dance Company</p>
+              <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl">{t('hero.companyInfo')}</p>
             </motion.div>
 
             {/* Main Heading */}
@@ -83,7 +86,7 @@ export default function Hero() {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
               >
-                DANCE WITH
+                {t('hero.danceWith')}
               </motion.p>
               <motion.p
                 className="text-primary-foreground font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-[8rem] xl:text-[10rem] "
@@ -91,7 +94,7 @@ export default function Hero() {
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
               >
-                PASSION
+                {t('hero.passion')}
               </motion.p>
             </motion.h1>
 
@@ -111,7 +114,7 @@ export default function Hero() {
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
                   <AnimatedCounter value={100} suffix="+" delay={1200} />
                 </div>
-                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">아티스트</div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">{t('hero.stats.artists')}</div>
               </motion.div>
               <motion.div
                 className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
@@ -122,7 +125,7 @@ export default function Hero() {
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
                   <AnimatedCounter value={500} suffix="+" delay={1400} />
                 </div>
-                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">프로젝트</div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">{t('hero.stats.projects')}</div>
               </motion.div>
               <motion.div
                 className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
@@ -133,7 +136,7 @@ export default function Hero() {
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
                   <AnimatedCounter value={30} suffix="+" delay={1600} />
                 </div>
-                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">국가</div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">{t('hero.stats.countries')}</div>
               </motion.div>
               <motion.div
                 className="text-left cursor-pointer lg:cursor-default p-2 -m-2 rounded-lg active:bg-white/5 lg:active:bg-transparent"
@@ -144,7 +147,7 @@ export default function Hero() {
                 <div className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-light">
                   <AnimatedCounter value={15} suffix="+" delay={1800} />
                 </div>
-                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">년 경력</div>
+                <div className="text-gray-400 text-sm sm:text-base md:text-lg lg:text-xl">{t('hero.stats.experience')}</div>
               </motion.div>
             </motion.div>
 
@@ -159,7 +162,7 @@ export default function Hero() {
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                JOIN US NOW
+                {t('hero.joinUs')}
               </motion.button>
             </motion.div>
           </motion.div>
@@ -193,7 +196,7 @@ export default function Hero() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.5, delay: 1.2 }}
       >
-        <p className="text-gray-400 text-sm sm:text-base lg:text-xl mb-2">SCROLL DOWN</p>
+        <p className="text-gray-400 text-sm sm:text-base lg:text-xl mb-2">{t('hero.scrollDown')}</p>
         <ChevronDown className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 text-gray-400 mx-auto animate-bounce" />
       </motion.div>
     </section>

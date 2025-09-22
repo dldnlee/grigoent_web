@@ -4,21 +4,21 @@ import { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/app/components/ui/button';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 interface ArtistSearchProps {
   onSearch: (query: string) => void;
   totalResults: number;
   isLoading?: boolean;
-  placeholder?: string;
 }
 
 export function ArtistSearch({
   onSearch,
   totalResults,
-  isLoading = false,
-  placeholder = "Search artists by Korean or English name..."
+  isLoading = false
 }: ArtistSearchProps) {
   const [query, setQuery] = useState('');
+  const { t } = useLanguage();
 
   // Debounced search
   useEffect(() => {
@@ -49,7 +49,7 @@ export function ArtistSearch({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={t('artists.searchPlaceholder')}
           className="pl-12 pr-12 h-14 text-lg bg-card border-border rounded-full
                      focus:ring-2 focus:ring-primary/20 focus:border-primary
                      transition-all duration-200"
@@ -72,7 +72,7 @@ export function ArtistSearch({
       {query && (
         <div className="mt-3 text-sm text-muted-foreground text-center">
           {isLoading ? (
-            <span>Searching...</span>
+            <span>{t('common.loading')}</span>
           ) : (
             <span>
               {totalResults} {totalResults === 1 ? 'result' : 'results'} found

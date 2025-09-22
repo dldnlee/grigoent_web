@@ -2,8 +2,10 @@
 
 import { useState } from 'react';
 import { MapPin, Mail, Phone, Clock } from 'lucide-react';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export default function Contact() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     emailOrPhone: '',
@@ -35,11 +37,15 @@ export default function Contact() {
             {/* Header */}
             <div>
               <h2 className="text-5xl md:text-8xl font-light mb-6">
-                Contact Us
+                {t('contact.title')}
               </h2>
               <p className="text-lg text-gray-400 leading-relaxed">
-                프로젝트에 대해 문의하거나 댄서와의 협업을<br />
-                원하시면 언제든지 연락주세요.
+                {t('contact.description').split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    {index < t('contact.description').split('\n').length - 1 && <br />}
+                  </span>
+                ))}
               </p>
             </div>
 

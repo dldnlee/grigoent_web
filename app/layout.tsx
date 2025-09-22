@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import "./globals.css";
 import TopNavBar from "./components/navigation/TopNavBar";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -53,8 +54,10 @@ export default function RootLayout({
       <body
         className={`${roboto.variable} antialiased overflow-x-hidden`}
       >
-        <TopNavBar />
-        {children}
+        <LanguageProvider>
+          <TopNavBar />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

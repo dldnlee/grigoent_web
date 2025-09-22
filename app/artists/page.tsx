@@ -6,6 +6,7 @@ import { ArtistSearch } from './components/ArtistSearch';
 import { SectionHeader } from './components/SectionHeader';
 import { DancerGrid } from './components/DancerGrid';
 import { useSearch } from './hooks/useSearch';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import { Dancer, Team } from './types/dancer';
 
 // Sample data - in a real app, this would come from an API
@@ -122,6 +123,7 @@ const pageVariants = {
 };
 
 export default function ArtistsPage() {
+  const { t } = useLanguage();
   const { filteredDancers, filteredTeams, updateFilter, totalResults } = useSearch({
     dancers: sampleDancers,
     teams: sampleTeams
@@ -146,7 +148,7 @@ export default function ArtistsPage() {
               transition={{ duration: 0.8 }}
               className="text-5xl md:text-7xl font-semibold mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent"
             >
-              OUR ARTISTS
+              {t('artists.title').toUpperCase()}
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 20 }}
@@ -154,7 +156,7 @@ export default function ArtistsPage() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
             >
-              세계적 수준의 전문 댄서들과 팀이 만들어내는 예술적 퍼포먼스를 만나보세요
+              {t('artists.description')}
             </motion.p>
           </div>
 
@@ -167,7 +169,6 @@ export default function ArtistsPage() {
             <ArtistSearch
               onSearch={(query) => updateFilter('query', query)}
               totalResults={totalResults}
-              placeholder="Search artists by Korean or English name..."
             />
           </motion.div>
         </div>
@@ -178,18 +179,18 @@ export default function ArtistsPage() {
         <div className="container mx-auto max-w-7xl">
           <Tabs defaultValue="all" className="w-full">
             <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-card/50 backdrop-blur-sm">
-              <TabsTrigger value="all">All Artists</TabsTrigger>
-              <TabsTrigger value="solo">Solo Dancers</TabsTrigger>
-              <TabsTrigger value="teams">Teams</TabsTrigger>
+              <TabsTrigger value="all">{t('artists.allArtists')}</TabsTrigger>
+              <TabsTrigger value="solo">{t('artists.soloDancers')}</TabsTrigger>
+              <TabsTrigger value="teams">{t('artists.teamDancers')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-12">
               {/* Solo Dancers Section */}
               <div>
                 <SectionHeader
-                  title="Solo Dancers"
+                  title={t('artists.soloDancers')}
                   count={soloDancers.length}
-                  subtitle="Individual performers showcasing their unique artistry"
+                  subtitle={t('artists.soloDancersSubtitle')}
                 />
                 <DancerGrid
                   dancers={soloDancers}
@@ -200,9 +201,9 @@ export default function ArtistsPage() {
               {/* Teams Section */}
               <div>
                 <SectionHeader
-                  title="Dance Teams"
+                  title={t('artists.teamDancers')}
                   count={filteredTeams.length}
-                  subtitle="Collaborative ensembles creating synchronized masterpieces"
+                  subtitle={t('artists.teamDancersSubtitle')}
                 />
                 <DancerGrid
                   teams={filteredTeams}
@@ -213,9 +214,9 @@ export default function ArtistsPage() {
 
             <TabsContent value="solo">
               <SectionHeader
-                title="Solo Dancers"
+                title={t('artists.soloDancers')}
                 count={soloDancers.length}
-                subtitle="Individual performers showcasing their unique artistry"
+                subtitle={t('artists.soloDancersSubtitle')}
               />
               <DancerGrid
                 dancers={soloDancers}
@@ -225,9 +226,9 @@ export default function ArtistsPage() {
 
             <TabsContent value="teams">
               <SectionHeader
-                title="Dance Teams"
+                title={t('artists.teamDancers')}
                 count={filteredTeams.length}
-                subtitle="Collaborative ensembles creating synchronized masterpieces"
+                subtitle={t('artists.teamDancersSubtitle')}
               />
               <DancerGrid
                 teams={filteredTeams}

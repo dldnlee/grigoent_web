@@ -4,18 +4,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Languages, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useLanguage } from '@/app/contexts/LanguageContext';
 import AnimatedHamburger from './AnimatedHamburger';
 import MobileMenu from './MobileMenu';
 
 export default function TopNavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const navItems = [
-    { name: 'Home', href: '/', type: 'route' },
-    { name: 'About Us', href: '#about', type: 'anchor' },
-    { name: 'Artists', href: '/artists', type: 'route' },
-    { name: 'Our Works', href: '#works', type: 'anchor' },
-    { name: 'Contact Us', href: '#contact', type: 'anchor' }
+    { name: t('nav.home'), href: '/', type: 'route' },
+    { name: t('nav.about'), href: '#about', type: 'anchor' },
+    { name: t('nav.artists'), href: '/artists', type: 'route' },
+    { name: t('nav.works'), href: '#works', type: 'anchor' },
+    { name: t('nav.contact'), href: '#contact', type: 'anchor' }
   ];
 
   const router = useRouter();
@@ -30,6 +32,10 @@ export default function TopNavBar() {
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
+  };
+
+  const handleLanguageToggle = () => {
+    setLanguage(language === 'ko' ? 'en' : 'ko');
   };
 
   return (
@@ -64,13 +70,12 @@ export default function TopNavBar() {
               <div className="hidden md:flex items-center space-x-4">
                 {/* Language Switcher */}
                 <button
+                  onClick={handleLanguageToggle}
                   className="flex items-center space-x-2 text-gray-600 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                  aria-label="Change language to English"
+                  aria-label={`Change language to ${language === 'ko' ? 'English' : '한국어'}`}
                 >
                   <Languages className="w-5 h-5 text-gray-600" />
-                  {/* <div className="w-6 h-6 bg-gray-100 rounded-full flex items-center justify-center">
-                  </div> */}
-                  <span className="text-sm font-medium">EN</span>
+                  <span className="text-sm font-medium">{language === 'ko' ? 'EN' : '한'}</span>
                 </button>
 
                 {/* Sign In Button */}
@@ -79,7 +84,7 @@ export default function TopNavBar() {
                   aria-label="Sign in to your account"
                 >
                       <UserCircle className="w-5 h-5 text-gray-600" />
-                  <span className="text-sm font-medium">Sign In</span>
+                  <span className="text-sm font-medium">{t('nav.signin')}</span>
                 </button>
 
                 {/* Sign Up Button */}
@@ -87,7 +92,7 @@ export default function TopNavBar() {
                   className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   aria-label="Create a new account"
                 >
-                  Sign Up
+                  {t('nav.signup')}
                 </button>
               </div>
 
@@ -95,8 +100,9 @@ export default function TopNavBar() {
               <div className="flex md:hidden items-center space-x-2">
                 {/* Mobile Language Indicator */}
                 <button
+                  onClick={handleLanguageToggle}
                   className="p-2 text-gray-600 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
-                  aria-label="Change language"
+                  aria-label={`Change language to ${language === 'ko' ? 'English' : '한국어'}`}
                 >
                   <Languages className="w-5 h-5" />
                 </button>
