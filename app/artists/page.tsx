@@ -1,8 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
+import { ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Button } from '@/app/components/ui/button';
 import { ArtistSearch } from './components/ArtistSearch';
 import { SectionHeader } from './components/SectionHeader';
 import { DancerGrid } from './components/DancerGrid';
@@ -19,6 +22,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Marline Kim',
     specialty: 'Hip Hop',
     type: 'solo',
+    slug: 'marline-kim',
     image: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
     isVerified: true,
     monthlyListeners: 125000,
@@ -34,6 +38,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Sarah Park',
     specialty: 'Contemporary',
     type: 'solo',
+    slug: 'sarah-park',
     image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1964&q=80',
     isVerified: true,
     monthlyListeners: 87000,
@@ -48,6 +53,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Alex Lee',
     specialty: 'Jazz',
     type: 'solo',
+    slug: 'alex-lee',
     image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
     monthlyListeners: 54000,
     followers: 42000
@@ -58,6 +64,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Luna Choi',
     specialty: 'Ballet',
     type: 'solo',
+    slug: 'luna-choi',
     image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1887&q=80',
     isVerified: true,
     monthlyListeners: 156000,
@@ -69,6 +76,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Marcus Kang',
     specialty: 'Street Dance',
     type: 'solo',
+    slug: 'marcus-kang',
     image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
     monthlyListeners: 203000,
     followers: 187000
@@ -79,6 +87,7 @@ const sampleDancers: Dancer[] = [
     englishName: 'Sofia Jung',
     specialty: 'Latin',
     type: 'solo',
+    slug: 'sofia-jung',
     image: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80',
     monthlyListeners: 92000,
     followers: 78000
@@ -91,6 +100,7 @@ const sampleTeams: Team[] = [
     teamName: 'Velocity Crew',
     koreanName: '벨로시티 크루',
     specialty: 'Hip Hop',
+    slug: 'velocity-crew',
     formedYear: 2020,
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     isVerified: true,
@@ -102,6 +112,7 @@ const sampleTeams: Team[] = [
     teamName: 'Phoenix Dance',
     koreanName: '피닉스 댄스',
     specialty: 'Contemporary',
+    slug: 'phoenix-dance',
     formedYear: 2019,
     image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2069&q=80',
     isVerified: true,
@@ -112,6 +123,7 @@ const sampleTeams: Team[] = [
     id: 't3',
     teamName: 'Urban Movement',
     specialty: 'Street Dance',
+    slug: 'urban-movement',
     formedYear: 2021,
     image: 'https://images.unsplash.com/photo-1547036967-23d11aacaee0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
     followers: 145000,
@@ -126,6 +138,7 @@ const pageVariants = {
 
 export default function ArtistsPage() {
   const { t } = useLanguage();
+  const router = useRouter();
   const [dancers, setDancers] = useState<Dancer[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -167,10 +180,22 @@ export default function ArtistsPage() {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-primary text-white pt-40"
+      className="min-h-screen bg-primary text-white"
     >
+      {/* Back Button */}
+      <div className="fixed top-6 left-6 z-50">
+        <Button
+          variant="ghost"
+          onClick={() => router.push('/')}
+          className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border-none rounded-full h-12 px-6"
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Home
+        </Button>
+      </div>
+
       {/* Hero Section */}
-      <section className="relative pt-8 pb-8 px-6">
+      <section className="relative pt-24 pb-8 px-6">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-8">
             <motion.h1
