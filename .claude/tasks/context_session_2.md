@@ -147,3 +147,129 @@ Created comprehensive documentation at `.claude/doc/spotify-style-artist-page-im
 - ✅ Navigation fully translated
 - ✅ Artists page previously completed
 - 🚀 **Ready for full testing - all main sections support EN/KO switching**
+
+## Artist Profile Pages Implementation (2025-09-22)
+
+### **Features Implemented**
+1. **Dynamic Routing**: Created `/artists/[slug]` route for individual artist profiles
+2. **Spotify-Style Design**: Hero section with cover image, verified badge, action bar
+3. **Data Integration**: Connected to Supabase `users` and `career_entries` tables
+4. **Tabbed Navigation**: Overview, Works, and About tabs for content organization
+5. **Career Showcase**: Featured works grid, recent works list, categorized works
+6. **Social Integration**: Instagram, YouTube, Twitter links with icons
+7. **Responsive Layout**: Mobile-first design with smooth animations
+8. **Bilingual Support**: Korean/English name display based on language preference
+
+### **Components Created/Updated**
+1. **`/app/artists/[slug]/page.tsx`** - Main profile page component
+   - Hero section with artist cover image and info
+   - Action bar with play button and social links
+   - Tabbed content (Overview, Works, About)
+   - Work cards and list items
+   - Loading and error states
+
+2. **`DancerCard.tsx`** - Updated to link to profile pages
+   - Added Next.js router navigation
+   - Click handler to navigate to `/artists/[slug]`
+   - Fallback to onClick prop if provided
+
+### **Database Integration**
+- **Users Table**: Fetches artist data (name, name_en, slug, profile_image, introduction, social links)
+- **Career Entries Table**: Fetches all career entries with categories (choreography, performance, etc.)
+- **Filtering**: Featured works, recent works, and category-based organization
+
+### **Key Features**
+- **Hero Section**: Full-width cover with gradient overlay, artist name, verification badge
+- **Action Bar**: Sticky play button and social media links
+- **Featured Works**: Grid of up to 6 featured career entries
+- **Recent Works**: List view of latest 10 works
+- **Works Tab**: Organized by category (choreography, performance, advertisement, TV, workshop)
+- **About Tab**: Full biography and social links
+- **Error Handling**: 404 page for missing artists with back navigation
+- **Loading States**: Spinner while fetching data
+
+### **Technical Stack**
+- Next.js 15 dynamic routes with `[slug]` parameter
+- Supabase client for data fetching
+- Framer Motion for animations
+- shadcn/ui components (Button, Badge, Card, Tabs)
+- Tailwind CSS for Spotify-inspired styling
+
+### **Navigation Flow**
+1. Artists listing page → Click dancer card
+2. Navigate to `/artists/[slug]` (using artist's slug from database)
+3. Profile page loads artist data and career entries
+4. Users can explore works, read bio, and connect via social links
+5. Back button returns to artists listing
+
+### **Next Steps**
+- Add real slug data to artist listings (currently using ID as fallback)
+- Implement video playback for career entries with video_url
+- Add animation transitions between pages
+- Consider adding related artists section
+- Add share functionality for profiles
+
+## Supabase Data Integration (2025-09-22)
+
+### **Implementation Complete**
+Successfully integrated Supabase database with both the Artists page and Homepage Artists section.
+
+### **Files Created**
+1. **`/app/artists/utils/mappers.ts`** - Database to UI type mappers
+   - `mapUserToDancer()` - Maps DB users to Dancer UI type
+   - `mapTeamToTeam()` - Maps DB teams with members to Team UI type
+
+2. **`/app/artists/utils/supabase.ts`** - Data fetching utilities
+   - `fetchDancers()` - Fetches all dancers ordered by display_order
+   - `fetchTeams()` - Fetches teams with their members
+   - `fetchFeaturedDancers(limit)` - Fetches limited dancers for homepage
+
+### **Files Updated**
+1. **`/app/artists/types/dancer.ts`**
+   - Added `DbUser` and `DbTeam` interfaces matching Supabase schema
+   - Added `slug` field to `Dancer` and `Team` types
+   - Maintained backward compatibility with existing UI components
+
+2. **`/app/artists/page.tsx`**
+   - Added Supabase data fetching with `useEffect`
+   - Implemented loading states with spinners
+   - Fallback to sample data if fetch fails or returns empty
+   - Loading indicators for all tabs
+
+3. **`/app/components/sections/Artists.tsx`**
+   - Converted to client component for data fetching
+   - Added Supabase integration with `fetchFeaturedDancers(8)`
+   - Implemented loading skeleton states
+   - Added click navigation to artist profile pages
+   - Bilingual name display based on language preference
+   - Hover scale animation on artist cards
+
+### **Database Schema Used**
+- **users table**: id, name, name_en, slug, profile_image, introduction, social links
+- **teams table**: id, name, name_en, slug, description, cover_image, status
+- **team_members table**: team_id, user_id junction table
+- **career_entries table**: Already connected in profile pages
+
+### **Features**
+- ✅ Real-time data fetching from Supabase
+- ✅ Display order support (ordered by display_order field)
+- ✅ Loading states with skeleton UI
+- ✅ Error handling with fallback data
+- ✅ Bilingual support (Korean/English names)
+- ✅ Homepage shows top 8 featured artists
+- ✅ Artists page shows all dancers and teams
+- ✅ Click navigation to profile pages with slugs
+- ✅ Responsive grid layouts
+
+### **Data Flow**
+1. **Homepage**: `Artists.tsx` → `fetchFeaturedDancers(8)` → Display 8 artists
+2. **Artists Page**: `page.tsx` → `fetchDancers()` + `fetchTeams()` → Display all with search/filter
+3. **Profile Pages**: `[slug]/page.tsx` → Fetch by slug → Display full profile
+
+### **Current Status**
+- ✅ Database integration complete
+- ✅ Homepage artists section connected to Supabase
+- ✅ Artists listing page connected to Supabase
+- ✅ Profile pages already using Supabase
+- ✅ Development server running on http://localhost:3001
+- 🚀 **Ready for testing with real database data**

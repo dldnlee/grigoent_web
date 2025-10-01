@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArtistSearch } from './components/ArtistSearch';
@@ -8,8 +9,9 @@ import { DancerGrid } from './components/DancerGrid';
 import { useSearch } from './hooks/useSearch';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { Dancer, Team } from './types/dancer';
+import { fetchDancers, fetchTeams } from './utils/supabase';
 
-// Sample data - in a real app, this would come from an API
+// Fallback sample data for development
 const sampleDancers: Dancer[] = [
   {
     id: '1',
@@ -124,9 +126,38 @@ const pageVariants = {
 
 export default function ArtistsPage() {
   const { t } = useLanguage();
+  const [dancers, setDancers] = useState<Dancer[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        const [fetchedDancers, fetchedTeams] = await Promise.all([
+          fetchDancers(),
+          fetchTeams()
+        ]);
+
+        // Use fetched data if available, otherwise fallback to sample data
+        setDancers(fetchedDancers.length > 0 ? fetchedDancers : sampleDancers);
+        setTeams(fetchedTeams.length > 0 ? fetchedTeams : sampleTeams);
+      } catch (error) {
+        console.error('Error loading artists data:', error);
+        // Fallback to sample data on error
+        setDancers(sampleDancers);
+        setTeams(sampleTeams);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
   const { filteredDancers, filteredTeams, updateFilter, totalResults } = useSearch({
-    dancers: sampleDancers,
-    teams: sampleTeams
+    dancers,
+    teams
   });
 
   const soloDancers = filteredDancers.filter(dancer => dancer.type === 'solo');
@@ -169,6 +200,7 @@ export default function ArtistsPage() {
             <ArtistSearch
               onSearch={(query) => updateFilter('query', query)}
               totalResults={totalResults}
+              isLoading={isLoading}
             />
           </motion.div>
         </div>
@@ -185,55 +217,79 @@ export default function ArtistsPage() {
             </TabsList>
 
             <TabsContent value="all" className="space-y-12">
-              {/* Solo Dancers Section */}
-              <div>
-                <SectionHeader
-                  title={t('artists.soloDancers')}
-                  count={soloDancers.length}
-                  subtitle={t('artists.soloDancersSubtitle')}
-                />
-                <DancerGrid
-                  dancers={soloDancers}
-                  onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
-                />
-              </div>
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  {/* Solo Dancers Section */}
+                  <div>
+                    <SectionHeader
+                      title={t('artists.soloDancers')}
+                      count={soloDancers.length}
+                      subtitle={t('artists.soloDancersSubtitle')}
+                    />
+                    <DancerGrid
+                      dancers={soloDancers}
+                      onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
+                    />
+                  </div>
 
-              {/* Teams Section */}
-              <div>
-                <SectionHeader
-                  title={t('artists.teamDancers')}
-                  count={filteredTeams.length}
-                  subtitle={t('artists.teamDancersSubtitle')}
-                />
-                <DancerGrid
-                  teams={filteredTeams}
-                  onTeamClick={(team) => console.log('Clicked team:', team)}
-                />
-              </div>
+                  {/* Teams Section */}
+                  <div>
+                    <SectionHeader
+                      title={t('artists.teamDancers')}
+                      count={filteredTeams.length}
+                      subtitle={t('artists.teamDancersSubtitle')}
+                    />
+                    <DancerGrid
+                      teams={filteredTeams}
+                      onTeamClick={(team) => console.log('Clicked team:', team)}
+                    />
+                  </div>
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="solo">
-              <SectionHeader
-                title={t('artists.soloDancers')}
-                count={soloDancers.length}
-                subtitle={t('artists.soloDancersSubtitle')}
-              />
-              <DancerGrid
-                dancers={soloDancers}
-                onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
-              />
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  <SectionHeader
+                    title={t('artists.soloDancers')}
+                    count={soloDancers.length}
+                    subtitle={t('artists.soloDancersSubtitle')}
+                  />
+                  <DancerGrid
+                    dancers={soloDancers}
+                    onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
+                  />
+                </>
+              )}
             </TabsContent>
 
             <TabsContent value="teams">
-              <SectionHeader
-                title={t('artists.teamDancers')}
-                count={filteredTeams.length}
-                subtitle={t('artists.teamDancersSubtitle')}
-              />
-              <DancerGrid
-                teams={filteredTeams}
-                onTeamClick={(team) => console.log('Clicked team:', team)}
-              />
+              {isLoading ? (
+                <div className="flex justify-center items-center py-20">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                </div>
+              ) : (
+                <>
+                  <SectionHeader
+                    title={t('artists.teamDancers')}
+                    count={filteredTeams.length}
+                    subtitle={t('artists.teamDancersSubtitle')}
+                  />
+                  <DancerGrid
+                    teams={filteredTeams}
+                    onTeamClick={(team) => console.log('Clicked team:', team)}
+                  />
+                </>
+              )}
             </TabsContent>
           </Tabs>
         </div>

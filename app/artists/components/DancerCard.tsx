@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { CheckCircle, Instagram, Youtube, Music } from 'lucide-react';
@@ -18,7 +19,7 @@ const cardVariants = {
   hover: {
     scale: 1.02,
     rotateY: 2,
-    transition: { duration: 0.2, ease: "easeOut" }
+    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
   }
 };
 
@@ -35,7 +36,18 @@ export function DancerCard({
   size = 'medium',
   showPlayButton = true
 }: DancerCardProps) {
+  const router = useRouter();
   const cardHeight = size === 'large' ? 'h-96' : size === 'small' ? 'h-72' : 'h-80';
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(dancer);
+    } else {
+      // Navigate to artist profile using slug from dancer ID or englishName
+      const slug = dancer.id; // In real implementation, this should be the actual slug from database
+      router.push(`/artists/${slug}`);
+    }
+  };
 
   return (
     <motion.div
@@ -43,7 +55,7 @@ export function DancerCard({
       initial="initial"
       whileHover="hover"
       className="cursor-pointer group"
-      onClick={() => onClick?.(dancer)}
+      onClick={handleClick}
     >
       <Card className={`${cardHeight} bg-card/80 backdrop-blur-sm border-border/50 overflow-hidden relative rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300`}>
         {/* Background Image */}
