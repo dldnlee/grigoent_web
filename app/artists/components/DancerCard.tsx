@@ -43,8 +43,8 @@ export function DancerCard({
     if (onClick) {
       onClick(dancer);
     } else {
-      // Navigate to artist profile using slug from dancer ID or englishName
-      const slug = dancer.id; // In real implementation, this should be the actual slug from database
+      // Navigate to artist profile using slug
+      const slug = dancer.slug || dancer.id; // Fallback to ID if slug doesn't exist
       router.push(`/artists/${slug}`);
     }
   };

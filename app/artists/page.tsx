@@ -167,17 +167,17 @@ export default function ArtistsPage() {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-background text-foreground pt-40"
+      className="min-h-screen bg-primary text-white pt-40"
     >
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 px-6">
+      <section className="relative pt-8 pb-8 px-6">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <motion.h1
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="text-5xl md:text-7xl font-semibold mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent"
+              className="text-4xl md:text-5xl font-semibold mb-3 text-white"
             >
               {t('artists.title').toUpperCase()}
             </motion.h1>
@@ -185,7 +185,7 @@ export default function ArtistsPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto"
+              className="text-base md:text-lg text-white/70 max-w-2xl mx-auto"
             >
               {t('artists.description')}
             </motion.p>
@@ -207,13 +207,13 @@ export default function ArtistsPage() {
       </section>
 
       {/* Content Section */}
-      <section className="pb-20 px-6">
+      <section className="pb-12 px-6">
         <div className="container mx-auto max-w-7xl">
           <Tabs defaultValue="all" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-card/50 backdrop-blur-sm">
-              <TabsTrigger value="all">{t('artists.allArtists')}</TabsTrigger>
-              <TabsTrigger value="solo">{t('artists.soloDancers')}</TabsTrigger>
-              <TabsTrigger value="teams">{t('artists.teamDancers')}</TabsTrigger>
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8 bg-white/10 backdrop-blur-sm border-white/20">
+              <TabsTrigger value="all" className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70">{t('artists.allArtists')}</TabsTrigger>
+              <TabsTrigger value="solo" className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70">{t('artists.soloDancers')}</TabsTrigger>
+              <TabsTrigger value="teams" className="data-[state=active]:bg-white/20 data-[state=active]:text-white text-white/70">{t('artists.teamDancers')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="all" className="space-y-12">
@@ -232,7 +232,6 @@ export default function ArtistsPage() {
                     />
                     <DancerGrid
                       dancers={soloDancers}
-                      onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
                     />
                   </div>
 
@@ -245,7 +244,6 @@ export default function ArtistsPage() {
                     />
                     <DancerGrid
                       teams={filteredTeams}
-                      onTeamClick={(team) => console.log('Clicked team:', team)}
                     />
                   </div>
                 </>
@@ -266,7 +264,6 @@ export default function ArtistsPage() {
                   />
                   <DancerGrid
                     dancers={soloDancers}
-                    onDancerClick={(dancer) => console.log('Clicked dancer:', dancer)}
                   />
                 </>
               )}
@@ -286,7 +283,6 @@ export default function ArtistsPage() {
                   />
                   <DancerGrid
                     teams={filteredTeams}
-                    onTeamClick={(team) => console.log('Clicked team:', team)}
                   />
                 </>
               )}

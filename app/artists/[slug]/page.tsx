@@ -3,11 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Instagram, Youtube, Twitter, Music, Calendar, MapPin, CheckCircle, Play } from 'lucide-react';
+import { ArrowLeft, Instagram, Youtube, Twitter, Calendar, MapPin, CheckCircle, ExternalLink } from 'lucide-react';
 import { Button } from '@/app/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
@@ -136,292 +135,237 @@ export default function ArtistProfilePage() {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-background text-foreground"
+      className="min-h-screen bg-primary text-white"
     >
-      {/* Hero Section with Cover */}
-      <div className="relative h-[60vh] min-h-[400px] max-h-[600px] overflow-hidden">
-        {/* Background Image with Gradient */}
-        <div
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: artist.profile_image
-              ? `url(${artist.profile_image})`
-              : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-          }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-background" />
-        </div>
-
-        {/* Back Button */}
-        <div className="absolute top-24 left-6 z-10">
+      {/* Header with Back Button */}
+      <div className="sticky top-0 z-50 bg-primary/80 backdrop-blur-md border-b border-border/50">
+        <div className="container mx-auto max-w-7xl px-6 py-4">
           <Button
             variant="ghost"
             onClick={() => router.push('/artists')}
-            className="bg-black/50 backdrop-blur-sm hover:bg-black/70 text-white border-none"
+            className="hover:bg-white/10 text-white"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
+            Back to Artists
           </Button>
-        </div>
-
-        {/* Artist Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12">
-          <div className="container mx-auto max-w-7xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="flex items-end gap-6"
-            >
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-4">
-                  <CheckCircle className="h-5 w-5 text-primary" />
-                  <span className="text-sm text-white/90 font-medium">Verified Artist</span>
-                </div>
-                <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-4 leading-tight">
-                  {artistName}
-                </h1>
-                {language === 'en' && artist.name && artist.name_en && artist.name !== artist.name_en && (
-                  <p className="text-xl md:text-2xl text-white/80 mb-4">{artist.name}</p>
-                )}
-                <div className="flex items-center gap-4 text-white/80">
-                  <span className="text-sm font-medium">GRIGO Entertainment Artist</span>
-                </div>
-              </div>
-            </motion.div>
-          </div>
         </div>
       </div>
 
-      {/* Action Bar */}
-      <div className="bg-background/95 backdrop-blur-sm border-b border-border sticky top-20 z-20">
-        <div className="container mx-auto max-w-7xl px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Button className="h-14 w-14 rounded-full bg-primary hover:bg-primary/90 hover:scale-105 transition-transform">
-              <Play className="h-6 w-6 ml-1" fill="currentColor" />
-            </Button>
-            <div className="flex gap-2">
+      {/* Main Content - macOS Preview Style */}
+      <div className="container mx-auto max-w-7xl px-6 py-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+          {/* Left Side - Large Image Preview */}
+          <div className="sticky top-32">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              className="relative aspect-[4/5] w-full rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20"
+            >
+              {artist.profile_image ? (
+                <img
+                  src={artist.profile_image}
+                  alt={artistName}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="text-8xl mb-4">👤</div>
+                    <p className="text-muted-foreground">No Image</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Verified Badge Overlay */}
+              {artist && (
+                <div className="absolute top-6 right-6">
+                  <div className="bg-black/50 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    <span className="text-sm text-white font-medium">Verified</span>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Right Side - Artist Information */}
+          <div className="space-y-8">
+            {/* Artist Name and Title */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+            >
+              <h1 className="text-6xl md:text-7xl font-bold mb-4 leading-tight text-white">
+                {artistName}
+              </h1>
+              {language === 'en' && artist.name && artist.name_en && artist.name !== artist.name_en && (
+                <p className="text-2xl text-white/70 mb-4">{artist.name}</p>
+              )}
+              <p className="text-lg text-white/70">GRIGO Entertainment Artist</p>
+            </motion.div>
+
+            {/* Social Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.5 }}
+              className="flex flex-wrap gap-3"
+            >
               {artist.instagram_url && (
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full"
+                  className="gap-2 border-white/20 text-white hover:bg-white/10 hover:text-white"
                   onClick={() => window.open(artist.instagram_url!, '_blank')}
                 >
-                  <Instagram className="h-5 w-5" />
+                  <Instagram className="h-4 w-4" />
+                  Instagram
+                  <ExternalLink className="h-3 w-3 ml-1 opacity-50" />
                 </Button>
               )}
               {artist.youtube_url && (
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full"
+                  className="gap-2 border-white/20 text-white hover:bg-white/10 hover:text-white"
                   onClick={() => window.open(artist.youtube_url!, '_blank')}
                 >
-                  <Youtube className="h-5 w-5" />
+                  <Youtube className="h-4 w-4" />
+                  YouTube
+                  <ExternalLink className="h-3 w-3 ml-1 opacity-50" />
                 </Button>
               )}
               {artist.twitter_url && (
                 <Button
                   variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full"
+                  className="gap-2 border-white/20 text-white hover:bg-white/10 hover:text-white"
                   onClick={() => window.open(artist.twitter_url!, '_blank')}
                 >
-                  <Twitter className="h-5 w-5" />
+                  <Twitter className="h-4 w-4" />
+                  Twitter
+                  <ExternalLink className="h-3 w-3 ml-1 opacity-50" />
                 </Button>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
+            </motion.div>
 
-      {/* Content Section */}
-      <div className="container mx-auto max-w-7xl px-6 py-12">
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="mb-8 bg-card/50 backdrop-blur-sm">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="works">Works</TabsTrigger>
-            <TabsTrigger value="about">About</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-12">
-            {/* Featured Works */}
-            {featuredWorks.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-6">Featured</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {featuredWorks.map((work) => (
-                    <WorkCard key={work.id} work={work} />
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* About Section Preview */}
+            {/* Biography */}
             {artist.introduction && (
-              <section>
-                <h2 className="text-3xl font-bold mb-6">About</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap max-w-3xl">
-                  {artist.introduction.length > 300
-                    ? `${artist.introduction.substring(0, 300)}...`
-                    : artist.introduction}
-                </p>
-                {artist.introduction.length > 300 && (
-                  <Button variant="link" className="mt-4 px-0">
-                    Read more
-                  </Button>
-                )}
-              </section>
-            )}
-
-            {/* Recent Works */}
-            {recentWorks.length > 0 && (
-              <section>
-                <h2 className="text-3xl font-bold mb-6">Recent Works</h2>
-                <div className="space-y-2">
-                  {recentWorks.map((work, index) => (
-                    <WorkListItem key={work.id} work={work} index={index + 1} />
-                  ))}
-                </div>
-              </section>
-            )}
-          </TabsContent>
-
-          <TabsContent value="works" className="space-y-8">
-            <div className="space-y-6">
-              {['choreography', 'performance', 'advertisement', 'tv', 'workshop'].map((category) => {
-                const categoryWorks = careerEntries.filter(entry => entry.category === category);
-                if (categoryWorks.length === 0) return null;
-
-                return (
-                  <section key={category}>
-                    <h2 className="text-2xl font-bold mb-4 capitalize">{category}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {categoryWorks.map((work) => (
-                        <WorkCard key={work.id} work={work} />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          <TabsContent value="about" className="space-y-8">
-            {artist.introduction && (
-              <section>
-                <h2 className="text-3xl font-bold mb-6">Biography</h2>
-                <p className="text-muted-foreground text-lg leading-relaxed whitespace-pre-wrap max-w-3xl">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+                className="space-y-4"
+              >
+                <h2 className="text-2xl font-bold text-white">About</h2>
+                <p className="text-white/80 text-lg leading-relaxed whitespace-pre-wrap">
                   {artist.introduction}
                 </p>
-              </section>
+              </motion.div>
             )}
 
-            <section>
-              <h2 className="text-3xl font-bold mb-6">Connect</h2>
-              <div className="flex flex-wrap gap-4">
-                {artist.instagram_url && (
-                  <Button
-                    variant="outline"
-                    className="gap-2"
-                    onClick={() => window.open(artist.instagram_url!, '_blank')}
-                  >
-                    <Instagram className="h-5 w-5" />
-                    Instagram
+            {/* Career Highlights */}
+            {featuredWorks.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+                className="space-y-4"
+              >
+                <h2 className="text-2xl font-bold text-white">Featured Works</h2>
+                <div className="space-y-3">
+                  {featuredWorks.slice(0, 5).map((work) => (
+                    <div
+                      key={work.id}
+                      className="group p-4 rounded-xl hover:bg-white/10 transition-colors cursor-pointer border border-transparent hover:border-white/20"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-semibold text-lg mb-1 truncate group-hover:text-white transition-colors text-white/90">
+                            {work.title}
+                          </h3>
+                          {work.description && (
+                            <p className="text-sm text-white/60 line-clamp-2">
+                              {work.description}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-3 mt-2">
+                            <Badge variant="secondary" className="capitalize bg-white/10 text-white border-white/20">
+                              {work.category}
+                            </Badge>
+                            {work.start_date && (
+                              <div className="flex items-center gap-1 text-xs text-white/60">
+                                <Calendar className="h-3 w-3" />
+                                <span>{new Date(work.start_date).getFullYear()}</span>
+                              </div>
+                            )}
+                            {work.country && (
+                              <div className="flex items-center gap-1 text-xs text-white/60">
+                                <MapPin className="h-3 w-3" />
+                                <span>{work.country}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        {work.poster_url && (
+                          <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
+                            <img
+                              src={work.poster_url}
+                              alt={work.title}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {/* All Works */}
+            {recentWorks.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="space-y-4"
+              >
+                <h2 className="text-2xl font-bold text-white">All Works ({careerEntries.length})</h2>
+                <div className="space-y-2">
+                  {recentWorks.map((work, index) => (
+                    <div
+                      key={work.id}
+                      className="flex items-center gap-4 p-3 rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                    >
+                      <span className="text-sm text-white/60 w-8">{index + 1}</span>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium truncate text-white">{work.title}</h3>
+                        {work.description && (
+                          <p className="text-sm text-white/60 line-clamp-1">{work.description}</p>
+                        )}
+                      </div>
+                      <Badge variant="secondary" className="capitalize flex-shrink-0 bg-white/10 text-white border-white/20">
+                        {work.category}
+                      </Badge>
+                      {work.start_date && (
+                        <span className="text-sm text-white/60 flex-shrink-0">
+                          {new Date(work.start_date).getFullYear()}
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                {careerEntries.length > 10 && (
+                  <Button variant="outline" className="w-full mt-4 border-white/20 text-white hover:bg-white/10 hover:text-white">
+                    View All {careerEntries.length} Works
                   </Button>
                 )}
-                {artist.youtube_url && (
-                  <Button
-                    variant="outline"
-                    className="gap-2"
-                    onClick={() => window.open(artist.youtube_url!, '_blank')}
-                  >
-                    <Youtube className="h-5 w-5" />
-                    YouTube
-                  </Button>
-                )}
-                {artist.twitter_url && (
-                  <Button
-                    variant="outline"
-                    className="gap-2"
-                    onClick={() => window.open(artist.twitter_url!, '_blank')}
-                  >
-                    <Twitter className="h-5 w-5" />
-                    Twitter
-                  </Button>
-                )}
-              </div>
-            </section>
-          </TabsContent>
-        </Tabs>
+              </motion.div>
+            )}
+          </div>
+        </div>
       </div>
     </motion.div>
   );
 }
 
-function WorkCard({ work }: { work: CareerEntry }) {
-  return (
-    <Card className="group relative overflow-hidden rounded-lg bg-card/80 backdrop-blur-sm border-border/50 hover:bg-card transition-all duration-300 cursor-pointer">
-      <div className="aspect-video relative overflow-hidden">
-        {work.poster_url ? (
-          <img
-            src={work.poster_url}
-            alt={work.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center">
-            <Music className="h-12 w-12 text-muted-foreground" />
-          </div>
-        )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-          <Play className="h-12 w-12 text-white" fill="white" />
-        </div>
-      </div>
-      <div className="p-4">
-        <Badge variant="secondary" className="mb-2 capitalize">
-          {work.category}
-        </Badge>
-        <h3 className="font-bold text-lg mb-2 line-clamp-2">{work.title}</h3>
-        {work.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2">{work.description}</p>
-        )}
-        {work.start_date && (
-          <div className="flex items-center gap-2 mt-3 text-xs text-muted-foreground">
-            <Calendar className="h-3 w-3" />
-            <span>{new Date(work.start_date).getFullYear()}</span>
-            {work.country && (
-              <>
-                <MapPin className="h-3 w-3 ml-2" />
-                <span>{work.country}</span>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-}
-
-function WorkListItem({ work, index }: { work: CareerEntry; index: number }) {
-  return (
-    <div className="group flex items-center gap-4 p-3 rounded-lg hover:bg-card/50 transition-colors cursor-pointer">
-      <span className="text-muted-foreground text-sm font-medium w-8">{index}</span>
-      <div className="flex-1">
-        <h3 className="font-semibold group-hover:text-primary transition-colors">{work.title}</h3>
-        {work.description && (
-          <p className="text-sm text-muted-foreground line-clamp-1">{work.description}</p>
-        )}
-      </div>
-      <Badge variant="secondary" className="capitalize">
-        {work.category}
-      </Badge>
-      {work.start_date && (
-        <span className="text-sm text-muted-foreground">
-          {new Date(work.start_date).getFullYear()}
-        </span>
-      )}
-    </div>
-  );
-}

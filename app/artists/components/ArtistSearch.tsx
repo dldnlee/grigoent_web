@@ -50,9 +50,9 @@ export function ArtistSearch({
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t('artists.searchPlaceholder')}
-          className="pl-12 pr-12 h-14 text-lg bg-card border-border rounded-full
-                     focus:ring-2 focus:ring-primary/20 focus:border-primary
-                     transition-all duration-200"
+          className="pl-12 pr-12 h-14 text-lg border-border rounded-full
+                    focus:ring-2 focus:ring-primary/20 focus:border-primary
+                    transition-all duration-200 bg-primary"
           disabled={isLoading}
         />
         {query && (
@@ -61,7 +61,7 @@ export function ArtistSearch({
             size="sm"
             onClick={handleClear}
             className="absolute right-2 top-1/2 transform -translate-y-1/2 h-8 w-8 rounded-full
-                       hover:bg-muted/80 transition-colors"
+                      hover:bg-muted/80 transition-colors"
           >
             <X className="h-4 w-4" />
           </Button>

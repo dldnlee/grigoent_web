@@ -24,7 +24,7 @@ export function SectionHeader({
     >
       <div>
         <div className="flex items-baseline gap-3">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+          <h2 className="text-2xl md:text-3xl font-bold text-white">
             {title}
           </h2>
           <motion.span

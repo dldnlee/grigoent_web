@@ -73,7 +73,7 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'common.notFound': '결과를 찾을 수 없습니다.',
 
       // Artists page
-      'artists.title': '아티스트',
+      'artists.title': 'Our Artists',
       'artists.description': '세계적 수준의 전문 댄서들과 팀이 만들어내는 예술적 퍼포먼스를 만나보세요',
       'artists.searchPlaceholder': '댄서 이름을 검색하세요 (한국어 또는 영어)',
       'artists.allArtists': '모든 아티스트',
@@ -158,7 +158,7 @@ const getTranslations = (lang: Language): Record<string, string> => {
       'common.notFound': 'No results found.',
 
       // Artists page
-      'artists.title': 'Artists',
+      'artists.title': 'Our Artists',
       'artists.description': 'Meet world-class professional dancers and teams creating artistic performances',
       'artists.searchPlaceholder': 'Search for dancers (Korean or English names)',
       'artists.allArtists': 'All Artists',

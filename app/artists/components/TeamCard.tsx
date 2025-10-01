@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { CheckCircle, Users, Calendar, Music } from 'lucide-react';
@@ -17,7 +18,7 @@ const cardVariants = {
   hover: {
     scale: 1.02,
     rotateY: 2,
-    transition: { duration: 0.2, ease: "easeOut" }
+    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
   }
 };
 
@@ -33,13 +34,25 @@ export function TeamCard({
   onClick,
   showPlayButton = true
 }: TeamCardProps) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(team);
+    } else {
+      // Navigate to team profile using slug
+      const slug = team.slug || team.id; // Fallback to ID if slug doesn't exist
+      router.push(`/artists/${slug}`);
+    }
+  };
+
   return (
     <motion.div
       variants={cardVariants}
       initial="initial"
       whileHover="hover"
       className="cursor-pointer group"
-      onClick={() => onClick?.(team)}
+      onClick={handleClick}
     >
       <Card className="h-64 bg-card/80 backdrop-blur-sm border-border/50 overflow-hidden relative rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300">
         {/* Background Image */}
