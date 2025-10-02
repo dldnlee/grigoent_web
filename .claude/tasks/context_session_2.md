@@ -343,3 +343,255 @@ Completely redesigned the artist profile page to match macOS Preview-style layou
 - Easier to scan and read
 - Professional presentation
 - Works great for portfolio showcase
+
+## Full-Screen Artist Profile Layout (2025-10-02)
+
+### **Update Implemented**
+Updated the artist profile page to fill the entire screen like Spotify's artist pages.
+
+### **Key Changes:**
+
+**Layout:**
+- **Full-Screen Grid**: Changed from max-width container to full viewport height layout
+- **Full-Height Image**: Left side image now takes full screen height (100vh)
+- **Scrollable Content**: Right side content is scrollable independently
+- **Floating Header**: Back button uses absolute positioning with gradient overlay
+
+**Visual Changes:**
+- Removed container max-width constraints
+- Image covers full left column height
+- Content section has independent scroll
+- Verified badge positioned below floating header (top-20)
+- Gradient overlay on header for better text visibility
+
+**Technical Updates:**
+- Changed from `min-h-screen` with padding to `h-screen` grid
+- Image div uses `h-screen` for full viewport height
+- Right content div has `h-screen overflow-y-auto` for independent scrolling
+- Header uses `absolute` positioning instead of `sticky`
+- Updated loading and error states to use `h-screen` instead of `min-h-screen`
+
+**Result:**
+- Full immersive experience similar to Spotify artist pages
+- Better use of screen real estate
+- Image is always visible on desktop
+- Clean, modern aesthetic with no wasted space
+
+## Team Membership Section (2025-10-02)
+
+### **Feature Implemented**
+Added a "Teams" section to artist profile pages that displays all teams the artist belongs to, positioned between the biography and career highlights sections.
+
+### **Key Features:**
+
+**Data Fetching:**
+- Queries `team_members` table to find teams for the current artist
+- Fetches full team data from `teams` table using team IDs
+- Only displays active teams (status = 'active')
+- Bilingual support for team names (Korean/English)
+
+**Visual Design:**
+- Card-based layout with hover effects
+- Team logo/cover image (64x64px) on the left
+- Team name and description in the middle
+- External link icon on the right
+- Gradient placeholder for teams without images
+- Smooth transitions and hover states
+
+**User Interaction:**
+- Clickable cards navigate to team profile pages
+- Uses team slug for navigation URLs
+- Hover effect highlights the card
+- Shows both Korean and English names based on language preference
+
+**Layout:**
+- Section appears only if artist belongs to at least one team
+- Positioned after "About" section, before "Featured Works"
+- Staggered animation (delay: 0.45s)
+- Responsive spacing and typography
+
+**Technical Implementation:**
+- Added `Team` interface matching database schema
+- Two-step data fetching: team_members → teams
+- Filters for active teams only
+- Bilingual name handling with fallback
+- Card component with onClick handler for navigation
+
+**Result:**
+- Users can easily see which teams an artist belongs to
+- Seamless navigation between artist and team profiles
+- Consistent with overall Spotify-inspired design
+- Only shows when relevant (conditional rendering)
+
+## Linked Artists in Career Entries (2025-10-02)
+
+### **Feature Implemented**
+Connected career entries with linked artists, displaying collaborative work relationships throughout the profile page.
+
+### **Database Integration:**
+
+**Schema Understanding:**
+- `career_entries` table has `linked_user_id` field for artist collaborations
+- Foreign key relationship: `linked_user_id` → `users.id`
+- Allows tracking which artists worked together on projects
+
+**Query Enhancement:**
+- Updated Supabase query to join `users` table via `linked_user_id`
+- Fetches linked artist data: id, name, name_en, slug, profile_image
+- Uses nested select syntax for efficient data fetching
+
+### **Interface Updates:**
+
+**TypeScript Types:**
+- Added `LinkedArtist` interface with artist profile fields
+- Extended `CareerEntry` interface to include `linked_artist` property
+- Proper type safety for optional linked artist data
+
+### **UI Implementation:**
+
+**Featured Works Section:**
+- Displays "with [Artist Name]" below work description
+- Shows linked artist profile image (24x24px rounded)
+- Clickable artist name/image navigates to their profile
+- Bilingual support for linked artist names
+- Hover effect on artist link
+
+**All Works Section:**
+- Inline display of linked artist next to work title
+- Small profile image (20x20px rounded) with artist name
+- Clickable navigation to linked artist profile
+- Compact layout suitable for list view
+
+**Visual Design:**
+- Profile images displayed as circular thumbnails
+- Semi-transparent text (white/60) for subtle presentation
+- Hover states increase opacity (white/90)
+- Stop propagation on click to prevent parent navigation
+
+### **User Experience:**
+
+**Navigation Flow:**
+- Click linked artist → Navigate to their profile page
+- Event propagation stopped to prevent conflicts
+- Smooth transitions and hover feedback
+- Works in both Featured Works and All Works sections
+
+**Internationalization:**
+- Respects language preference (Korean/English)
+- Falls back to Korean name if English unavailable
+- Consistent with overall app language system
+
+### **Technical Details:**
+- Uses `router.push()` for client-side navigation
+- Conditional rendering - only shows if `linked_artist` exists
+- Profile images loaded efficiently
+- Type-safe access with TypeScript non-null assertions
+
+**Result:**
+- Artists can showcase collaborative work
+- Easy discovery of related artists
+- Professional portfolio presentation
+- Encourages exploration of other artists' profiles
+- Clear visual indication of collaborative projects
+
+## Team Profile Pages (2025-10-02)
+
+### **Feature Implemented**
+Created team profile pages that display team information and member cards, using the same `/artists/[slug]` route for both individual artists and teams.
+
+### **Dual Profile System:**
+
+**Route Handling:**
+- Single route `/artists/[slug]` handles both artist and team profiles
+- Attempts to fetch artist profile first, then falls back to team
+- Sets `profileType` state to determine which view to render
+- Graceful error handling for non-existent profiles
+
+**Data Fetching:**
+- Queries `teams` table by slug for team data
+- Joins `team_members` and `users` tables to fetch member details
+- Retrieves full member information: name, image, introduction, social links
+- Only displays active teams (status = 'active')
+
+### **Team Profile UI:**
+
+**Layout Structure:**
+- Same full-screen two-column layout as artist profiles
+- Left: Team cover image (70% viewport height on desktop)
+- Right: Scrollable content with team info and members
+- Responsive: Stacks vertically on mobile
+
+**Team Image Section:**
+- Uses `cover_image` or `logo_url` from team data
+- Fallback: Users icon with gradient background
+- Verified badge overlay (top right)
+- Team name overlay at bottom with gradient backdrop
+- Bilingual name display (Korean/English)
+
+**Content Sections:**
+1. **About Section**
+   - Team description with proper formatting
+   - Displayed if description exists in database
+
+2. **Members Section**
+   - Title shows member count: "Members (X)"
+   - Grid layout: 1 column mobile, 2 columns tablet+
+   - Uses existing `DancerCard` component
+   - Cards link to individual artist profiles
+   - Shows member profile images and basic info
+
+### **Data Transformation:**
+
+**TeamMember to Dancer Mapping:**
+- Converts `TeamMember` interface to `Dancer` type for DancerCard
+- Maps Korean name, English name, profile image, slug
+- Includes social media links (Instagram, YouTube)
+- Sets default values (verified: true, type: 'solo')
+
+### **Technical Implementation:**
+
+**Type Safety:**
+- Added `TeamMember` interface matching database schema
+- Updated `Team` interface with all fields
+- Profile type state: `'artist' | 'team' | null`
+- Proper null checking throughout
+
+**Component Reuse:**
+- Leveraged existing `DancerCard` component for members
+- Shared layout structure with artist profiles
+- Consistent styling and animations
+- Same back navigation and header
+
+**Database Queries:**
+- Team data: `teams` table filtered by slug and status
+- Members: Join query through `team_members` table
+- Efficient data fetching with single compound query
+- Inner join ensures only active relationships
+
+### **User Experience:**
+
+**Navigation:**
+- Team cards on artists page → Navigate to `/artists/[team-slug]`
+- Team profile shows all members
+- Click member card → Navigate to their artist profile
+- Back button returns to artists listing
+
+**Visual Consistency:**
+- Matches artist profile design language
+- Same color scheme and spacing
+- Framer Motion animations with same timing
+- Professional, clean presentation
+
+**Responsive Design:**
+- Mobile: Image half-screen, scrollable content below
+- Desktop: Side-by-side layout with fixed image height
+- Member cards adapt to screen size
+- Proper overflow handling
+
+### **Result:**
+- Unified profile system for both artists and teams
+- Easy team browsing and member discovery
+- Professional team portfolio presentation
+- Seamless navigation between team and member profiles
+- Consistent user experience across profile types
+- Efficient code reuse and maintenance
