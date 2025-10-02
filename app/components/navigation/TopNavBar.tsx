@@ -1,25 +1,34 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Languages, UserCircle } from 'lucide-react';
+import { Languages, UserCircle, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { getCurrentUser, signOut, getUserDisplayName } from '@/app/utils/auth';
+import type { User } from '@supabase/supabase-js';
 import AnimatedHamburger from './AnimatedHamburger';
 import MobileMenu from './MobileMenu';
 
 export default function TopNavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [showUserMenu, setShowUserMenu] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
 
+  useEffect(() => {
+    // Check auth state on mount
+    getCurrentUser().then(setUser);
+  }, []);
+
   const navItems = [
     { name: t('nav.home'), href: '/', type: 'route' },
-    { name: t('nav.about'), href: '#about', type: 'anchor' },
+    { name: t('nav.about'), href: '/about', type: 'route' },
     { name: t('nav.artists'), href: '/artists', type: 'route' },
-    { name: t('nav.works'), href: '#works', type: 'anchor' },
-    { name: t('nav.contact'), href: '#contact', type: 'anchor' }
+    { name: t('nav.works'), href: '/works', type: 'route' },
+    { name: t('nav.contact'), href: '/contact', type: 'route' }
   ];
 
   // Hide navbar on artist pages
@@ -45,6 +54,13 @@ export default function TopNavBar() {
     setLanguage(language === 'ko' ? 'en' : 'ko');
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    setUser(null);
+    setShowUserMenu(false);
+    router.push('/');
+  };
+
   return (
     <>
       <nav className='w-full fixed p-4 md:p-10 z-20'>
@@ -53,7 +69,7 @@ export default function TopNavBar() {
             <div className="flex justify-between items-center h-14 md:h-16">
               {/* Logo */}
               <div className="flex items-center gap-6 md:gap-10">
-                <div className="text-black font-bold text-xl md:text-2xl tracking-wide">
+                <div className="text-white font-bold text-xl md:text-2xl tracking-wide">
                   GRIGO
                 </div>
                 {/* Desktop Navigation */}
@@ -85,22 +101,57 @@ export default function TopNavBar() {
                   <span className="text-sm font-medium">{language === 'ko' ? 'EN' : '한'}</span>
                 </button>
 
-                {/* Sign In Button */}
-                <button
-                  className="flex items-center space-x-2 text-gray-200 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                  aria-label="Sign in to your account"
-                >
-                      <UserCircle className="w-5 h-5 text-gray-200" />
-                  <span className="text-sm font-medium">{t('nav.signin')}</span>
-                </button>
+                {/* Auth Buttons or User Menu */}
+                {user ? (
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center space-x-2 text-gray-200 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                      aria-label="User menu"
+                    >
+                      <Avatar className="w-8 h-8">
+                        <AvatarFallback className="bg-white text-black text-sm">
+                          {getUserDisplayName(user).charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-sm font-medium">{getUserDisplayName(user)}</span>
+                    </button>
 
-                {/* Sign Up Button */}
-                <button
-                  className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400"
-                  aria-label="Create a new account"
-                >
-                  {t('nav.signup')}
-                </button>
+                    {/* User Dropdown Menu */}
+                    {showUserMenu && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                        <button
+                          onClick={handleSignOut}
+                          className="w-full flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4" />
+                          <span className="text-sm">{language === 'en' ? 'Sign Out' : '로그아웃'}</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    {/* Sign In Button */}
+                    <button
+                      onClick={() => router.push('/login')}
+                      className="flex items-center space-x-2 text-gray-200 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                      aria-label="Sign in to your account"
+                    >
+                      <UserCircle className="w-5 h-5 text-gray-200" />
+                      <span className="text-sm font-medium">{t('nav.signin')}</span>
+                    </button>
+
+                    {/* Sign Up Button */}
+                    <button
+                      onClick={() => router.push('/signup')}
+                      className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                      aria-label="Create a new account"
+                    >
+                      {t('nav.signup')}
+                    </button>
+                  </>
+                )}
               </div>
 
               {/* Mobile Menu Controls */}
@@ -108,19 +159,34 @@ export default function TopNavBar() {
                 {/* Mobile Language Indicator */}
                 <button
                   onClick={handleLanguageToggle}
-                  className="p-2 text-gray-600 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                  className="p-2 text-gray-200 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
                   aria-label={`Change language to ${language === 'ko' ? 'English' : '한국어'}`}
                 >
                   <Languages className="w-5 h-5" />
                 </button>
 
-                {/* Mobile User Icon */}
-                <button
-                  className="p-2 text-gray-600 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
-                  aria-label="User account"
-                >
-                  <UserCircle className="w-5 h-5" />
-                </button>
+                {/* Mobile User Icon or Avatar */}
+                {user ? (
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="p-2 text-gray-200 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    aria-label="User account"
+                  >
+                    <Avatar className="w-6 h-6">
+                      <AvatarFallback className="bg-white text-black text-xs">
+                        {getUserDisplayName(user).charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => router.push('/login')}
+                    className="p-2 text-gray-200 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
+                    aria-label="User account"
+                  >
+                    <UserCircle className="w-5 h-5" />
+                  </button>
+                )}
 
                 {/* Animated Hamburger */}
                 <AnimatedHamburger

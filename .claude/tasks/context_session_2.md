@@ -595,3 +595,185 @@ Created team profile pages that display team information and member cards, using
 - Seamless navigation between team and member profiles
 - Consistent user experience across profile types
 - Efficient code reuse and maintenance
+
+## Skeleton Pages Implementation (2025-10-02)
+
+### **Pages Created**
+Created three skeleton pages with consistent design and internationalization support:
+
+1. **About Us Page** - `/app/about/page.tsx`
+   - Route: `/about`
+   - Bilingual title: "About Us" / "회사 소개"
+   - Coming soon message
+
+2. **Our Works Page** - `/app/works/page.tsx`
+   - Route: `/works`
+   - Bilingual title: "Our Works" / "작품"
+   - Coming soon message
+
+3. **Contact Us Page** - `/app/contact/page.tsx`
+   - Route: `/contact`
+   - Bilingual title: "Contact Us" / "연락처"
+   - Coming soon message
+
+### **Features:**
+- **Consistent Layout**: All pages follow the same structure
+- **Sticky Header**: Back button with backdrop blur effect
+- **Bilingual Support**: Full Korean/English language switching
+- **Navigation**: Back button returns to previous page
+- **Dark Theme**: Matches overall Spotify-inspired design
+- **Gradient Text**: Large gradient titles for visual appeal
+- **Coming Soon**: Placeholder content for future implementation
+
+### **Technical Details:**
+- Client components with 'use client' directive
+- Uses LanguageContext for internationalization
+- Next.js router for navigation
+- Lucide React icons (ArrowLeft)
+- Consistent styling with zinc-950 background
+- Sticky header with z-40 and backdrop blur
+- Responsive max-width containers
+
+### **Design Consistency:**
+- Same header style across all three pages
+- Matching color scheme (zinc-950, white/60 text)
+- Consistent spacing (px-6 py-16)
+- Gradient text effect on titles
+- Border styling (border-white/10)
+
+### **Next Steps:**
+- Add actual content to About Us page (company history, mission, values)
+- Implement works gallery/portfolio in Our Works page
+- Build contact form in Contact Us page
+- Connect navigation items in TopNavBar to these routes
+
+## Top Bars Removal (2025-10-03)
+
+### **Update Implemented**
+Removed sticky header bars with back buttons from about, works, and contact pages to provide a cleaner, more integrated navigation experience.
+
+### **Changes Made:**
+1. **About Page** - Removed sticky header with back button
+2. **Works Page** - Removed sticky header with back button
+3. **Contact Page** - Removed sticky header with back button
+4. **Artists Page** - Kept the back button as requested
+
+### **Technical Details:**
+- Removed unused imports (`ArrowLeft`, `useRouter`)
+- Cleaned up TypeScript warnings
+- Maintained consistent styling across pages
+- Pages now rely on TopNavBar for navigation
+
+### **Result:**
+- Cleaner page layouts without duplicate navigation
+- Better use of vertical space
+- Consistent navigation through TopNavBar
+- No more redundant back buttons on skeleton pages
+
+## Supabase Authentication Implementation (2025-10-03)
+
+### **Overview**
+Implemented complete authentication system using Supabase Auth with email/password and Google OAuth support.
+
+### **Files Created:**
+
+1. **Login Page** - `/app/login/page.tsx`
+   - Email/password login form
+   - Google OAuth integration
+   - Error handling with localized messages
+   - Forgot password link
+   - Redirect to signup page
+   - Loading states and animations
+   - Bilingual support (Korean/English)
+
+2. **Sign Up Page** - `/app/signup/page.tsx`
+   - Registration form with name, email, password fields
+   - Password confirmation validation
+   - Password strength validation (min 6 characters)
+   - Google OAuth sign up
+   - Success message with email verification reminder
+   - Auto-redirect to login after successful registration
+   - Error handling and loading states
+   - Bilingual support
+
+3. **Auth Callback Route** - `/app/auth/callback/route.ts`
+   - Handles OAuth redirect callback
+   - Exchanges authorization code for session
+   - Redirects to home page after authentication
+
+4. **Auth Utilities** - `/app/utils/auth.ts`
+   - `getCurrentUser()` - Get authenticated user
+   - `signOut()` - Sign out current user
+   - `isAuthenticated()` - Check auth status
+   - `getUserDisplayName()` - Get user's display name
+   - `getAuthErrorMessage()` - Localized error messages
+   - Error message translations (EN/KO)
+
+### **Files Updated:**
+
+1. **TopNavBar** - `/app/components/navigation/TopNavBar.tsx`
+   - Added auth state management
+   - Conditional rendering based on user state
+   - User avatar and dropdown menu when authenticated
+   - Sign In/Sign Up buttons when not authenticated
+   - Sign out functionality
+   - Mobile responsive auth UI
+   - User display name shown in navbar
+
+### **Features Implemented:**
+
+**Authentication Methods:**
+- ✅ Email/password authentication
+- ✅ Google OAuth (requires Supabase configuration)
+- ✅ Session management
+- ✅ Auto-redirect after login
+- ✅ Email verification workflow
+
+**UI/UX:**
+- ✅ Clean, Spotify-inspired dark theme design
+- ✅ Form validation (email, password strength, matching passwords)
+- ✅ Loading states with spinners
+- ✅ Error messages with proper styling
+- ✅ Success messages
+- ✅ Smooth animations with Framer Motion
+- ✅ Responsive design (mobile & desktop)
+- ✅ Bilingual support (Korean/English)
+
+**User Experience:**
+- ✅ User avatar in navbar when logged in
+- ✅ Display name from metadata or email
+- ✅ Dropdown menu with sign out option
+- ✅ Automatic session detection on page load
+- ✅ Seamless navigation between auth pages
+- ✅ Back to home button on auth pages
+
+### **Design Consistency:**
+- Matches existing Spotify-style dark theme
+- Consistent with other pages (artists, about, etc.)
+- Gradient text effects
+- Glassmorphism cards with backdrop blur
+- White/60 text opacity for secondary text
+- Proper spacing and typography
+
+### **Technical Stack:**
+- Supabase Auth (@supabase/supabase-js)
+- Next.js 15 App Router
+- TypeScript for type safety
+- Framer Motion for animations
+- Tailwind CSS for styling
+- React hooks (useState, useEffect)
+
+### **Security Features:**
+- Password validation
+- Secure session management via Supabase
+- PKCE flow for OAuth
+- Email verification requirement
+- Protected routes ready for implementation
+
+### **Next Steps:**
+- Configure Google OAuth in Supabase dashboard
+- Add password reset functionality
+- Implement protected routes middleware
+- Add user profile page
+- Connect authenticated users to dancer profiles
+- Add role-based access control (admin/dancer/user)

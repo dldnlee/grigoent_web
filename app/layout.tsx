@@ -50,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className="overflow-x-hidden">
+    <html lang="ko" className="overflow-x-hidden bg-primary">
       <body
         className={`${roboto.variable} antialiased overflow-x-hidden`}
       >
