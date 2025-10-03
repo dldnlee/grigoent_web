@@ -14,11 +14,10 @@ interface TeamCardProps {
 }
 
 const cardVariants = {
-  initial: { scale: 1, rotateY: 0 },
+  initial: { scale: 1 },
   hover: {
     scale: 1.02,
-    rotateY: 2,
-    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
+    transition: { duration: 0.2 }
   }
 };
 

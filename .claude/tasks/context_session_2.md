@@ -777,3 +777,536 @@ Implemented complete authentication system using Supabase Auth with email/passwo
 - Add user profile page
 - Connect authenticated users to dancer profiles
 - Add role-based access control (admin/dancer/user)
+
+## Team Badge Redesign in Artist Profile (2025-10-03)
+
+### **Update Implemented**
+Redesigned the team membership cards in the artist profile page to use a compact horizontal layout matching the provided screenshot design.
+
+### **Key Changes:**
+
+**Layout:**
+- Changed from larger card with description to compact horizontal layout
+- Small square team image (64x64px) on the left side
+- Team information stacked vertically on the right
+- Compact single-row card design
+
+**Visual Design:**
+- Dark background (zinc-900) with hover effect (zinc-800/90)
+- Square team image with sharp rounded corners
+- Gradient background fallback for missing images
+- "Team" badge displayed above team name
+- Team name in white (text-base, font-semibold)
+- Korean name or description in muted text below (text-white/50)
+
+**Features:**
+- Cleaner, more scannable card design
+- Better for vertical list views in profile pages
+- "Team" badge makes it clear this is a team membership
+- Improved text truncation for long names
+- Shows Korean name when viewing in English, or description otherwise
+
+**Removed Features:**
+- External link icon (simplified design)
+- Multi-line descriptions (now single line with truncation)
+- Larger padding and spacing
+
+**Technical Updates:**
+- Updated Card className to use zinc color scheme
+- Added Badge component for "Team" label
+- Changed padding from p-4 to p-3 for more compact layout
+- Simplified gap spacing to gap-3
+- Uses Users icon as fallback instead of emoji
+
+**Result:**
+- Team cards in artist profiles now match the screenshot design
+- More compact and readable layout
+- Better visual hierarchy with badge → name → subtitle
+- Consistent with modern music app design patterns
+- Improved space efficiency in profile pages
+
+## Highlights Section in Artist Profile (2025-10-03)
+
+### **Feature Implemented**
+Added a vertical stacked "Highlights" section to the artist profile page displaying featured works, matching the provided screenshot design.
+
+### **Key Features:**
+
+**Layout:**
+- Vertical stacked layout (not horizontal scroll)
+- Shows up to 3 featured works (based on `is_featured` flag)
+- Full-width cards stacked vertically with gap-3 spacing
+- Compact, scannable design
+
+**Visual Design:**
+- Wide aspect ratio (16:9 video aspect) images
+- Smaller rounded corners (rounded-md)
+- Dark background (zinc-900) fallback
+- No hover scale effects - clean and simple
+- Smaller heading (text-xl instead of text-2xl)
+
+**Content Structure:**
+- Large poster/thumbnail image (aspect-video)
+- Work title below (text-sm, font-medium, white, single line)
+- Metadata line: category • year (text-xs, white/60)
+- Minimal spacing between elements (space-y-0.5)
+
+**Spacing:**
+- Section spacing: space-y-3
+- Image margin bottom: mb-2
+- Tighter overall spacing matching screenshot
+
+**Technical Implementation:**
+- Uses `featuredWorks` array filtered from career entries
+- Slices to show maximum 3 items (not 6)
+- Conditional rendering (only shows if featured works exist)
+- Framer Motion animation (delay: 0.35s)
+- Cursor pointer on cards for future click interactions
+- Fallback emoji (🎬) when no poster image available
+
+**Positioning:**
+- Appears between Social Links section and Biography section
+- Animation delay: 0.35s (between social links and bio)
+- Maintains stagger animation flow of profile page
+
+**Result:**
+- Vertical highlights section matching screenshot design exactly
+- Compact, easy-to-scan layout
+- Better use of vertical space on profile page
+- Clean presentation with wide images
+- Professional, minimal styling
+
+## Artist Profile Page Reset (2025-10-03)
+
+### **Update Implemented**
+Reset the artist profile page to a minimal scaffold with only data fetching logic, removing all UI components for fresh implementation.
+
+### **What Was Kept:**
+
+**Data Fetching:**
+- Complete useEffect hook for fetching profile data
+- Dual profile support (artist OR team)
+- Career entries with linked artists
+- Team memberships for artists
+- Team members for team profiles
+- All TypeScript interfaces preserved
+
+**State Management:**
+- All useState hooks intact
+- Loading and error states
+- Profile type detection
+- Language support via useLanguage hook
+
+**Computed Values:**
+- `artistName` - bilingual artist name
+- `teamName` - bilingual team name
+- `featuredWorks` - filtered career entries with is_featured flag
+
+**Basic UI:**
+- Loading spinner
+- Error/404 page
+- Simple scaffold showing available data
+- JSON previews of data structures
+
+### **What Was Removed:**
+
+**All UI Components:**
+- Full-screen grid layout
+- Image hero sections
+- Social media buttons
+- Highlights section
+- Team membership cards
+- Career works cards
+- All Framer Motion animations
+- All styling and layout code
+
+**Imports Removed:**
+- Framer Motion
+- All Lucide icons
+- Button, Badge, Card components
+- DancerCard component
+
+### **Current State:**
+
+**Artist Profile View:**
+- Shows artist name and basic info
+- Displays available data fields in text
+- Shows JSON previews of:
+  - Teams array
+  - Featured works (highlights)
+  - All career entries
+- Ready for UI implementation
+
+**Team Profile View:**
+- Shows team name and basic info
+- Displays team metadata
+- Shows JSON preview of team members
+- Ready for UI implementation
+
+**Purpose:**
+- Clean slate for building custom UI components
+- All data fetching logic preserved
+- Easy to see what data is available
+- No dependency on existing components
+- Full flexibility for new design implementation
+
+## Choreography Works Section (2025-10-03)
+
+### **Feature Implemented**
+Added a choreography works section to the artist profile page with horizontal card layout, expandable list, and video linking.
+
+### **Key Features:**
+
+**Layout:**
+- Vertical stacked list of choreography works
+- Shows 5 works initially
+- "더 보기" (Show More) button to expand full list
+- "접기" (Collapse) button when expanded
+- Horizontal card design matching screenshot
+
+**Visual Design:**
+- Dark background cards (bg-zinc-900)
+- Hover effect (bg-zinc-800/90)
+- Small rectangular thumbnail (96x64px) on the left
+- Work title and metadata on the right
+- Compact spacing (gap-3, p-3)
+- Rounded corners (rounded-lg)
+
+**Content Structure:**
+- Small video thumbnail (16:9 aspect ratio, 24x16 size)
+- Work title (text-sm, white, line-clamp-1)
+- Description • Date format (text-xs, white/60)
+- Date shows year.month format (YYYY.MM) in Korean locale
+
+**Functionality:**
+- Clicking card opens video_url in new tab
+- Expandable list shows/hides additional works
+- Show More button displays count of remaining works
+- Fallback emoji (🎬) when no poster image
+
+**Data Handling:**
+- Filters career entries by category === 'choreography'
+- Uses `single_date` or falls back to `start_date`
+- Formats date as Korean locale (2025.04)
+- Description and date shown together
+
+**State Management:**
+- `showAllChoreography` state controls expansion
+- Slice array to show 5 or all items
+- Toggle button text changes based on state
+
+**Technical Details:**
+- Computed value: `choreographyWorks` filters choreography category
+- Date formatting with Korean locale
+- External link opens in new tab
+- Conditional rendering based on array length
+- Line clamp prevents text overflow
+
+**Result:**
+- Clean, compact choreography showcase
+- Easy navigation to video content
+- Space-efficient expandable list
+- Professional presentation matching screenshot design
+- Korean language support for UI text
+
+### **YouTube Thumbnail Integration (2025-10-03)**
+
+**Feature Added:**
+- Automatic YouTube thumbnail extraction from video URLs
+- Falls back to poster_url if available
+- Uses high-quality YouTube thumbnail (hqdefault.jpg)
+
+**Technical Implementation:**
+- Regex pattern matches both youtube.com/watch?v= and youtu.be/ formats
+- Extracts video ID from URL
+- Constructs thumbnail URL: `https://img.youtube.com/vi/{videoId}/hqdefault.jpg`
+- Priority: poster_url → YouTube thumbnail → fallback emoji
+
+**URL Pattern Support:**
+- `https://www.youtube.com/watch?v=VIDEO_ID`
+- `https://youtu.be/VIDEO_ID`
+- Handles query parameters correctly
+
+**Result:**
+- Automatic thumbnails for all YouTube videos
+- No manual poster_url upload needed
+- Consistent thumbnail display across all choreography works
+
+## Highlights Section Update (2025-10-03)
+
+### **Feature Implemented**
+Updated the Highlights (Featured Works) section to match the screenshot design with large YouTube thumbnails and vertical stacked layout.
+
+### **Key Features:**
+
+**Layout:**
+- Vertical stacked list of featured works
+- Shows up to 3 featured works (is_featured = true)
+- Full-width aspect-video (16:9) thumbnails
+- Clean, minimal design matching screenshot
+
+**Visual Design:**
+- Large full-width thumbnail images
+- Aspect ratio: 16:9 (aspect-video)
+- Rounded corners (rounded-md)
+- Dark background fallback (bg-zinc-900)
+- No hover effects - clean and simple
+
+**Content Structure:**
+- Large YouTube thumbnail (maxresdefault.jpg - highest quality)
+- Work title below (text-sm, font-medium, white)
+- Description • Date format (text-xs, white/60)
+- Minimal spacing (mb-2, space-y-0.5)
+
+**YouTube Thumbnail Integration:**
+- Uses maxresdefault.jpg for highest quality
+- Automatic extraction from video_url
+- Falls back to poster_url if available
+- Supports both YouTube URL formats
+
+**Functionality:**
+- Clicking thumbnail/card opens video in new tab
+- Line clamp prevents text overflow
+- Clean, minimal interaction
+
+**Technical Implementation:**
+- Reuses same YouTube thumbnail extraction logic
+- Higher quality thumbnail (maxresdefault vs hqdefault)
+- Priority: poster_url → YouTube thumbnail → fallback emoji
+- Date formatting in Korean locale (YYYY.MM)
+
+**Result:**
+- Large, prominent featured work showcase
+- Professional presentation matching screenshot
+- Automatic YouTube thumbnails
+- Clean vertical layout
+- Easy navigation to featured content
+
+## Performance Works Section (2025-10-03)
+
+### **Feature Implemented**
+Added a performance works section to the artist profile page with the same design pattern as choreography works.
+
+### **Key Features:**
+
+**Layout:**
+- Vertical stacked list of performance works
+- Shows 5 works initially
+- "더 보기" (Show More) button to expand full list
+- "접기" (Collapse) button when expanded
+- Horizontal card design matching choreography section
+
+**Visual Design:**
+- Identical styling to choreography works section
+- Dark background cards (bg-zinc-900)
+- Hover effect (bg-zinc-800/90)
+- Small rectangular thumbnail (96x64px) on the left
+- Work title and metadata on the right
+- Compact spacing (gap-3, p-3)
+
+**Content Structure:**
+- Section title: "공연" (Performance)
+- Small video thumbnail (16:9 aspect ratio)
+- Work title (text-sm, white, line-clamp-1)
+- Description • Date format (text-xs, white/60)
+- Date shows year.month format in Korean locale
+
+**Functionality:**
+- Clicking card opens video_url in new tab
+- Expandable list shows/hides additional works
+- Show More button displays count of remaining works
+- Automatic YouTube thumbnail extraction
+
+**Data Handling:**
+- Filters career entries by category === 'performance'
+- Uses `single_date` or falls back to `start_date`
+- Formats date as Korean locale (YYYY.MM)
+- Description and date shown together
+
+**State Management:**
+- `performanceWorks` computed value filters performance category
+- `showAllPerformance` state controls expansion
+- Slice array to show 5 or all items
+- Toggle button text changes based on state
+
+**Technical Details:**
+- Same YouTube thumbnail extraction as choreography
+- Uses hqdefault.jpg quality
+- Priority: poster_url → YouTube thumbnail → fallback emoji
+- Conditional rendering based on array length
+
+**Result:**
+- Consistent design with choreography section
+- Separate category organization
+- Easy navigation to performance videos
+- Space-efficient expandable list
+- Professional presentation
+
+## Classes/Workshop Section (2025-10-03)
+
+### **Feature Implemented**
+Added a Classes section for workshop category entries with a simple text-based layout matching the provided screenshot.
+
+### **Key Features:**
+
+**Layout:**
+- Vertical stacked list of workshop entries
+- Shows 5 workshops initially
+- "더 보기" (Show More) button to expand full list
+- "접기" (Collapse) button when expanded
+- Simple text-only design without thumbnails
+
+**Visual Design:**
+- Minimal, clean text-based layout
+- No thumbnails or images
+- Border bottom dividers (border-white/5)
+- Hover effect on border (border-white/10)
+- Larger text compared to other sections
+- More breathing room with py-3 padding
+
+**Content Structure:**
+- Section title: "Classes"
+- Work title (text-base, font-medium, white)
+- Date only (text-sm, white/60)
+- No description shown - clean and minimal
+
+**Functionality:**
+- Clicking item opens video_url in new tab (if available)
+- Expandable list shows/hides additional workshops
+- Show More button displays count of remaining items
+- Simple hover interaction on border
+
+**Data Handling:**
+- Filters career entries by category === 'workshop'
+- Uses `single_date` or falls back to `start_date`
+- Formats date as Korean locale (YYYY.MM)
+- Only shows title and date (no description)
+
+**State Management:**
+- `workshopWorks` computed value filters workshop category
+- `showAllWorkshop` state controls expansion
+- Slice array to show 5 or all items
+- Toggle button text changes based on state
+
+**Technical Details:**
+- No thumbnail/image requirements
+- Simpler card structure than other sections
+- Border-based visual separation
+- Text-only presentation
+- Conditional rendering based on array length
+
+**Visual Differences from Other Sections:**
+- No background color on cards
+- No thumbnails
+- Larger text (text-base vs text-sm)
+- Border separators instead of card backgrounds
+- More minimal appearance
+
+**Result:**
+- Clean, text-focused class listing
+- Professional educational presentation
+- Easy to scan and read
+- Different visual hierarchy from media sections
+- Space-efficient list format
+- Matches screenshot design exactly
+
+## Back Button Addition (2025-10-03)
+
+### **Feature Implemented**
+Added back button navigation to both artist and team profile pages.
+
+### **Key Features:**
+
+**Placement:**
+- Top of the page, above profile content
+- Positioned in header area before main content
+- Padding: px-4 pt-6 pb-4 (artist), p-6 with mb-6 (team)
+
+**Visual Design:**
+- Left-pointing chevron icon (SVG)
+- "Back" text label
+- Subtle color: white/70
+- Hover effect: white (full opacity)
+- Smooth transition on hover
+- Flex layout with gap-2 spacing
+
+**Functionality:**
+- Navigates back to `/artists` page
+- Uses router.push() for client-side navigation
+- Works on both artist and team profiles
+- Clickable button with cursor pointer
+
+**Technical Implementation:**
+- Inline SVG chevron icon (20x20px)
+- Text size: text-sm
+- Hover transition on color
+- Simple click handler with router.push
+- Consistent placement across both profile types
+
+**Result:**
+- Easy navigation back to artists listing
+- Clear visual affordance for back action
+- Consistent UX across artist and team pages
+- Professional navigation pattern
+
+## Teams Section Redesign (2025-10-03)
+
+### **Feature Implemented**
+Redesigned the Teams section in artist profile to show team image with badge, name, and subtitle layout matching the provided screenshot.
+
+### **Key Features:**
+
+**Layout:**
+- Horizontal layout with image on left, info on right
+- Team image: 80x80px (w-20 h-20)
+- Flex gap-4 spacing between image and info
+- Space-y-4 between multiple teams
+
+**Visual Design:**
+- Square team image with rounded corners
+- Gradient fallback background (purple/pink)
+- Users icon SVG fallback (32x32px)
+- Clean, spacious layout
+
+**Team Badge:**
+- "Team" text badge above team name
+- Small badge: px-2 py-0.5
+- Background: bg-zinc-800
+- Text color: white/70
+- Text size: text-xs
+- Rounded corners
+- Positioned right under team image
+
+**Content Structure:**
+1. Team badge (small, above name)
+2. Team name (text-base, font-semibold, white)
+3. Subtitle (text-sm, white/60)
+   - Shows team description if available
+   - Falls back to Korean name
+
+**Functionality:**
+- Entire card is clickable
+- Navigates to team profile page
+- Uses team slug for navigation
+- Cursor pointer on hover
+
+**Technical Implementation:**
+- Inline SVG for users icon fallback
+- Bilingual name support
+- Conditional image rendering
+- Clean flex layout structure
+- No background cards - minimal design
+
+**Visual Hierarchy:**
+- Badge → Name → Subtitle
+- Clear vertical stacking
+- Proper spacing with mb-1, mb-2
+- Easy to scan layout
+
+**Result:**
+- Clean team representation matching screenshot
+- Professional badge-based design
+- Easy to identify teams vs individuals
+- Good visual hierarchy
+- Clickable cards for navigation
+- Consistent with overall design system
