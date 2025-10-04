@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { fetchFeaturedDancers } from '@/app/artists/utils/supabase';
 import { Dancer } from '@/app/artists/types/dancer';
 import { useLanguage } from '@/app/contexts/LanguageContext';
@@ -123,9 +124,9 @@ export default function Artists() {
 
         {/* View More Button */}
         <div className="text-center mt-12">
-          <a href="/artists" className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
+          <Link href="/artists" className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg hover:shadow-purple-500/25 transition-all duration-300">
             View All Artists
-          </a>
+          </Link>
         </div>
       </div>
     </section>

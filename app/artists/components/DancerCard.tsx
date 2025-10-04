@@ -14,15 +14,6 @@ interface DancerCardProps {
   showPlayButton?: boolean;
 }
 
-const cardVariants = {
-  initial: { scale: 1, rotateY: 0 },
-  hover: {
-    scale: 1.02,
-    rotateY: 2,
-    transition: { duration: 0.2, ease: [0.4, 0, 0.2, 1] }
-  }
-};
-
 const formatNumber = (num: number | undefined) => {
   if (!num) return '';
   if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -51,9 +42,9 @@ export function DancerCard({
 
   return (
     <motion.div
-      variants={cardVariants}
-      initial="initial"
-      whileHover="hover"
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ duration: 0.2 }}
       className="cursor-pointer group"
       onClick={handleClick}
     >

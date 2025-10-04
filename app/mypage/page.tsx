@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
 import { getCurrentUser, signOut } from '@/app/utils/auth';
 import { useLanguage } from '@/app/contexts/LanguageContext';
@@ -233,7 +234,14 @@ export default function MyPage() {
           <div className="bg-zinc-900 rounded-lg p-6">
             <div className="flex items-center gap-4">
               {user.profile_image ? (
-                <img src={user.profile_image} alt={user.name} className="w-16 h-16 rounded-full object-cover" />
+                <div className="relative w-16 h-16 rounded-full overflow-hidden">
+                  <Image
+                    src={user.profile_image}
+                    alt={user.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               ) : (
                 <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-2xl font-bold">
                   {user.name.charAt(0)}

@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
         hostname: 'i.ytimg.com',
         port: '',
         pathname: '/vi/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'rqaycpwaumuffzammyje.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/**',
       }
     ],
   },

@@ -148,6 +148,199 @@ Created comprehensive documentation at `.claude/doc/spotify-style-artist-page-im
 - ✅ Artists page previously completed
 - 🚀 **Ready for full testing - all main sections support EN/KO switching**
 
+## Team Profile Page Design (2025-10-04)
+
+### **Task Overview**
+Design a comprehensive team profile page with Spotify-style aesthetic to replace the basic team view at lines 254-299 in `/app/artists/[slug]/page.tsx`.
+
+### **Research & Analysis Completed**
+- ✅ Analyzed existing artist profile page (lines 302-858) for design consistency
+- ✅ Reviewed DancerCard and TeamCard components for member showcase design
+- ✅ Examined available shadcn/ui components (Card, Badge, Tabs, etc.)
+- ✅ Analyzed Spotify-inspired theme variables in globals.css
+- ✅ Reviewed team and member data structures from Supabase
+
+### **Implementation Plan Created**
+**Documentation**: `.claude/doc/team-profile-page-implementation.md`
+
+### **Key Design Specifications**
+
+#### **1. Hero Section**
+- Full-width cover image (team.cover_image or team.logo_url)
+- Responsive heights: 400px (mobile) → 550px (XL desktop)
+- Gradient overlays (top & bottom) for text readability
+- Large team name display (3xl → 6xl responsive)
+- Member count badge with Users icon
+- Back button (top-left) with ChevronLeft icon
+
+#### **2. Team Information Bar**
+- Social media icons (if team has links)
+- Share button with native share API / clipboard fallback
+- Horizontal layout with rounded buttons (w-10 h-10)
+
+#### **3. Main Content Layout**
+- Two-column grid on desktop (1:3 ratio)
+- Left sidebar: Team stats, leader info, highlights
+- Right content: Description, member grid, achievements
+- Stack vertically on mobile
+
+#### **4. Team Statistics (Left Sidebar)**
+- Formation year (from created_at)
+- Member count (from teamMembers.length)
+- Leader info with Crown icon
+- Optional: Total followers, combined stats
+
+#### **5. Team Description Section**
+- "About {Team Name}" heading
+- Full team description with line breaks preserved
+- Responsive typography (text-white/80)
+
+#### **6. Member Showcase Section**
+**Component**: New `TeamMemberCard.tsx`
+- Profile image with gradient fallback
+- Member names (Korean/English support)
+- Leader badge for team leader
+- Social links (minimal icons)
+- Hover animations (scale 1.03, y: -4px)
+- Click navigation to member profile
+
+**Grid Layout**:
+- Mobile: 2 columns
+- Tablet: 3 columns
+- Desktop: 4 columns
+- Show first 8, expandable with "Show More" button
+
+#### **7. Component Architecture**
+**New Components to Create**:
+1. **TeamMemberCard.tsx** - Individual member cards for team profile
+   - Props: member, isLeader, onClick, size
+   - Features: Profile image, name display, leader badge, social links
+   - Animations: Hover scale, tap feedback
+
+2. **TeamStatsCard.tsx** (Optional) - Team statistics display
+   - Props: team, memberCount, totalFollowers
+   - Features: Formation year, member count, leader info
+
+### **Technical Specifications**
+
+#### **Data Structure**
+```typescript
+interface Team {
+  id: string;
+  name: string;
+  name_en: string;
+  slug: string;
+  description: string | null;
+  logo_url: string | null;
+  cover_image: string | null;
+  status: string;
+  leader_id: string | null;
+  created_at: string;
+}
+
+interface TeamMember {
+  id: string;
+  name: string;
+  name_en: string;
+  slug: string;
+  profile_image: string | null;
+  introduction: string | null;
+  instagram_url: string | null;
+  youtube_url: string | null;
+  twitter_url: string | null;
+}
+```
+
+#### **State Management**
+- `showAllMembers` - Toggle for member list expansion
+- `displayedMembers` - Computed: show 8 or all members
+- `leaderMember` - Computed: find member by leader_id
+- `formationYear` - Computed: extract year from created_at
+
+#### **Internationalization**
+- Use existing `useLanguage()` hook
+- Display team.name or team.name_en based on language
+- Member names with same bilingual support
+- New translation keys for team profile:
+  - `teamProfile.members`, `teamProfile.formed`, `teamProfile.leader`
+  - `teamProfile.about`, `teamProfile.showMore`, `teamProfile.showLess`
+
+#### **Animation Patterns**
+- Framer Motion for all interactions
+- Hero section: fade-in with slide-up
+- Member grid: stagger children animation
+- Member cards: hover scale (1.03) + lift (y: -4px)
+- Smooth transitions (200ms colors, 300ms all)
+
+#### **Responsive Design**
+- Mobile-first approach
+- Breakpoints: mobile → md → lg → xl
+- Hero: Responsive heights and typography
+- Grid: 2 → 3 → 4 columns
+- Sidebar: Stack on mobile, side-by-side on lg+
+
+### **Implementation Checklist**
+**Phase 1: Core Structure**
+- [ ] Update page.tsx team profile section (lines 254-299)
+- [ ] Implement hero section with cover image
+- [ ] Add team name and member count badge
+- [ ] Add back button and navigation
+
+**Phase 2: Team Information**
+- [ ] Create team stats section
+- [ ] Implement team description display
+- [ ] Add leader information
+- [ ] Implement social share functionality
+
+**Phase 3: Member Showcase**
+- [ ] Create TeamMemberCard component
+- [ ] Implement member grid layout
+- [ ] Add show more/less functionality
+- [ ] Implement member click navigation
+
+**Phase 4: Polish & Animations**
+- [ ] Add Framer Motion animations
+- [ ] Implement hover effects
+- [ ] Add responsive design refinements
+- [ ] Test on mobile devices
+
+**Phase 5: Testing & Optimization**
+- [ ] Test with real team data
+- [ ] Optimize image loading
+- [ ] Test internationalization
+- [ ] Accessibility audit
+
+### **Future Enhancements**
+- Team career entries/highlights section
+- Aggregate member statistics
+- Team photo gallery
+- Social media feed integration
+- Member roles and specialties display
+
+### **Key Files to Modify**
+1. `/app/artists/[slug]/page.tsx` - Lines 254-299 (team profile section)
+2. `/app/artists/components/TeamMemberCard.tsx` - NEW component
+3. `/app/contexts/LanguageContext.tsx` - Add team profile translation keys
+
+### **Design Resources**
+- **Reference Artist Profile**: Lines 302-858 in page.tsx
+- **Color Scheme**: Black (#000000), zinc-900, zinc-950 backgrounds
+- **Theme Variables**: Defined in app/globals.css (lines 98-143)
+- **Existing Components**: DancerCard, TeamCard, DancerGrid
+
+### **Estimated Timeline**
+- Core features: 4-6 hours
+- Polish & testing: 2-3 hours
+- **Total**: 6-9 hours
+
+### **Current Status**
+✅ **Design research completed**
+✅ **Comprehensive implementation plan created**
+✅ **Component architecture defined**
+✅ **Ready for implementation phase**
+
+📄 **Full documentation available at**: `.claude/doc/team-profile-page-implementation.md`
+
 ## Artist Profile Pages Implementation (2025-09-22)
 
 ### **Features Implemented**
@@ -3088,4 +3281,214 @@ if (isArtistDetailPage) return null;
 - ✅ Consistent primary background across all pages
 - ✅ Responsive padding (smaller on mobile, larger on desktop)
 - ✅ Clean navigation experience throughout the app
+
+
+## Team Profile Page Implementation (2025-10-04)
+
+### **Feature Implemented**
+Built comprehensive team profile page with Spotify-style aesthetic, replacing the basic team view placeholder.
+
+### **Design Approach**
+Consulted shadcn-ui-expert agent for comprehensive design planning:
+- Created detailed implementation plan (`.claude/doc/team-profile-page-implementation.md`)
+- Created visual design guide (`.claude/doc/team-profile-visual-guide.md`)
+- Followed Spotify's dark theme aesthetic matching the existing artist profile page
+
+### **Components Created**
+
+#### 1. TeamMemberCard Component
+**File**: `app/artists/components/TeamMemberCard.tsx`
+
+**Features**:
+- Profile image with fallback gradient avatar
+- Leader badge with Crown icon (shows for team leader)
+- Bilingual name display (primary + alternative name)
+- Social media links (Instagram, YouTube, Twitter)
+- Hover animations (scale 1.03, lift -4px)
+- Click to navigate to member's artist profile
+- Size variants: small, medium (default), large
+
+**Styling**:
+- Dark card with `bg-zinc-900/80 backdrop-blur-sm`
+- Profile image section: 48px height
+- Card heights: 64px (small), 72px (medium), 80px (large)
+- Border: `border-zinc-800/50` with hover effect to `border-zinc-700/50`
+- Leader badge: `bg-primary/20 text-primary border-primary/30`
+
+**Props Interface**:
+```typescript
+interface TeamMemberCardProps {
+  member: TeamMember;
+  isLeader: boolean;
+  onClick?: (member: TeamMember) => void;
+  size?: 'small' | 'medium' | 'large';
+}
+```
+
+### **Team Profile Page Updates**
+
+**File**: `app/artists/[slug]/page.tsx` (lines 257-455)
+
+Replaced basic team view with comprehensive Spotify-style layout:
+
+#### Hero Section
+- Full-width team cover image (team.cover_image or team.logo_url)
+- Responsive heights: 400px → 450px → 500px → 550px (mobile → XL)
+- Fallback: Gradient background with team initial
+- Gradient overlays (top and bottom) for readability
+- Large team name display (3xl → 4xl → 5xl → 6xl)
+- Member count badge with Users icon
+- Back button with navigation to /artists
+
+#### Social Bar
+- Share button with native share API support
+- Clipboard fallback for desktop browsers
+- Positioned below hero in dedicated section
+
+#### Main Content Layout
+**Two-column grid** (mobile stacks, desktop splits):
+- Left sidebar: 1/4 width (Team Info)
+- Right content: 3/4 width (Description + Members)
+
+#### Left Sidebar - Team Info
+Three stat items with icons:
+1. **Formation Year** - Calendar icon, extracted from `team.created_at`
+2. **Member Count** - Users icon, from `teamMembers.length`
+3. **Leader Info** - Crown icon, shows leader name (bilingual)
+
+Each stat shows:
+- Icon in `text-white/60`
+- Label in small gray text
+- Value in bold white text
+
+#### Right Content - Team Description & Members
+1. **Team Description Section**:
+   - "About {teamName}" heading
+   - Full description with `whitespace-pre-line` for formatting
+   - Only shown if `team.description` exists
+
+2. **Team Members Grid**:
+   - Responsive grid: 2 → 3 → 4 columns (mobile → desktop)
+   - Shows first 8 members by default
+   - TeamMemberCard for each member
+   - Leader badge shown on leader's card
+   - Click navigates to member's profile
+
+3. **Show More/Less Button**:
+   - Only shown if team has more than 8 members
+   - Toggles between showing 8 and all members
+   - Shows count of hidden members in button text
+   - Styled with border and hover effects
+
+### **State Management**
+
+Added `showAllMembers` state:
+```typescript
+const [showAllMembers, setShowAllMembers] = useState(false);
+```
+
+Computed values:
+```typescript
+const leaderMember = teamMembers.find(m => m.id === team.leader_id);
+const displayedMembers = showAllMembers ? teamMembers : teamMembers.slice(0, 8);
+```
+
+### **Imports Added**
+
+Added to `[slug]/page.tsx`:
+```typescript
+import { TeamMemberCard } from '../components/TeamMemberCard';
+import { Users, Calendar, Crown, Share2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+```
+
+### **Design Consistency**
+
+**Matching Artist Profile**:
+- Same hero layout structure and responsive heights
+- Identical gradient overlay pattern
+- Same back button style and positioning
+- Matching social button design
+- Consistent spacing and typography
+- Same dark theme color scheme
+
+**Responsive Design**:
+- Mobile-first approach
+- Breakpoints: sm (640px), md (768px), lg (1024px), xl (1280px)
+- Grid adapts: 1 col → 4 col layout
+- Member cards: 2 → 3 → 4 columns
+- Padding adjusts: 4 → 8 → 12 (mobile → desktop)
+
+### **Animations**
+
+**TeamMemberCard**:
+- Framer Motion `whileHover`: scale 1.03, y -4px
+- `whileTap`: scale 0.98
+- Duration: 0.2s
+- Smooth transitions on all interactive elements
+
+**Hover Effects**:
+- Card border brightens on hover
+- Shadow increases (shadow-lg → shadow-2xl)
+- Social links: bg opacity increases
+- Show more button: text and border brighten
+
+### **Accessibility**
+
+- Semantic HTML structure
+- Proper heading hierarchy (h1 → h2 → h3)
+- ARIA labels on social links and buttons
+- Keyboard navigation support
+- Focus states on interactive elements
+- Alternative text for images
+
+### **Build Status**
+
+✅ **Build Successful**
+- No TypeScript errors
+- Only minor ESLint warnings (unused variables)
+- Bundle size increased by ~3KB for artist detail route (7.53 kB total)
+- All 13 pages generated successfully
+
+### **Files Created/Modified**
+
+**Created**:
+1. `app/artists/components/TeamMemberCard.tsx` (151 lines)
+
+**Modified**:
+1. `app/artists/[slug]/page.tsx` (lines 1-10, 230, 257-455)
+   - Added imports
+   - Added `showAllMembers` state
+   - Replaced team profile view (lines 257-455)
+
+**Documentation Created** (by shadcn-ui-expert agent):
+1. `.claude/doc/team-profile-page-implementation.md` (1,243 lines)
+2. `.claude/doc/team-profile-visual-guide.md` (546 lines)
+
+### **Result**
+- ✅ Professional team profile page with Spotify aesthetic
+- ✅ Full bilingual support (Korean/English)
+- ✅ Responsive design (mobile → desktop)
+- ✅ Member showcase with leader badge
+- ✅ Team statistics and information display
+- ✅ Social sharing functionality
+- ✅ Smooth animations and hover effects
+- ✅ Consistent with artist profile design
+- ✅ Accessible and keyboard-navigable
+- ✅ Production-ready with successful build
+- ✅ Click-through navigation to member profiles
+- ✅ Show more/less functionality for large teams
+
+### **Future Enhancements** (Optional)
+
+Potential additions for future development:
+- Team-level social media links (requires database schema update)
+- Team career entries/achievements section
+- Team statistics aggregation (total followers, total listeners)
+- Team highlight videos/media gallery
+- Member role badges (choreographer, dancer, etc.)
+- Join date for each member
+- Team awards and recognitions section
+- Collaborative works section
+- Team timeline/history
 

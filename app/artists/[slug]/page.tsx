@@ -2,8 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { createClient } from '@/utils/supabase/client';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { TeamMemberCard } from '../components/TeamMemberCard';
+import { Users, Calendar, Crown, Share2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface Artist {
   id: string;
@@ -192,6 +196,7 @@ export default function ArtistProfilePage() {
               .eq('team_id', teamData.id);
 
             if (membersData) {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               const members = membersData.map((m: any) => m.users);
               setTeamMembers(members);
             }
@@ -222,6 +227,7 @@ export default function ArtistProfilePage() {
   const [showAllChoreography, setShowAllChoreography] = useState(false);
   const [showAllPerformance, setShowAllPerformance] = useState(false);
   const [showAllWorkshop, setShowAllWorkshop] = useState(false);
+  const [showAllMembers, setShowAllMembers] = useState(false);
 
   if (isLoading) {
     return (
@@ -250,13 +256,42 @@ export default function ArtistProfilePage() {
 
   // Team Profile View
   if (team && profileType === 'team') {
+    const leaderMember = teamMembers.find(m => m.id === team.leader_id);
+    const displayedMembers = showAllMembers ? teamMembers : teamMembers.slice(0, 8);
+
     return (
-      <div className="min-h-screen bg-zinc-950 text-white">
-        <div className="p-6">
+      <div className="min-h-screen text-white bg-black">
+        {/* Hero Section */}
+        <div className="relative w-full overflow-hidden">
+          {team.cover_image || team.logo_url ? (
+            <div className="relative w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px]">
+              <Image
+                src={team.cover_image || team.logo_url || ''}
+                alt={teamName}
+                fill
+                className="object-cover object-center"
+                priority
+              />
+            </div>
+          ) : (
+            <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] bg-gradient-to-br from-purple-900 via-zinc-900 to-zinc-950 flex items-center justify-center">
+              <div className="text-center">
+                <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-6xl font-bold">
+                  {teamName.charAt(0)}
+                </div>
+                <p className="text-white/40 text-sm">No team image</p>
+              </div>
+            </div>
+          )}
+
+          {/* Gradient Overlays */}
+          <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-black via-black/60 to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
           {/* Back Button */}
           <button
             onClick={() => router.push('/artists')}
-            className="flex items-center gap-2 text-white/70 hover:text-white mb-6 transition-colors"
+            className="absolute top-6 left-4 md:left-8 lg:left-12 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -274,23 +309,145 @@ export default function ArtistProfilePage() {
             <span className="text-sm">Back</span>
           </button>
 
-          <h1 className="text-4xl font-bold mb-4">{teamName}</h1>
-          <p className="text-white/60 mb-8">Team Profile</p>
-
-          {/* Available data for UI building */}
-          <div className="space-y-4 text-sm text-white/40">
-            <p>Team ID: {team.id}</p>
-            <p>Description: {team.description || 'N/A'}</p>
-            <p>Members: {teamMembers.length}</p>
-            <p>Cover Image: {team.cover_image || team.logo_url || 'N/A'}</p>
+          {/* Team Name and Member Count */}
+          <div className="absolute bottom-6 left-4 md:left-8 lg:left-12 md:bottom-8 lg:bottom-10 right-4 md:right-8 lg:right-12">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3">
+              {teamName}
+            </h1>
+            <div className="flex items-center gap-3">
+              <Badge
+                variant="secondary"
+                className="bg-white/20 backdrop-blur-sm border-none text-white text-sm px-4 py-1.5"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                {teamMembers.length} {teamMembers.length === 1 ? 'Member' : 'Members'}
+              </Badge>
+            </div>
           </div>
+        </div>
 
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">Team Members ({teamMembers.length})</h2>
-            {/* Build your team members UI here */}
-            <pre className="text-xs text-white/40 overflow-auto">
-              {JSON.stringify(teamMembers, null, 2)}
-            </pre>
+        {/* Social Buttons Section */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-4">
+          <div className="flex gap-3 items-center">
+            {/* Share Button */}
+            <button
+              onClick={async () => {
+                const currentUrl = window.location.href;
+                if (navigator.share) {
+                  try {
+                    await navigator.share({
+                      title: `${teamName} - GRIGO Entertainment`,
+                      url: currentUrl
+                    });
+                  } catch (err) {
+                    console.log('Share cancelled:', err);
+                  }
+                } else {
+                  try {
+                    await navigator.clipboard.writeText(currentUrl);
+                    alert('Link copied to clipboard!');
+                  } catch (err) {
+                    console.error('Failed to copy:', err);
+                  }
+                }
+              }}
+              className="w-10 h-10 rounded-full bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition-colors"
+              aria-label="Share team profile"
+            >
+              <Share2 className="h-4 w-4 text-white" />
+            </button>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+          {/* Two Column Layout for Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
+            {/* Left Sidebar - Stats and Info */}
+            <div className="lg:col-span-1 space-y-8">
+              {/* Team Stats */}
+              <div>
+                <h2 className="text-xl font-bold text-white mb-3">Team Info</h2>
+                <div className="space-y-3">
+                  {/* Formation Year */}
+                  <div className="flex items-center gap-3">
+                    <Calendar className="h-5 w-5 text-white/60" />
+                    <div>
+                      <p className="text-white/60 text-xs">Formed</p>
+                      <p className="text-white font-semibold">
+                        {new Date(team.created_at).getFullYear()}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Member Count */}
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 text-white/60" />
+                    <div>
+                      <p className="text-white/60 text-xs">Members</p>
+                      <p className="text-white font-semibold">{teamMembers.length}</p>
+                    </div>
+                  </div>
+
+                  {/* Leader Info */}
+                  {leaderMember && (
+                    <div className="flex items-center gap-3">
+                      <Crown className="h-5 w-5 text-white/60" />
+                      <div>
+                        <p className="text-white/60 text-xs">Leader</p>
+                        <p className="text-white font-semibold">
+                          {language === 'en' && leaderMember.name_en
+                            ? leaderMember.name_en
+                            : leaderMember.name}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Description and Members */}
+            <div className="lg:col-span-3 space-y-8">
+              {/* Team Description */}
+              {team.description && (
+                <div>
+                  <h2 className="text-2xl font-bold text-white mb-4">
+                    About {teamName}
+                  </h2>
+                  <p className="text-white/80 leading-relaxed whitespace-pre-line">
+                    {team.description}
+                  </p>
+                </div>
+              )}
+
+              {/* Team Members Grid */}
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-6">Team Members</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+                  {displayedMembers.map((member) => (
+                    <TeamMemberCard
+                      key={member.id}
+                      member={member}
+                      isLeader={member.id === team.leader_id}
+                      onClick={() => router.push(`/artists/${member.slug}`)}
+                    />
+                  ))}
+                </div>
+
+                {/* Show More/Less Button */}
+                {teamMembers.length > 8 && (
+                  <button
+                    onClick={() => setShowAllMembers(!showAllMembers)}
+                    className="mt-6 w-full py-3 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
+                  >
+                    {showAllMembers
+                      ? 'Show Less'
+                      : `Show ${teamMembers.length - 8} More Members`}
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -303,11 +460,15 @@ export default function ArtistProfilePage() {
       <div className="min-h-screen text-white bg-black">
           <div className='relative w-full overflow-hidden'>
             {artist.profile_image ? (
-              <img
-                src={artist.profile_image}
-                alt={artist.name}
-                className='w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] object-cover object-center'
-              />
+              <div className="relative w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px]">
+                <Image
+                  src={artist.profile_image}
+                  alt={artist.name}
+                  fill
+                  className='object-cover object-center'
+                  priority
+                />
+              </div>
             ) : (
               <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] bg-gradient-to-br from-purple-900 via-zinc-900 to-zinc-950 flex items-center justify-center">
                 <div className="text-center">
@@ -498,10 +659,11 @@ export default function ArtistProfilePage() {
                       {/* Team Image */}
                       <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20">
                         {team.cover_image || team.logo_url ? (
-                          <img
+                          <Image
                             src={team.cover_image || team.logo_url || ''}
                             alt={teamName}
-                            className="w-full h-full object-cover"
+                            fill
+                            className="object-cover"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
@@ -597,10 +759,11 @@ export default function ArtistProfilePage() {
                             {/* Image Container */}
                             <div className="relative w-full aspect-video rounded-md overflow-hidden bg-zinc-900 mb-2 group-hover:ring-2 group-hover:ring-white/20 transition-all">
                               {thumbnailUrl ? (
-                                <img
+                                <Image
                                   src={thumbnailUrl}
                                   alt={work.title}
-                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                  fill
+                                  className="object-cover group-hover:scale-105 transition-transform duration-300"
                                 />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
@@ -667,10 +830,11 @@ export default function ArtistProfilePage() {
                         {/* Thumbnail */}
                         <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
                           {thumbnailUrl ? (
-                            <img
+                            <Image
                               src={thumbnailUrl}
                               alt={work.title}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
@@ -744,10 +908,11 @@ export default function ArtistProfilePage() {
                         {/* Thumbnail */}
                         <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
                           {thumbnailUrl ? (
-                            <img
+                            <Image
                               src={thumbnailUrl}
                               alt={work.title}
-                              className="w-full h-full object-cover"
+                              fill
+                              className="object-cover"
                             />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">

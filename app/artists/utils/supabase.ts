@@ -125,6 +125,7 @@ export async function fetchTeams(): Promise<Team[]> {
 /**
  * Helper function to fetch team members
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchTeamMembers(supabase: any, teams: DbTeam[]): Promise<Team[]> {
   const teamsWithMembers: Team[] = [];
 
@@ -140,6 +141,7 @@ async function fetchTeamMembers(supabase: any, teams: DbTeam[]): Promise<Team[]>
     }
 
     // Fetch user details for team members
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const memberIds = teamMembers.map((m: any) => m.user_id);
     const { data: users, error: usersError } = await supabase
       .from('users')
