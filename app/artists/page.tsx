@@ -180,20 +180,8 @@ export default function ArtistsPage() {
       variants={pageVariants}
       initial="initial"
       animate="animate"
-      className="min-h-screen bg-primary text-white"
+      className="min-h-screen bg-primary text-white pt-20 md:pt-24"
     >
-      {/* Back Button */}
-      <div className="fixed top-6 left-6 z-50">
-        <Button
-          variant="ghost"
-          onClick={() => router.push('/')}
-          className="bg-white/10 backdrop-blur-md hover:bg-white/20 text-white border-none rounded-full h-12 px-6"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
-        </Button>
-      </div>
-
       {/* Hero Section */}
       <section className="relative pt-24 pb-8 px-6">
         <div className="container mx-auto max-w-7xl">

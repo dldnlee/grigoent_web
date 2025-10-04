@@ -19,7 +19,7 @@ export default function AnimatedHamburger({ isOpen, onClick }: AnimatedHamburger
       <div className="w-6 h-6 relative flex flex-col justify-center items-center">
         {/* Top line */}
         <motion.span
-          className="absolute w-5 h-0.5 bg-gray-700 origin-center"
+          className="absolute w-5 h-0.5 bg-white origin-center"
           animate={{
             rotate: isOpen ? 45 : 0,
             y: isOpen ? 0 : -6,
@@ -32,7 +32,7 @@ export default function AnimatedHamburger({ isOpen, onClick }: AnimatedHamburger
 
         {/* Middle line */}
         <motion.span
-          className="absolute w-5 h-0.5 bg-gray-700"
+          className="absolute w-5 h-0.5 bg-white"
           animate={{
             opacity: isOpen ? 0 : 1,
             scale: isOpen ? 0.8 : 1,
@@ -45,7 +45,7 @@ export default function AnimatedHamburger({ isOpen, onClick }: AnimatedHamburger
 
         {/* Bottom line */}
         <motion.span
-          className="absolute w-5 h-0.5 bg-gray-700 origin-center"
+          className="absolute w-5 h-0.5 bg-white origin-center"
           animate={{
             rotate: isOpen ? -45 : 0,
             y: isOpen ? 0 : 6,

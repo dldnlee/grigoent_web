@@ -6,7 +6,7 @@ export default function WorksPage() {
   const { language } = useLanguage();
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white">
+    <main className="min-h-screen bg-primary text-white pt-20 md:pt-24">
       {/* Content */}
       <div className="max-w-7xl mx-auto px-6 py-16">
         <h1 className="text-6xl font-bold mb-8 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">

@@ -192,7 +192,7 @@ export default function MyPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+      <div className="min-h-screen bg-primary flex items-center justify-center pt-20 md:pt-24">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white"></div>
       </div>
     );
@@ -207,7 +207,7 @@ export default function MyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white pt-20">
+    <div className="min-h-screen bg-primary text-white pt-20 md:pt-24">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-lg border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">

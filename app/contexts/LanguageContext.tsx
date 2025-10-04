@@ -140,6 +140,86 @@ const getTranslations = (lang: Language): Record<string, string> => {
 
       // Footer section
       'footer.description': '그리고 엔터테인먼트와 함께 새로운 예술의 길을 만들어가세요',
+
+      // About Us page
+      'aboutPage.hero.tagline': '글로벌 댄스 엔터테인먼트 선도 기업',
+      'aboutPage.hero.subtitle': '열정과 창의성으로 세계를 춤추게 합니다',
+
+      'aboutPage.mission.title': '우리의 미션',
+      'aboutPage.mission.content': '그리고 엔터테인먼트는 세계적 수준의 댄서와 안무가를 발굴하고 육성하여, 한국의 댄스 문화를 전 세계에 알리고 있습니다. 우리는 예술적 창의성과 전문성을 통해 댄스 산업의 새로운 기준을 만들어갑니다.',
+
+      'aboutPage.vision.title': '우리의 비전',
+      'aboutPage.vision.content': '댄스를 통한 문화 교류의 중심이 되어, 전 세계 사람들에게 감동과 영감을 전달하는 글로벌 엔터테인먼트 기업으로 성장하겠습니다.',
+
+      'aboutPage.story.title': '우리의 이야기',
+      'aboutPage.story.milestone1.year': '2018',
+      'aboutPage.story.milestone1.title': '회사 설립',
+      'aboutPage.story.milestone1.description': 'K-POP 댄스 문화를 세계에 알리겠다는 비전으로 시작',
+      'aboutPage.story.milestone2.year': '2019',
+      'aboutPage.story.milestone2.title': '첫 해외 워크샵',
+      'aboutPage.story.milestone2.description': '아시아 5개국에서 K-POP 댄스 워크샵 성공적 개최',
+      'aboutPage.story.milestone3.year': '2021',
+      'aboutPage.story.milestone3.title': '글로벌 확장',
+      'aboutPage.story.milestone3.description': '유럽과 미주 지역으로 사업 확장, 20개국 이상 협업',
+      'aboutPage.story.milestone4.year': '2023',
+      'aboutPage.story.milestone4.title': '산업 리더십',
+      'aboutPage.story.milestone4.description': '메이저 엔터테인먼트 레이블과 파트너십 구축',
+      'aboutPage.story.milestone5.year': '2025',
+      'aboutPage.story.milestone5.title': '새로운 도약',
+      'aboutPage.story.milestone5.description': '글로벌 댄스 플랫폼으로 진화하며 지속적인 성장',
+
+      'aboutPage.stats.artists': '전속 아티스트',
+      'aboutPage.stats.projects': '완료 프로젝트',
+      'aboutPage.stats.countries': '활동 국가',
+      'aboutPage.stats.awards': '수상 경력',
+
+      'aboutPage.values.title': '핵심 가치',
+      'aboutPage.values.passion.title': '열정',
+      'aboutPage.values.passion.description': '댄스에 대한 순수한 열정으로 최고의 퍼포먼스를 만들어냅니다',
+      'aboutPage.values.innovation.title': '혁신',
+      'aboutPage.values.innovation.description': '끊임없는 도전과 창의적 사고로 댄스의 새로운 가능성을 탐구합니다',
+      'aboutPage.values.collaboration.title': '협업',
+      'aboutPage.values.collaboration.description': '서로를 존중하고 함께 성장하는 팀워크를 중요하게 생각합니다',
+      'aboutPage.values.excellence.title': '탁월함',
+      'aboutPage.values.excellence.description': '완벽을 추구하며 항상 최고 수준의 결과물을 제공합니다',
+
+      'aboutPage.cta.title': '함께 춤추실 준비가 되셨나요?',
+      'aboutPage.cta.description': '그리고 엔터테인먼트와 함께 새로운 도전을 시작하세요',
+      'aboutPage.cta.joinUs': '지금 합류하기',
+      'aboutPage.cta.contact': '문의하기',
+
+      // Contact Us page
+      'contactPage.hero.title': '문의하기',
+      'contactPage.hero.subtitle': '프로젝트 협업이나 문의사항이 있으시면 언제든 연락주세요',
+
+      'contactPage.form.title': '메시지 보내기',
+      'contactPage.form.name': '이름',
+      'contactPage.form.namePlaceholder': '홍길동',
+      'contactPage.form.email': '이메일',
+      'contactPage.form.emailPlaceholder': 'your@email.com',
+      'contactPage.form.phone': '전화번호',
+      'contactPage.form.phonePlaceholder': '010-1234-5678',
+      'contactPage.form.subject': '제목',
+      'contactPage.form.subjectPlaceholder': '문의 제목을 입력하세요',
+      'contactPage.form.message': '메시지',
+      'contactPage.form.messagePlaceholder': '문의 내용을 자세히 입력해주세요...',
+      'contactPage.form.submit': '메시지 전송',
+      'contactPage.form.sending': '전송 중...',
+      'contactPage.form.success': '메시지가 성공적으로 전송되었습니다!',
+      'contactPage.form.error': '전송 중 오류가 발생했습니다. 다시 시도해주세요.',
+
+      'contactPage.info.title': '연락처 정보',
+      'contactPage.info.email.label': '이메일',
+      'contactPage.info.email.value': 'contact@grigo-ent.com',
+      'contactPage.info.phone.label': '전화',
+      'contactPage.info.phone.value': '+82 10-1234-5678',
+      'contactPage.info.address.label': '주소',
+      'contactPage.info.address.value': '서울특별시 강남구',
+      'contactPage.info.hours.label': '운영 시간',
+      'contactPage.info.hours.value': '월-금: 9:00 - 18:00',
+
+      'contactPage.social.title': '소셜 미디어',
+      'contactPage.social.followUs': '팔로우하세요',
     },
     en: {
       // Navigation
@@ -225,6 +305,86 @@ const getTranslations = (lang: Language): Record<string, string> => {
 
       // Footer section
       'footer.description': 'Create new paths in art with GRIGO Entertainment',
+
+      // About Us page
+      'aboutPage.hero.tagline': 'Leading Global Dance Entertainment',
+      'aboutPage.hero.subtitle': 'Making the world dance with passion and creativity',
+
+      'aboutPage.mission.title': 'Our Mission',
+      'aboutPage.mission.content': 'GRIGO Entertainment discovers and nurtures world-class dancers and choreographers, promoting Korean dance culture globally. Through artistic creativity and professionalism, we set new standards in the dance industry.',
+
+      'aboutPage.vision.title': 'Our Vision',
+      'aboutPage.vision.content': 'To become a global entertainment company that serves as a hub for cultural exchange through dance, delivering inspiration and emotion to people worldwide.',
+
+      'aboutPage.story.title': 'Our Story',
+      'aboutPage.story.milestone1.year': '2018',
+      'aboutPage.story.milestone1.title': 'Company Founded',
+      'aboutPage.story.milestone1.description': 'Started with a vision to spread K-POP dance culture worldwide',
+      'aboutPage.story.milestone2.year': '2019',
+      'aboutPage.story.milestone2.title': 'First International Workshop',
+      'aboutPage.story.milestone2.description': 'Successfully hosted K-POP dance workshops in 5 Asian countries',
+      'aboutPage.story.milestone3.year': '2021',
+      'aboutPage.story.milestone3.title': 'Global Expansion',
+      'aboutPage.story.milestone3.description': 'Expanded to Europe and Americas, collaborating with 20+ countries',
+      'aboutPage.story.milestone4.year': '2023',
+      'aboutPage.story.milestone4.title': 'Industry Leadership',
+      'aboutPage.story.milestone4.description': 'Established partnerships with major entertainment labels',
+      'aboutPage.story.milestone5.year': '2025',
+      'aboutPage.story.milestone5.title': 'New Heights',
+      'aboutPage.story.milestone5.description': 'Evolving into a global dance platform with continuous growth',
+
+      'aboutPage.stats.artists': 'Artists',
+      'aboutPage.stats.projects': 'Projects',
+      'aboutPage.stats.countries': 'Countries',
+      'aboutPage.stats.awards': 'Awards',
+
+      'aboutPage.values.title': 'Core Values',
+      'aboutPage.values.passion.title': 'Passion',
+      'aboutPage.values.passion.description': 'Creating the best performances with pure passion for dance',
+      'aboutPage.values.innovation.title': 'Innovation',
+      'aboutPage.values.innovation.description': 'Exploring new possibilities in dance through constant challenges and creative thinking',
+      'aboutPage.values.collaboration.title': 'Collaboration',
+      'aboutPage.values.collaboration.description': 'Valuing teamwork that respects each other and grows together',
+      'aboutPage.values.excellence.title': 'Excellence',
+      'aboutPage.values.excellence.description': 'Pursuing perfection and always delivering top-quality results',
+
+      'aboutPage.cta.title': 'Ready to Dance with Us?',
+      'aboutPage.cta.description': 'Start a new challenge with GRIGO Entertainment',
+      'aboutPage.cta.joinUs': 'Join Us Now',
+      'aboutPage.cta.contact': 'Contact Us',
+
+      // Contact Us page
+      'contactPage.hero.title': 'Contact Us',
+      'contactPage.hero.subtitle': 'Have a project or inquiry? We\'d love to hear from you',
+
+      'contactPage.form.title': 'Send a Message',
+      'contactPage.form.name': 'Name',
+      'contactPage.form.namePlaceholder': 'John Doe',
+      'contactPage.form.email': 'Email',
+      'contactPage.form.emailPlaceholder': 'your@email.com',
+      'contactPage.form.phone': 'Phone',
+      'contactPage.form.phonePlaceholder': '+82 10-1234-5678',
+      'contactPage.form.subject': 'Subject',
+      'contactPage.form.subjectPlaceholder': 'Enter your inquiry subject',
+      'contactPage.form.message': 'Message',
+      'contactPage.form.messagePlaceholder': 'Tell us more about your project or inquiry...',
+      'contactPage.form.submit': 'Send Message',
+      'contactPage.form.sending': 'Sending...',
+      'contactPage.form.success': 'Message sent successfully!',
+      'contactPage.form.error': 'An error occurred. Please try again.',
+
+      'contactPage.info.title': 'Contact Information',
+      'contactPage.info.email.label': 'Email',
+      'contactPage.info.email.value': 'contact@grigo-ent.com',
+      'contactPage.info.phone.label': 'Phone',
+      'contactPage.info.phone.value': '+82 10-1234-5678',
+      'contactPage.info.address.label': 'Address',
+      'contactPage.info.address.value': 'Gangnam-gu, Seoul, South Korea',
+      'contactPage.info.hours.label': 'Business Hours',
+      'contactPage.info.hours.value': 'Mon-Fri: 9:00 AM - 6:00 PM',
+
+      'contactPage.social.title': 'Social Media',
+      'contactPage.social.followUs': 'Follow Us',
     }
   };
 

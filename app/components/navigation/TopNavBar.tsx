@@ -30,10 +30,11 @@ export default function TopNavBar() {
     { name: t('nav.contact'), href: '/contact', type: 'route' }
   ];
 
-  // Hide navbar on artist pages
-  const isArtistPage = pathname?.startsWith('/artists');
+  // Hide navbar only on artist detail pages (e.g., /artists/john-doe)
+  // Show on artist list page (/artists)
+  const isArtistDetailPage = pathname?.startsWith('/artists/');
 
-  if (isArtistPage) {
+  if (isArtistDetailPage) {
     return null;
   }
 
@@ -176,6 +177,7 @@ export default function TopNavBar() {
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
         navItems={navItems}
+        user={user}
       />
     </>
   );

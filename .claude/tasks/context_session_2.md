@@ -2317,6 +2317,69 @@ text-sm lg:text-base
 - Smooth responsive transitions between breakpoints
 - Better user experience across all devices
 
+## Mobile Navigation Auth Update (2025-10-04)
+
+### **Feature Implemented**
+Updated the mobile side navigation to conditionally show auth options based on user login status.
+
+### **Changes Made:**
+
+**When User is Signed In:**
+- Shows "My Page" button with user's name and avatar
+- Shows "Sign Out" button with red accent colors
+- Hides all other auth options
+
+**When User is Not Signed In:**
+- Shows nothing in the auth section (relies on top nav bar icons)
+
+**Files Updated:**
+1. **MobileMenu.tsx** - Added user prop and conditional rendering
+   - Imports: Added `LogOut`, `User` type, `signOut`, `getUserDisplayName`
+   - Props: Added `user: User | null`
+   - My Page button: Shows avatar with user initial and display name
+   - Sign Out button: Red themed with logout icon
+   - Conditional: `user ? <AuthButtons> : null`
+
+2. **TopNavBar.tsx** - Passed user state to MobileMenu
+   - Updated MobileMenu component call to include `user={user}` prop
+
+### **Visual Design:**
+
+**My Page Button:**
+- Avatar with user's first letter initial
+- Display name as button text
+- Gray color scheme matching navigation
+- Navigates to `/mypage` on click
+
+**Sign Out Button:**
+- Red color theme (text-red-600, bg-red-100)
+- Logout icon in circle
+- "Sign Out" text label
+- Calls `signOut()` and redirects to home
+
+### **User Flow:**
+1. User logs in
+2. Opens mobile menu (hamburger icon)
+3. Sees their name/avatar button (My Page)
+4. Sees red "Sign Out" button below
+5. No language switcher or sign in/up buttons shown
+6. Click My Page → Navigate to `/mypage`
+7. Click Sign Out → Sign out, redirect to home, refresh page
+
+### **Technical Implementation:**
+- Added `handleSignOut()` function with async sign out
+- Conditional rendering with ternary operator
+- Framer Motion animations maintained
+- Proper prop typing with TypeScript
+- Clean separation of signed-in vs signed-out states
+
+### **Result:**
+- Mobile navigation now shows only relevant auth options
+- Cleaner interface when logged in
+- Clear sign out functionality
+- Consistent with desktop navigation patterns
+- Better user experience for authenticated users
+
 ## Highlights Section Horizontal Scroll (2025-10-04)
 
 ### **Feature Implemented**
@@ -2455,3 +2518,574 @@ Added custom CSS utility in `globals.css`:
 - Smooth hover animations and transitions
 - Better mobile and desktop experience
 - Modern gallery-style presentation
+
+## About Us Page Design Research (2025-10-04)
+
+### **Research Completed**
+Conducted comprehensive research and created detailed design plan for the GRIGO Entertainment About Us page.
+
+### **Documentation Created**
+**File**: `/Volumes/EWL/Development/projects/grigoent_web/.claude/doc/about-us-page-design-plan.md`
+
+### **Design Plan Overview**
+
+**Page Structure** (7 Main Sections):
+1. **Hero Section** - Full-screen gradient background with company tagline and scroll indicator
+2. **Mission & Vision** - Two-column card layout with icons
+3. **Our Story** - Interactive timeline with alternating layout
+4. **Statistics** - Animated counter grid (4 key metrics)
+5. **Core Values** - 3-4 value cards with icons and descriptions
+6. **Team Section** - Optional founder/leader showcase
+7. **Call-to-Action** - Gradient CTA with primary action buttons
+
+### **Status**
+✅ Research completed
+✅ Design plan documented (70+ page comprehensive guide)
+✅ Component examples provided
+✅ Animation patterns defined
+✅ Responsive strategy outlined
+✅ i18n structure planned
+✅ Ready for implementation
+
+**Next Step**: Review the complete design plan at `.claude/doc/about-us-page-design-plan.md`
+
+## About Us Page Implementation (2025-10-04)
+
+### **Feature Implemented**
+Built comprehensive About Us page for GRIGO Entertainment with full bilingual support and modern design.
+
+### **Page Structure**
+
+**7 Main Sections:**
+
+1. **Hero Section**
+   - Full-screen layout with animated gradient background
+   - Large GRIGO title with gradient text effect
+   - Company tagline and subtitle
+   - Animated gradient orbs (purple and pink)
+   - Scroll indicator with bounce animation
+
+2. **Mission & Vision Section**
+   - Two-column card layout (responsive to 1 column on mobile)
+   - Mission card with Target icon and purple/pink gradient
+   - Vision card with Eye icon and blue/purple gradient
+   - Glass-morphism card design with backdrop blur
+
+3. **Statistics Section**
+   - 4-column grid (2 columns on mobile)
+   - Animated counters with viewport trigger
+   - Stats: 50+ Artists, 200+ Projects, 25+ Countries, 15+ Awards
+   - Large gradient text (purple to pink)
+   - Dark background stripe for visual separation
+
+4. **Core Values Section**
+   - 2-column grid (1 column on mobile)
+   - 4 values: Passion, Innovation, Collaboration, Excellence
+   - Each with custom gradient icon box
+   - Hover effect for subtle interaction
+   - Lucide React icons: Flame, Lightbulb, Users, Award
+
+5. **Our Story Timeline**
+   - Vertical timeline with gradient line (purple → pink → purple)
+   - 5 milestones from 2018 to 2025
+   - Alternating left/right layout on desktop
+   - Gradient dot markers with ring effect
+   - Responsive: all left-aligned on mobile
+
+6. **Call-to-Action Section**
+   - Full-width gradient card (purple → pink → purple)
+   - Rounded corners with overflow hidden
+   - Two CTA buttons: "Join Us Now" and "Contact Us"
+   - Links to /signup and /contact pages
+
+### **Features Implemented**
+
+**Animations:**
+- Hero fade-in and slide-up on mount
+- Scroll-triggered reveal animations for each section
+- Animated counter component using requestAnimationFrame
+- Infinite bounce animation for scroll indicator
+- Pulse animation for gradient orbs
+- Viewport-based animations with Framer Motion
+
+**Responsive Design:**
+- Mobile-first approach
+- Breakpoints: base, md (768px), lg (1024px)
+- Hero text scales: 6xl → 7xl → 8xl
+- Grid layouts adapt: 1 col → 2 cols → 4 cols
+- Timeline switches from left-only to alternating
+- Padding and spacing responsive
+
+**Internationalization:**
+- All content translated (Korean/English)
+- Translation keys added to LanguageContext
+- Dynamic content rendering with t() function
+- Covers: hero, mission, vision, story, values, stats, CTA
+
+**Visual Design:**
+- Consistent with Spotify-inspired dark theme
+- zinc-950 background throughout
+- Purple/pink gradient accents
+- Glass-morphism cards (zinc-900/50 with backdrop blur)
+- White/10 borders for subtle separation
+- White/70 text for secondary content
+
+### **Components & Libraries Used**
+
+**shadcn/ui Components:**
+- Card - for mission, vision, values, timeline
+- Separator - imported but not actively used
+
+**Lucide React Icons:**
+- Target, Eye - mission/vision
+- Flame, Lightbulb, Users, Award - core values
+- ChevronDown - scroll indicator
+
+**Framer Motion:**
+- motion.div for all animated sections
+- useInView hook for viewport detection
+- Scroll-triggered animations with viewport={{ once: true }}
+- Initial/whileInView/transition props
+
+**Custom Components:**
+- AnimatedCounter - viewport-triggered number animation
+- Uses requestAnimationFrame for smooth counting
+- Triggers when element enters viewport
+
+### **Technical Implementation**
+
+**File Structure:**
+- `/app/about/page.tsx` - main About Us page component
+- `/app/contexts/LanguageContext.tsx` - updated with aboutPage translations
+
+**Data Structure:**
+- milestones[] - timeline data from translations
+- values[] - core values with icons and gradients
+- stats[] - statistics with value, label, suffix
+
+**Animation Logic:**
+- AnimatedCounter uses useInView + useEffect
+- requestAnimationFrame for performance
+- Progress calculation over duration
+- Cleanup on unmount
+
+**Routing:**
+- CTA buttons use Next.js router.push()
+- Navigate to /signup and /contact
+- No hard page reloads
+
+### **Translation Keys Added**
+
+**Korean:**
+- aboutPage.hero.tagline/subtitle
+- aboutPage.mission.title/content
+- aboutPage.vision.title/content
+- aboutPage.story.title + 5 milestones (year/title/description)
+- aboutPage.stats.* (4 stat labels)
+- aboutPage.values.* (4 values with title/description)
+- aboutPage.cta.* (title/description/buttons)
+
+**English:**
+- Complete mirror translations for all Korean keys
+
+### **Responsive Breakpoints**
+
+**Typography:**
+- Hero title: text-6xl → md:text-7xl → lg:text-8xl
+- Section titles: text-4xl → md:text-5xl → lg:text-6xl
+- Mission/Vision title: text-3xl → md:text-4xl
+- Value cards: text-2xl → md:text-3xl
+
+**Layout:**
+- Mission/Vision grid: 1 col → lg:2 cols
+- Stats grid: 2 cols → lg:4 cols
+- Values grid: 1 col → md:2 cols
+- Timeline: left-only → md:alternating
+
+**Spacing:**
+- Section padding: py-24 → md:py-32
+- Card padding: p-6 → md:p-8
+- CTA padding: p-12 → md:p-16 → lg:p-20
+
+### **Visual Effects**
+
+**Gradients:**
+- Hero background: purple-900/20 → zinc-950 → pink-900/20
+- Hero title: white → purple-200 → pink-200
+- Timeline line: purple-500 → pink-500 → purple-500
+- Stat numbers: purple-400 → pink-400
+- CTA background: purple-600 → pink-600 → purple-700
+
+**Glass-morphism:**
+- Cards: bg-zinc-900/50 + backdrop-blur
+- Borders: border-white/10
+- Transparent overlays throughout
+
+**Hover States:**
+- Value cards: hover:bg-zinc-900/70
+- CTA buttons: hover:bg-white/90 and hover:bg-white/20
+
+### **Accessibility**
+
+**Best Practices:**
+- Semantic HTML structure
+- Proper heading hierarchy (h1 → h2 → h3)
+- Sufficient color contrast
+- Motion respects user preferences
+- Keyboard-accessible buttons
+
+### **Performance**
+
+**Optimizations:**
+- Viewport-based animations (once: true)
+- requestAnimationFrame for counters
+- Proper cleanup in useEffect
+- No unnecessary re-renders
+- Efficient Framer Motion usage
+
+### **User Experience**
+
+**Flow:**
+1. Hero grabs attention with large GRIGO title
+2. Mission/Vision establishes purpose
+3. Stats provide credibility
+4. Values show company culture
+5. Timeline tells company story
+6. CTA encourages action
+
+**Interactions:**
+- Scroll to see animations trigger
+- Numbers count up when visible
+- Cards hover for subtle feedback
+- CTA buttons navigate to signup/contact
+- Smooth transitions throughout
+
+### **Result**
+- ✅ Professional, modern About Us page
+- ✅ Full bilingual support (KO/EN)
+- ✅ Responsive across all devices
+- ✅ Smooth scroll-triggered animations
+- ✅ Consistent with existing design system
+- ✅ Clear storytelling and brand messaging
+- ✅ Effective CTAs for user conversion
+- ✅ Accessible and performant
+
+## Contact Us Page Implementation (2025-10-04)
+
+### **Feature Implemented**
+Built comprehensive Contact Us page with functional contact form, contact information, and social media links.
+
+### **Page Structure**
+
+**Main Sections:**
+
+1. **Hero Section**
+   - Large gradient title
+   - Subtitle with call to action
+   - Clean, centered layout
+   - Gradient text effect (white → purple → pink)
+
+2. **Two-Column Layout**
+   - Left: Contact form
+   - Right: Contact information and social links
+   - Responsive: Stacks to single column on mobile
+
+3. **Contact Form**
+   - 5 fields: Name, Email, Phone, Subject, Message
+   - Form validation (required fields)
+   - Loading state with spinner
+   - Success state with checkmark
+   - Error handling
+   - Auto-reset after submission
+   - Purple gradient submit button
+
+4. **Contact Information Cards**
+   - Email (with mailto: link)
+   - Phone (with tel: link)
+   - Address
+   - Business Hours
+   - Each with custom gradient icon
+   - Hover effects with scale animation
+
+5. **Social Media Links**
+   - Instagram
+   - YouTube
+   - External links with gradient icons
+   - Hover scale effects
+
+### **Features Implemented**
+
+**Form Functionality:**
+- Controlled inputs with React state
+- Form validation (HTML5 required attributes)
+- Submit handler with loading state
+- Success/error feedback
+- Auto-clear form after 3 seconds
+- Simulated submission (1.5s delay)
+- Disabled state during submission
+
+**Visual States:**
+- Idle: Send icon + "Send Message"
+- Submitting: Spinner + "Sending..."
+- Success: Checkmark + "Message sent successfully!"
+- Error: Alert icon + error message
+
+**Responsive Design:**
+- Mobile-first approach
+- Two-column → Single column on mobile
+- Form and info stack vertically
+- Proper spacing and padding adjustments
+- Hero text scales: 5xl → 6xl → 7xl
+
+**Animations:**
+- Hero fade-in on mount
+- Form slide from left
+- Info sidebar slide from right
+- Contact cards stagger animation
+- Social links stagger animation
+- Hover scale on info cards (110%)
+- Smooth transitions throughout
+
+**Internationalization:**
+- All content translated (Korean/English)
+- Form labels and placeholders
+- Button states (submit/sending/success)
+- Contact info labels
+- Error messages
+
+### **Components & Styling**
+
+**shadcn/ui Components:**
+- Card - for form and info card containers
+- Custom form inputs styled with Tailwind
+
+**Lucide React Icons:**
+- Mail, Phone, MapPin, Clock - contact info
+- Instagram, Youtube - social media
+- Send - submit button default
+- Check - success state
+- AlertCircle - error state
+
+**Gradient Themes:**
+- Email: purple-500 → pink-500
+- Phone: blue-500 → purple-500
+- Address: pink-500 → orange-500
+- Hours: green-500 → emerald-500
+- Instagram: purple-500 → pink-500 → orange-500
+- YouTube: red-500 → red-600
+- Submit button: purple-600 → pink-600
+
+**Form Inputs:**
+- Background: zinc-800/50
+- Border: white/10
+- Focus: purple-500 ring
+- Placeholder: white/40
+- Text: white
+
+### **Technical Implementation**
+
+**File Structure:**
+- `/app/contact/page.tsx` - main Contact page component
+- `/app/contexts/LanguageContext.tsx` - updated with contactPage translations
+
+**State Management:**
+```typescript
+- formData: { name, email, phone, subject, message }
+- isSubmitting: boolean
+- submitStatus: 'idle' | 'success' | 'error'
+```
+
+**Form Handling:**
+- handleChange: Updates formData state
+- handleSubmit: Prevents default, simulates submission, shows success
+- Auto-reset: Clears form 3s after success
+
+**Contact Info Data:**
+- Array of 4 contact methods
+- Each with icon, label, value, href, gradient
+- Map over array for rendering
+
+**Social Links Data:**
+- Array of 2 social platforms
+- Each with icon, name, href, gradient
+- External links open in new tab
+
+### **Translation Keys Added**
+
+**Korean:**
+- contactPage.hero.title/subtitle
+- contactPage.form.* (11 keys: title, fields, placeholders, states)
+- contactPage.info.* (9 keys: title, email, phone, address, hours)
+- contactPage.social.title/followUs
+
+**English:**
+- Complete mirror translations for all Korean keys
+
+### **Responsive Breakpoints**
+
+**Typography:**
+- Hero title: text-5xl → md:text-6xl → lg:text-7xl
+- Section titles: text-3xl → md:text-4xl
+- Form labels: text-sm
+- Contact info label: text-sm, value: base
+
+**Layout:**
+- Grid: 1 col → lg:2 cols
+- Gap: 12 (3rem)
+- Form padding: p-8 → md:p-10
+- Contact cards: Always full width in column
+
+**Spacing:**
+- Hero: pt-32 pb-16 → md:pt-40 md:pb-24
+- Main: pb-24 → md:pb-32
+- Form fields: space-y-6
+- Info cards: space-y-4
+- Social links: space-y-3
+
+### **User Experience**
+
+**Form Flow:**
+1. User fills out required fields (name, email, subject, message)
+2. Optional phone number
+3. Clicks "Send Message"
+4. Button shows spinner + "Sending..."
+5. After 1.5s, shows checkmark + "Message sent successfully!"
+6. Form clears after 3s
+7. Ready for new submission
+
+**Contact Info:**
+- Click email → Opens mailto: link
+- Click phone → Opens dialer (mobile)
+- Click address → No action (placeholder)
+- Click hours → No action (placeholder)
+- Hover → Card highlights, icon scales up
+
+**Social Media:**
+- Click → Opens in new tab
+- Instagram and YouTube links
+- Hover effects for feedback
+
+### **Accessibility**
+
+**Best Practices:**
+- Semantic HTML (form, label, input)
+- Proper label-input associations
+- Required field indicators
+- Focus states on inputs
+- Keyboard-accessible buttons
+- External link indicators (rel="noopener noreferrer")
+
+**Form Accessibility:**
+- All inputs have labels
+- Placeholders provide hints
+- Required fields marked
+- Error messages visible
+- Submit button states clear
+
+### **Future Enhancements**
+
+**Potential Additions:**
+- Real form submission to backend/email service
+- reCAPTCHA integration
+- File upload for attachments
+- Category/type dropdown
+- Google Maps integration
+- Live chat widget
+- More social platforms
+- Email validation feedback
+- Character count for message
+- Form field error states
+
+### **Result**
+- ✅ Professional contact form with validation
+- ✅ Full bilingual support (KO/EN)
+- ✅ Responsive two-column layout
+- ✅ Smooth animations and transitions
+- ✅ Clear contact information display
+- ✅ Social media integration
+- ✅ Loading and success states
+- ✅ Clean, modern design matching brand
+- ✅ Accessible form with proper labels
+- ✅ Hover effects for visual feedback
+
+## TopNavBar Visibility & Page Padding Updates (2025-10-04)
+
+### **Feature Implemented**
+Updated TopNavBar to show on all pages except artist detail pages, and added proper top padding to prevent content from being covered by the navbar.
+
+### **Changes Made**
+
+**TopNavBar Component:**
+- Modified visibility logic to only hide on artist detail pages (`/artists/[slug]`)
+- Now shows on artist list page (`/artists`)
+- Now shows on all other pages (home, about, contact, works, login, signup, mypage)
+
+**Logic Change:**
+```typescript
+// Before:
+const isArtistPage = pathname?.startsWith('/artists');
+if (isArtistPage) return null;
+
+// After:
+const isArtistDetailPage = pathname?.startsWith('/artists/');
+if (isArtistDetailPage) return null;
+```
+
+**Pages Updated with Top Padding:**
+
+1. **About Us Page** - `pt-20 md:pt-24`
+2. **Contact Us Page** - `pt-20 md:pt-24` (also adjusted hero section padding)
+3. **Artists List Page** - `pt-20 md:pt-24`
+4. **Works Page** - `pt-20 md:pt-24` (also changed bg to `bg-primary`)
+5. **Login Page** - `pt-20 md:pt-24` (also changed bg to `bg-primary`)
+6. **Signup Page** - `pt-20 md:pt-24` (also changed bg to `bg-primary`)
+7. **My Page** - `pt-20 md:pt-24` (loading state and main container, also changed bg to `bg-primary`)
+
+**Padding Strategy:**
+- Mobile: `pt-20` (5rem / 80px)
+- Desktop: `md:pt-24` (6rem / 96px)
+- Matches typical navbar height + comfortable spacing
+
+**Background Color Updates:**
+- Changed all pages from `bg-zinc-950` to `bg-primary` for consistency
+- Works page, Login page, Signup page, My page all now use primary background
+
+### **Files Modified**
+
+1. **TopNavBar.tsx**
+   - Line 33-37: Updated visibility logic
+   - Now uses `pathname?.startsWith('/artists/')` instead of `/artists`
+
+2. **about/page.tsx**
+   - Added `pt-20 md:pt-24` to main element
+
+3. **contact/page.tsx**
+   - Added `pt-20 md:pt-24` to main element
+   - Adjusted hero section from `pt-32` to `pt-12`, `pt-40` to `pt-16`
+
+4. **artists/page.tsx**
+   - Added `pt-20 md:pt-24` to motion.div container
+
+5. **works/page.tsx**
+   - Added `pt-20 md:pt-24` to main element
+   - Changed `bg-zinc-950` to `bg-primary`
+
+6. **login/page.tsx**
+   - Added `pt-20 md:pt-24` to main element
+   - Changed `bg-zinc-950` to `bg-primary`
+
+7. **signup/page.tsx**
+   - Added `pt-20 md:pt-24` to main element
+   - Changed `bg-zinc-950` to `bg-primary`
+
+8. **mypage/page.tsx**
+   - Added `pt-20 md:pt-24` to loading state and main container
+   - Changed `bg-zinc-950` to `bg-primary`
+
+### **Result**
+- ✅ TopNavBar now visible on all pages except artist detail pages
+- ✅ All pages have proper top padding to prevent navbar overlap
+- ✅ Consistent primary background across all pages
+- ✅ Responsive padding (smaller on mobile, larger on desktop)
+- ✅ Clean navigation experience throughout the app
+

@@ -95,7 +95,7 @@ export default function SignUpPage() {
   };
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white flex items-center justify-center px-6 py-12">
+    <main className="min-h-screen bg-primary text-white flex items-center justify-center px-6 py-12 pt-20 md:pt-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}

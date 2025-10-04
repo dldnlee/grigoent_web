@@ -2,18 +2,21 @@
 
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
-import { Globe, User, X } from 'lucide-react';
+import { LogOut, UserCircle2, X } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import type { User } from '@supabase/supabase-js';
+import { signOut, getUserDisplayName } from '@/app/utils/auth';
 
 interface MobileMenuProps {
   isOpen: boolean;
   onClose: () => void;
   navItems: Array<{ name: string; href: string; type: string }>;
+  user?: User | null;
 }
 
-export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, navItems, user }: MobileMenuProps) {
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -43,6 +46,13 @@ export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProp
         element.scrollIntoView({ behavior: 'smooth' });
       }
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    onClose();
+    router.push('/');
+    router.refresh();
   };
 
   return (
@@ -92,47 +102,51 @@ export default function MobileMenu({ isOpen, onClose, navItems }: MobileMenuProp
 
           <Separator className="mx-6" />
 
-          {/* Language & Auth Section */}
+          {/* Auth Section - Conditional rendering based on user state */}
           <motion.div
             className="px-6 py-6 space-y-4"
             variants={containerVariants}
             initial="hidden"
             animate={isOpen ? "visible" : "hidden"}
           >
-            {/* Language Switcher */}
-            <motion.button
-              variants={itemVariants}
-              className="w-full flex items-center space-x-3 py-3 px-4 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                <Globe className="w-4 h-4 text-gray-600" />
-              </div>
-              <span className="font-medium">Language: English</span>
-            </motion.button>
+            {user ? (
+              // Signed in: Show My Page and Sign Out
+              <>
+                {/* My Page Button */}
+                <motion.button
+                  variants={itemVariants}
+                  onClick={() => {
+                    onClose();
+                    router.push('/mypage');
+                  }}
+                  className="w-full flex items-center space-x-3 py-3 px-4 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Avatar className="w-8 h-8">
+                    <AvatarFallback className="bg-gray-100 text-gray-900">
+                      {getUserDisplayName(user).charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">{getUserDisplayName(user)}</span>
+                </motion.button>
 
-            {/* Sign In Button */}
-            <motion.button
-              variants={itemVariants}
-              className="w-full flex items-center space-x-3 py-3 px-4 rounded-lg text-gray-600 hover:text-gray-900 hover:bg-gray-50 transition-all duration-200"
-              whileTap={{ scale: 0.98 }}
-            >
-              <Avatar className="w-8 h-8">
-                <AvatarFallback className="bg-gray-100">
-                  <User className="w-4 h-4 text-gray-600" />
-                </AvatarFallback>
-              </Avatar>
-              <span className="font-medium">Sign In</span>
-            </motion.button>
-
-            {/* Sign Up Button */}
-            <motion.button
-              variants={itemVariants}
-              className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 active:scale-[0.98]"
-              whileTap={{ scale: 0.98 }}
-            >
-              Sign Up
-            </motion.button>
+                {/* Sign Out Button */}
+                <motion.button
+                  variants={itemVariants}
+                  onClick={handleSignOut}
+                  className="w-full flex items-center space-x-3 py-3 px-4 rounded-lg text-red-600 hover:text-red-700 hover:bg-red-50 transition-all duration-200"
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <div className="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                    <LogOut className="w-4 h-4 text-red-600" />
+                  </div>
+                  <span className="font-medium">Sign Out</span>
+                </motion.button>
+              </>
+            ) : (
+              // Not signed in: Show Sign In and Sign Up (kept empty to only show when logged in)
+              null
+            )}
           </motion.div>
         </div>
       </SheetContent>

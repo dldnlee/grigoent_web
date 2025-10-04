@@ -3,6 +3,7 @@
 import { ChevronDown } from 'lucide-react';
 import { motion, useInView, useMotionValue, useTransform, animate } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
 function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suffix?: string; delay?: number }) {
@@ -34,6 +35,7 @@ function AnimatedCounter({ value, suffix = '', delay = 0 }: { value: number; suf
 
 export default function Hero() {
   const { t } = useLanguage();
+  const router = useRouter();
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -59,12 +61,12 @@ export default function Hero() {
   return (
     <section className="min-h-screen bg-primary text-primary-foreground flex items-center relative overflow-hidden w-full">
       {/* Gradient Background Effect */}
-      <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute top-10 left-4 w-48 h-48 sm:w-64 sm:h-64 lg:top-20 lg:left-20 lg:w-96 lg:h-96 bg-gradient-to-br from-pink-500 to-purple-600 rounded-full blur-2xl lg:blur-3xl animate-pulse"></div>
         <div className="absolute bottom-10 right-8 w-40 h-40 sm:w-56 sm:h-56 lg:bottom-20 lg:right-20 lg:w-80 lg:h-80 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full blur-2xl lg:blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-gradient-to-br from-pink-400 to-purple-400 rounded-full blur-2xl lg:blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
-      <div className="container mx-auto px-6 lg:px-12">
+      <div className="container mx-auto px-6 lg:px-12 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
           {/* Left Side - Content */}
           <motion.div
@@ -153,11 +155,12 @@ export default function Hero() {
 
             {/* CTA Button */}
             <motion.div
-              className="pt-4"
+              className="pt-4 relative z-10"
               variants={itemVariants}
             >
               <motion.button
-                className="border border-primary-foreground/30 text-primary-foreground px-8 py-4 sm:px-10 sm:py-4 md:px-12 md:py-5 rounded-full hover:bg-primary-foreground hover:text-primary active:bg-primary-foreground/90 transition-all duration-300 font-medium text-base sm:text-lg md:text-xl min-h-[44px] w-full sm:w-auto"
+                onClick={() => router.push('/signup')}
+                className="border border-primary-foreground/30 text-primary-foreground px-8 py-4 sm:px-10 sm:py-4 md:px-12 md:py-5 rounded-full hover:bg-primary-foreground hover:text-primary active:bg-primary-foreground/90 transition-all duration-300 font-medium text-base sm:text-lg md:text-xl min-h-[44px] w-full sm:w-auto cursor-pointer"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
