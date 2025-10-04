@@ -283,11 +283,16 @@ export default function ArtistProfilePage() {
   if (artist && profileType === 'artist') {
     return (
       <div className="min-h-screen text-white bg-black">
-          {/* Back Button */}
-          <div className="px-4 pt-6 pb-4">
+          <div className='relative w-full'>
+            <img src={artist.profile_image || ""} alt={artist.name} className='w-full'/>
+
+            {/* Gradient overlay for back button */}
+            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black to-transparent" />
+
+            {/* Back Button */}
             <button
               onClick={() => router.push('/artists')}
-              className="flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+              className="absolute top-6 left-4 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -304,28 +309,13 @@ export default function ArtistProfilePage() {
               </svg>
               <span className="text-sm">Back</span>
             </button>
-          </div>
 
-          <div className='relative w-full mb-20'>
-            <img src={artist.profile_image} alt={artist.name} className='w-full'/>
             <h1 className="text-4xl font-bold mb-4 absolute bottom-2 right-10">{artistName}</h1>
           </div>
-        <div className="px-4 flex flex-col gap-4">
-
-          {/* Profile Data */}
-
-          {/* Available data for UI building */}
-          {/* <div className="space-y-4 text-sm text-white/40 mb-8">
-            <p>Artist ID: {artist.id}</p>
-            <p>Profile Image: {artist.profile_image || 'N/A'}</p>
-            <p>Instagram: {artist.instagram_url || 'N/A'}</p>
-            <p>YouTube: {artist.youtube_url || 'N/A'}</p>
-            <p>Twitter: {artist.twitter_url || 'N/A'}</p>
-          </div> */}
-
+        <div className="px-4 flex flex-col gap-8">
           {/* Teams */}
           {teams.length > 0 && (
-            <div className="mb-8">
+            <div className="">
               <h2 className="text-xl font-bold text-white mb-3">Teams</h2>
               <div className="space-y-4">
                 {teams.map((team) => {
@@ -395,7 +385,7 @@ export default function ArtistProfilePage() {
 
           {/* Artist Introduction */}
           {artist.introduction && (
-            <div className="mb-8">
+            <div className="">
               <h2 className="text-2xl font-bold mb-4">About</h2>
               <p className="text-white/80">{artist.introduction}</p>
             </div>
@@ -403,7 +393,7 @@ export default function ArtistProfilePage() {
 
           {/* Highlights */}
           {featuredWorks.length > 0 && (
-            <div className="mb-8">
+            <div className="">
               <h2 className="text-xl font-bold text-white mb-3">Highlights</h2>
               <div className="space-y-3">
                 {featuredWorks.slice(0, 3).map((work) => {
@@ -468,7 +458,7 @@ export default function ArtistProfilePage() {
 
           {/* Choreography Works */}
           {choreographyWorks.length > 0 && (
-            <div className="mb-8">
+            <div className="">
               <h2 className="text-xl font-bold text-white mb-3">Choreographies</h2>
               <div className="space-y-3">
                 {choreographyWorks.slice(0, showAllChoreography ? choreographyWorks.length : 5).map((work) => {
@@ -545,8 +535,8 @@ export default function ArtistProfilePage() {
 
           {/* Performance Works */}
           {performanceWorks.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-white mb-3">공연</h2>
+            <div className="">
+              <h2 className="text-xl font-bold text-white mb-3">Performances</h2>
               <div className="space-y-3">
                 {performanceWorks.slice(0, showAllPerformance ? performanceWorks.length : 5).map((work) => {
                   const workDate = work.single_date
@@ -624,7 +614,7 @@ export default function ArtistProfilePage() {
           {workshopWorks.length > 0 && (
             <div className="mb-8">
               <h2 className="text-xl font-bold text-white mb-3">Classes</h2>
-              <div className="space-y-3">
+              <div className="space-y-1">
                 {workshopWorks.slice(0, showAllWorkshop ? workshopWorks.length : 5).map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
@@ -646,7 +636,7 @@ export default function ArtistProfilePage() {
                         {work.title}
                       </h3>
                       <p className="text-white/60 text-sm">
-                        {workDate}
+                        {work.description}
                       </p>
                     </div>
                   );
@@ -666,15 +656,14 @@ export default function ArtistProfilePage() {
           )}
 
           {/* All Career Entries */}
-          {careerEntries.length > 0 && (
+          {/* {careerEntries.length > 0 && (
             <div className="mb-8">
               <h2 className="text-2xl font-bold mb-4">All Works ({careerEntries.length})</h2>
-              {/* Build your works UI here */}
               <pre className="text-xs text-white/40 overflow-auto max-h-96">
                 {JSON.stringify(careerEntries.slice(0, 5), null, 2)}
               </pre>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     );
