@@ -1310,3 +1310,1148 @@ Redesigned the Teams section in artist profile to show team image with badge, na
 - Good visual hierarchy
 - Clickable cards for navigation
 - Consistent with overall design system
+
+## Artist Profile Back Button Update (2025-10-04)
+
+### **Feature Implemented**
+Moved the back button inside the profile image section with a gradient overlay for better visual integration.
+
+### **Key Changes:**
+
+**Layout:**
+- Back button now positioned absolutely inside the profile image container
+- Gradient overlay (`bg-gradient-to-b from-black to-transparent`) at the top of the image
+- Button positioned at `top-6 left-4` with `z-10` to appear above gradient
+
+**Visual Design:**
+- Gradient creates smooth black-to-transparent fade from top
+- Ensures good contrast for the back button
+- Button text remains white/70 with hover to white
+- Same chevron icon and "Back" text
+
+**Technical Implementation:**
+- Removed separate back button section above image
+- Added gradient div as absolute overlay (h-32 height)
+- Back button uses absolute positioning within image container
+- z-index ensures proper layering
+
+**Result:**
+- Better visual integration with profile image
+- Cleaner, more immersive layout
+- Professional appearance matching modern design patterns
+- Improved use of space
+
+## Automatic User Record Creation (2025-10-04)
+
+### **Feature Implemented**
+Created database trigger to automatically create a record in `public.users` table whenever a new user signs up via Supabase Auth.
+
+### **Database Trigger:**
+
+**Migration:** `create_user_on_signup`
+
+**Function:** `public.handle_new_user()`
+- Triggered AFTER INSERT on `auth.users`
+- Extracts user data from auth record
+- Creates corresponding record in `public.users`
+
+**Data Mapping:**
+1. **ID**: Uses same UUID as auth user (`NEW.id`)
+2. **Name**: Extracts from `raw_user_meta_data->>'name'` or uses email username
+3. **Email**: Uses auth user's email (`NEW.email`)
+4. **Slug**: Generated from email username (sanitized and made unique)
+5. **Type**: Defaults to 'general'
+6. **Name_en**: Defaults to same as name (can be updated later)
+
+**Slug Generation:**
+- Base slug from email username (before @ symbol)
+- Sanitized: lowercase, non-alphanumeric replaced with hyphens
+- Uniqueness: Appends counter if slug already exists (-1, -2, etc.)
+
+**Permissions:**
+- Function runs with SECURITY DEFINER
+- Grants INSERT permission on public.users to authenticated role
+- Grants USAGE on public schema
+
+### **Integration:**
+
+**Signup Flow:**
+1. User signs up via `/signup` page
+2. Supabase Auth creates user in `auth.users`
+3. Trigger automatically fires
+4. New record created in `public.users` with same ID
+5. User can immediately be linked to profile data
+
+**Signup Page:**
+- Already passes user name to metadata (`options.data.name`)
+- Name is captured during signup and stored in auth metadata
+- Trigger extracts this name for public user record
+
+**Google OAuth:**
+- Also supported through the trigger
+- Uses Google profile name if available
+- Falls back to email username
+
+### **Technical Details:**
+
+**Error Handling:**
+- Uses COALESCE for fallback values
+- Ensures slug uniqueness with WHILE loop
+- SECURITY DEFINER allows trigger to write to public.users
+
+**Benefits:**
+1. Automatic profile creation - no manual intervention needed
+2. Consistent user records across auth and public schemas
+3. Same ID linking makes queries simple
+4. Slug generation ensures unique, URL-friendly identifiers
+5. Supports both email/password and OAuth signup
+
+**Database Objects Created:**
+- Function: `public.handle_new_user()`
+- Trigger: `on_auth_user_created` on `auth.users`
+- Permissions: USAGE on schema, INSERT on users table
+
+### **Result:**
+- Seamless user onboarding experience
+- Every auth user automatically gets a public profile record
+- Ready for future profile customization
+- Supports all authentication methods
+- Maintains data consistency between auth and public schemas
+
+## TopNavBar My Page Button (2025-10-04)
+
+### **Feature Implemented**
+Updated TopNavBar to show a "My Page" button with the logged-in user's name instead of Sign In/Sign Up buttons when authenticated.
+
+### **Changes Made:**
+
+**Desktop Navigation:**
+- **When Not Logged In**: Shows "Sign In" button (icon + text) and "Sign Up" button (black background)
+- **When Logged In**: Shows single "My Page" button with user's name as the label
+  - Same black background styling as Sign Up button
+  - Navigates to `/mypage` route on click
+  - Displays user's display name from auth metadata or email
+
+**Mobile Navigation:**
+- **When Not Logged In**: Shows UserCircle icon that links to login
+- **When Logged In**: Shows user avatar (first letter of name) that links to `/mypage`
+
+**Code Cleanup:**
+- Removed unused `showUserMenu` state
+- Removed unused `handleSignOut` function
+- Removed unused `LogOut` icon import
+- Removed dropdown menu code
+- Simplified authentication UI logic
+
+### **Visual Changes:**
+
+**Desktop:**
+- Logged in users see: `[Language Toggle] [User Name]` (black button)
+- Logged out users see: `[Language Toggle] [👤 Sign In] [Sign Up]` (black button)
+
+**Mobile:**
+- Logged in users see: `[Language Icon] [Avatar] [Hamburger]`
+- Logged out users see: `[Language Icon] [User Icon] [Hamburger]`
+
+### **Technical Implementation:**
+- Button navigates to `/mypage` route (to be created)
+- Uses `getUserDisplayName(user)` to get display name
+- Same button styling as Sign Up for consistency
+- Clean conditional rendering: `user ? <MyPageButton /> : <AuthButtons />`
+
+### **User Flow:**
+1. User signs up/logs in
+2. TopNavBar updates automatically (via useEffect checking auth state)
+3. Sign In/Sign Up buttons replaced with "My Page" button
+4. Button shows user's name as label
+5. Click navigates to personal profile/dashboard at `/mypage`
+
+### **Next Steps:**
+- Create `/mypage` route for user profile/dashboard
+- Implement My Page content (profile info, settings, logout)
+- Add auth state refresh on navigation between pages
+
+## My Page Implementation (2025-10-04)
+
+### **Feature Implemented**
+Created comprehensive My Page for authenticated users to manage their profile and career entries, with add/delete functionality for each category.
+
+### **Page Structure:**
+
+**Route:** `/app/mypage/page.tsx`
+
+**Main Sections:**
+1. **Header** - Sticky header with page title, user name, and sign out button
+2. **Profile Section** - User avatar, name, email, and account type
+3. **Career Entries** - Organized by category with add/delete functionality
+
+### **Features:**
+
+**Authentication:**
+- Redirects to `/login` if not authenticated
+- Fetches user data from `public.users` table
+- Uses auth user ID to link data
+
+**Profile Display:**
+- Shows user avatar (profile image or initial in gradient circle)
+- Displays name, email, and account type
+- Clean card-based layout with dark theme
+
+**Career Entries Management:**
+
+**Display by Category:**
+- 5 categories: Choreography, Performance, Advertisement, TV, Workshop
+- Each category shows count of entries
+- Empty state when no entries exist
+- Entries sorted by creation date (newest first)
+
+**Entry Information Shown:**
+- Title (with featured badge if applicable)
+- Description
+- Date (single date or date range)
+- Country
+- Delete button
+
+**Add Entry Modal:**
+- Full-screen modal with form
+- Category selection (pre-filled if opened from category button)
+- Required fields: Category, Title
+- Optional fields: Description, Video URL, Poster URL
+- Date type selection: Single date or Date range
+- Featured checkbox
+- Country field (defaults to 'Korea')
+
+**Add Entry Buttons:**
+- Global "Add Entry" button in header
+- Per-category "Add {Category}" buttons
+- Opens modal with category pre-selected
+
+**Delete Functionality:**
+- Trash icon on each entry
+- Confirmation dialog before deletion
+- Removes from database and updates UI instantly
+
+### **Technical Implementation:**
+
+**State Management:**
+- `user` - Current user profile data
+- `careerEntries` - All career entries array
+- `showAddModal` - Modal visibility
+- `selectedCategory` - Pre-selected category for modal
+- `formData` - Form input values
+
+**Database Operations:**
+- **Fetch user**: Query `users` table by auth ID
+- **Fetch entries**: Query `career_entries` table by user_id
+- **Insert entry**: Add to `career_entries` table
+- **Delete entry**: Remove from `career_entries` table
+
+**Form Validation:**
+- Title is required
+- Category is required
+- Other fields optional
+- Submit button disabled if required fields empty
+
+**UI/UX Features:**
+- Dark theme (zinc-950 background)
+- Sticky header with backdrop blur
+- Modal with backdrop blur overlay
+- Hover states on entries and buttons
+- Loading spinner while fetching data
+- Responsive layout with max-width container
+
+### **Categories:**
+
+```typescript
+const CATEGORIES = [
+  { value: 'choreography', label_en: 'Choreography', label_ko: '안무' },
+  { value: 'performance', label_en: 'Performance', label_ko: '공연' },
+  { value: 'advertisement', label_en: 'Advertisement', label_ko: '광고' },
+  { value: 'tv', label_en: 'TV', label_ko: 'TV' },
+  { value: 'workshop', label_en: 'Workshop', label_ko: '워크샵' },
+];
+```
+
+### **Data Structure:**
+
+**CareerEntry Interface:**
+- id, category, title, description
+- video_url, poster_url, is_featured
+- country, date_type (single/range)
+- single_date, start_date, end_date
+- linked_user_id, created_at
+
+**User Interface:**
+- id, name, name_en, email
+- profile_image, type
+
+### **User Flow:**
+
+1. User clicks their name button in TopNavBar
+2. Navigates to `/mypage`
+3. Sees profile info and career entries organized by category
+4. Clicks "Add Entry" or category-specific add button
+5. Fills out modal form
+6. Submits to add entry to database
+7. Entry appears in appropriate category section
+8. Can delete entries with trash icon
+
+### **Bilingual Support:**
+- Page title: "My Page" / "마이 페이지"
+- Sign out: "Sign Out" / "로그아웃"
+- Profile: "Profile" / "프로필"
+- Career Entries: "Career Entries" / "경력"
+- Add Entry: "Add Entry" / "추가"
+- Empty states in Korean/English
+- Category labels in Korean/English
+
+### **Design Highlights:**
+- Consistent with artist profile page dark theme
+- Clean card-based layout
+- Featured badge for highlighted entries
+- Smooth transitions and hover effects
+- Professional modal design with overflow scroll
+- Icon buttons for actions (Plus, Trash, X)
+
+### **Next Enhancements:**
+- Edit functionality for existing entries
+- Image upload for profile picture
+- Profile information editing
+- Linked artist selection in form
+- Entry filtering and search
+- Export career data
+- Privacy settings
+
+## Artist Profile Placeholder Image (2025-10-04)
+
+### **Feature Implemented**
+Added a placeholder/filler image display for artist profiles when no profile image is available.
+
+### **Implementation:**
+
+**Conditional Rendering:**
+- If `artist.profile_image` exists: Display the actual image
+- If no image: Show gradient placeholder with artist initial
+
+**Placeholder Design:**
+- **Container**: 500px height with gradient background (purple-900 → zinc-900 → zinc-950)
+- **Avatar Circle**: 128px (w-32 h-32) rounded-full with gradient (purple-500 → pink-500)
+- **Initial**: First letter of artist name in 6xl font size, bold, centered
+- **Label**: "No profile image" text in white/40 opacity below avatar
+
+**Visual Hierarchy:**
+```
+┌─────────────────────────────────────┐
+│  Gradient Background (500px)        │
+│                                     │
+│          ┌───────────┐              │
+│          │     A     │  ← Initial   │
+│          └───────────┘              │
+│       No profile image              │
+│                                     │
+└─────────────────────────────────────┘
+```
+
+**Gradient Colors:**
+- Background: `from-purple-900 via-zinc-900 to-zinc-950`
+- Avatar: `from-purple-500 to-pink-500`
+- Matches overall dark theme aesthetic
+
+**Back Button Integration:**
+- Gradient overlay still works correctly
+- Back button positioned above placeholder
+- z-index maintained for proper layering
+
+**Artist Name Display:**
+- Name still shows at bottom right
+- Positioned absolutely as before
+- Works with both image and placeholder
+
+### **Technical Details:**
+
+**Conditional Logic:**
+```typescript
+{artist.profile_image ? (
+  <img src={artist.profile_image} alt={artist.name} className='w-full object-cover'/>
+) : (
+  <div className="w-full h-[500px] bg-gradient-to-br...">
+    {/* Placeholder content */}
+  </div>
+)}
+```
+
+**CSS Classes Used:**
+- Container: `w-full h-[500px] bg-gradient-to-br flex items-center justify-center`
+- Avatar: `w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br flex items-center justify-center text-6xl font-bold`
+- Label: `text-white/40 text-sm`
+
+### **Benefits:**
+- Professional appearance even without profile image
+- Consistent height and layout
+- Clear visual indication of missing image
+- Maintains brand aesthetic with gradient colors
+- Shows artist initial for easy identification
+- No broken images or empty space
+
+### **Result:**
+- Artists without profile images now have beautiful placeholder
+- Gradient design matches overall Spotify-inspired theme
+- Large initial makes profile easily identifiable
+- Clean, modern fallback UI
+
+## Responsive Desktop Layout for Artist Profile (2025-10-04)
+
+### **Feature Implemented**
+Transformed the mobile-first artist profile page into a fully responsive layout optimized for desktop viewing with proper grid structure and spacing.
+
+### **Layout Structure:**
+
+**Mobile (Default):**
+- Single column stacked layout
+- Full-width sections
+- Compact spacing (px-4, py-8)
+
+**Desktop (lg breakpoint - 1024px+):**
+- Two-column grid layout (1:2 ratio)
+- Left sidebar (1 column): Teams, About, Highlights
+- Right main content (2 columns): Work sections
+- Wide max-width container (max-w-7xl)
+- Generous spacing (px-8, py-12)
+
+### **Responsive Breakpoints:**
+
+**Hero Image:**
+- Mobile: 400px height
+- Tablet (md): 500px height
+- Desktop (lg): 600px height
+- Responsive `object-cover` for proper scaling
+
+**Artist Name:**
+- Mobile: text-3xl, bottom-4, left-4
+- Tablet (md): text-4xl, left-8
+- Desktop (lg): text-5xl, bottom-8
+- Positioned absolutely for overlay effect
+
+**Back Button:**
+- Mobile: left-4
+- Desktop: left-8
+- Consistent positioning across breakpoints
+
+**Container Padding:**
+- Mobile: px-4, py-8
+- Desktop: px-8, py-12
+- Max-width: 7xl (1280px)
+
+### **Grid Layout:**
+
+**Desktop Structure:**
+```
+┌─────────────────────────────────────────┐
+│         Hero Image (full width)         │
+│         with back button & name         │
+├───────────────┬─────────────────────────┤
+│   Sidebar     │    Main Content         │
+│  (1 column)   │    (2 columns)          │
+│               │                         │
+│  - Teams      │  - Choreographies       │
+│  - About      │  - Performances         │
+│  - Highlights │  - Classes              │
+│               │                         │
+└───────────────┴─────────────────────────┘
+```
+
+**Grid Classes:**
+- Container: `grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12`
+- Sidebar: `lg:col-span-1 space-y-8`
+- Main: `lg:col-span-2 space-y-8`
+
+### **Section Improvements:**
+
+**Headings:**
+- Mobile: text-xl
+- Desktop: text-2xl (md:text-2xl)
+- Better hierarchy and readability
+
+**Spacing:**
+- Consistent `space-y-8` between major sections
+- `mb-3` to `mb-4` for desktop heading margins
+- `leading-relaxed` for about section text
+
+**Buttons:**
+- Added border styling: `border border-white/10`
+- Hover state: `hover:border-white/20`
+- Better visual feedback
+
+**Work Cards:**
+- Improved padding and spacing for desktop
+- Better hover states
+- Maintained mobile-friendly touch targets
+
+### **Responsive Features:**
+
+**Image Heights:**
+- Responsive hero image with proper aspect ratios
+- Maintains visual impact across devices
+- `object-cover` prevents distortion
+
+**Typography Scale:**
+- Scales smoothly from mobile to desktop
+- Better readability on larger screens
+- Proper text hierarchy
+
+**Grid Behavior:**
+- Single column mobile (stacked)
+- Two-column desktop (sidebar + main)
+- Smooth transition at lg breakpoint
+
+**Content Organization:**
+- Sidebar content (Teams, About, Highlights) easy to scan
+- Main works content gets more space on desktop
+- Logical content grouping
+
+### **Technical Implementation:**
+
+**Tailwind Breakpoints Used:**
+- `md:` - 768px (tablet)
+- `lg:` - 1024px (desktop)
+- Mobile-first approach
+
+**Key Classes:**
+- `max-w-7xl mx-auto` - Centered wide container
+- `grid grid-cols-1 lg:grid-cols-3` - Responsive grid
+- `lg:col-span-1` / `lg:col-span-2` - Column distribution
+- `space-y-8` - Vertical spacing
+- `gap-8 lg:gap-12` - Responsive grid gaps
+
+### **Benefits:**
+
+**Desktop Experience:**
+- Better use of horizontal space
+- Easier content scanning
+- More professional appearance
+- Reduced scrolling for works sections
+
+**Maintained Mobile:**
+- Still mobile-first and touch-friendly
+- No desktop-only features
+- Consistent experience across devices
+
+**Performance:**
+- No JavaScript layout changes
+- Pure CSS responsive design
+- Fast rendering with Tailwind
+
+**Accessibility:**
+- Proper heading hierarchy maintained
+- Readable text sizes across devices
+- Good contrast and spacing
+
+### **Result:**
+- Professional desktop layout with sidebar + main content structure
+- Smooth responsive behavior from mobile to desktop
+- Better information architecture for larger screens
+- Consistent spacing and typography scale
+- Optimal content distribution across screen sizes
+
+## Artists Page Mobile Grid (2025-10-04)
+
+### **Feature Implemented**
+Updated the artists listing page to display artist cards in a 2-column grid on mobile devices for better space utilization.
+
+### **Changes Made:**
+
+**Grid Configuration:**
+- **Mobile (default)**: `grid-cols-2` - 2 columns
+- **Small (sm)**: `grid-cols-2` - 2 columns (same as mobile)
+- **Large (lg)**: `grid-cols-3` - 3 columns
+- **Extra Large (xl)**: `grid-cols-4` - 4 columns
+- **2XL**: `grid-cols-5` - 5 columns
+
+**Gap Spacing:**
+- **Mobile**: `gap-4` - Smaller gap for mobile
+- **Desktop (md+)**: `gap-6` - Larger gap for desktop
+
+**File Updated:**
+- `/app/artists/components/DancerGrid.tsx`
+
+### **Before:**
+```typescript
+className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6"
+```
+
+### **After:**
+```typescript
+className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6"
+```
+
+### **Benefits:**
+
+**Mobile Experience:**
+- Better use of horizontal screen space
+- Shows 2 cards side-by-side instead of 1
+- Reduced scrolling on mobile devices
+- More content visible at once
+
+**Responsive Design:**
+- Consistent 2-column layout on mobile and small tablets
+- Scales up to 3, 4, 5 columns on larger screens
+- Adaptive gap spacing (smaller on mobile, larger on desktop)
+
+**Visual Impact:**
+- More gallery-like presentation on mobile
+- Better balance between card size and readability
+- Consistent with modern mobile app patterns
+
+### **Applied To:**
+- Loading skeleton state
+- Actual grid rendering
+- Both dancer and team cards
+
+### **Result:**
+- Mobile users now see 2 cards per row
+- Better utilization of mobile screen space
+- Improved browsing experience on small devices
+- Smoother responsive scaling across all breakpoints
+
+## Display Order Integration (2025-10-04)
+
+### **Feature Implemented**
+Updated artist and team fetching to use the `display_order_items` table for consistent, centralized ordering across the application.
+
+### **Problem Solved:**
+Previously, the code was ordering by the `display_order` column in the `users` and `teams` tables. However, there's a separate `display_order_items` table that provides unified ordering for both artists and teams together.
+
+### **Database Structure:**
+
+**display_order_items table:**
+- `id`: UUID
+- `item_type`: 'artist' or 'team'
+- `item_id`: Reference to user or team ID
+- `display_order`: Integer for ordering
+- `created_at`, `updated_at`: Timestamps
+
+This allows artists and teams to be ordered together in a unified list.
+
+### **Implementation Changes:**
+
+**File Updated:** `/app/artists/utils/supabase.ts`
+
+**Functions Modified:**
+1. `fetchDancers()` - Fetch all dancers with proper ordering
+2. `fetchTeams()` - Fetch all teams with proper ordering
+3. `fetchFeaturedDancers()` - Fetch limited dancers for homepage
+
+### **New Logic Flow:**
+
+**For Dancers/Artists:**
+1. Query `display_order_items` table for `item_type = 'artist'`
+2. Order by `display_order` ascending
+3. Get list of ordered IDs
+4. Fetch users from `users` table using those IDs
+5. Re-sort users to match the display_order_items order
+6. Map to Dancer objects
+
+**For Teams:**
+1. Query `display_order_items` table for `item_type = 'team'`
+2. Order by `display_order` ascending
+3. Get list of ordered IDs
+4. Fetch teams from `teams` table using those IDs
+5. Re-sort teams to match the display_order_items order
+6. Fetch team members for each team
+7. Map to Team objects
+
+**Fallback Handling:**
+- If `display_order_items` query fails → fetch directly from users/teams table
+- If no items in `display_order_items` → fetch all dancers/teams
+- Error handling with console logging
+
+### **Technical Details:**
+
+**Key Code Pattern:**
+```typescript
+// 1. Get ordered IDs from display_order_items
+const { data: orderItems } = await supabase
+  .from('display_order_items')
+  .select('item_id, display_order')
+  .eq('item_type', 'artist')
+  .order('display_order', { ascending: true });
+
+const orderedIds = orderItems?.map(item => item.item_id) || [];
+
+// 2. Fetch actual data
+const { data: users } = await supabase
+  .from('users')
+  .select('*')
+  .in('id', orderedIds);
+
+// 3. Re-sort to match display_order_items order
+const orderedUsers = orderedIds
+  .map(id => users?.find(user => user.id === id))
+  .filter(user => user !== undefined);
+```
+
+**Helper Function:**
+- Created `fetchTeamMembers()` helper to avoid code duplication
+- Shared between main team fetch and fallback logic
+
+### **Benefits:**
+
+**Centralized Ordering:**
+- Single source of truth for display order
+- Can order artists and teams together
+- Easy to manage from admin interface
+
+**Flexibility:**
+- Artists and teams can be interleaved in display
+- Admin can control exact positioning
+- Unified ordering across entire application
+
+**Reliability:**
+- Fallback logic ensures app works even if ordering fails
+- Graceful degradation to unordered lists
+- Error logging for debugging
+
+**Consistency:**
+- Same ordering logic for all fetch functions
+- Homepage featured dancers use same ordering
+- Artists page uses same ordering
+
+### **Use Cases:**
+
+**Unified List:**
+- Display order: Artist 1, Artist 2, Team 1, Artist 3, Team 2
+- Both types ordered together based on `display_order_items`
+
+**Separate Lists:**
+- Solo dancers ordered by their entries in `display_order_items`
+- Teams ordered by their entries in `display_order_items`
+- Each maintains their relative order
+
+### **Result:**
+- Artists and teams now display in the order defined by `display_order_items` table
+- Centralized, manageable ordering system
+- Consistent ordering across all pages
+- Proper fallback handling for edge cases
+- Ready for admin interface to manage display order
+
+### **Artist Detail Page Update (2025-10-04)**
+
+**File Updated:** `/app/artists/[slug]/page.tsx`
+
+**Change:** Applied `display_order_items` ordering to teams displayed on artist profile pages.
+
+**Implementation:**
+```typescript
+// Get display order for teams
+const { data: orderItems } = await supabase
+  .from('display_order_items')
+  .select('item_id, display_order')
+  .eq('item_type', 'team')
+  .in('item_id', teamIds)  // Only teams this artist belongs to
+  .order('display_order', { ascending: true });
+
+// Fetch teams
+const { data: teamsData } = await supabase
+  .from('teams')
+  .select('*')
+  .in('id', teamIds)
+  .eq('status', 'active');
+
+// Sort teams by display_order_items if available
+if (orderItems && orderItems.length > 0) {
+  const orderedIds = orderItems.map(item => item.item_id);
+  const orderedTeams = orderedIds
+    .map(id => teamsData.find(team => team.id === id))
+    .filter(team => team !== undefined);
+  setTeams(orderedTeams);
+} else {
+  setTeams(teamsData);  // Fallback to unordered
+}
+```
+
+**Benefits:**
+- Teams on artist profile pages now respect global display order
+- Consistent ordering between artists page and artist detail page
+- Only orders teams that the artist belongs to
+- Fallback to unordered if display_order_items not available
+
+**Result:**
+- Complete ordering integration across all artist-related pages
+- Teams section on artist profiles now properly ordered
+- Unified ordering system throughout the application
+
+## Artist Profile Image Responsive Optimization (2025-10-04)
+
+### **Feature Implemented**
+Optimized the artist profile hero image for better desktop display while maintaining mobile layout.
+
+### **Changes Made:**
+
+**Image Height Adjustments:**
+- **Mobile**: 400px (kept same as before)
+- **Tablet (md)**: 450px (reduced from 500px)
+- **Desktop (lg)**: 500px (reduced from 600px)
+- **Extra Large (xl)**: 550px (new breakpoint)
+- More balanced proportions for desktop viewing
+
+**Image Positioning:**
+- Added `object-center` for better focal point
+- Added `overflow-hidden` on container for cleaner edges
+- Kept `object-cover` for proper scaling
+
+**Gradient Overlays:**
+- **Top gradient**: Height 32 → 40 on desktop for better visibility
+- **Bottom gradient**: NEW - Added for artist name readability
+  - `bg-gradient-to-t from-black via-black/60 to-transparent`
+  - Ensures name is always readable regardless of image
+
+**Artist Name Positioning:**
+- **Mobile**: bottom-6, left-4, text-3xl
+- **Tablet**: bottom-8, left-8, text-4xl
+- **Desktop**: bottom-10, left-12, text-5xl
+- **XL**: text-6xl
+- Added right padding to prevent text overflow
+
+**Back Button Positioning:**
+- **Mobile**: left-4
+- **Tablet**: left-8
+- **Desktop**: left-12
+- Consistent z-index and hover states
+
+### **Responsive Breakpoints:**
+
+```typescript
+// Image heights
+h-[400px]    // Mobile
+md:h-[450px] // Tablet (768px+)
+lg:h-[500px] // Desktop (1024px+)
+xl:h-[550px] // XL (1280px+)
+
+// Artist name
+text-3xl           // Mobile
+md:text-4xl        // Tablet
+lg:text-5xl        // Desktop
+xl:text-6xl        // XL
+
+// Positioning
+left-4 md:left-8 lg:left-12
+bottom-6 md:bottom-8 lg:bottom-10
+```
+
+### **Visual Improvements:**
+
+**Better Proportions:**
+- Desktop images no longer too tall (reduced from 600px to 500-550px)
+- More cinematic aspect ratio for large screens
+- Balanced header height vs content area
+
+**Enhanced Readability:**
+- Bottom gradient ensures name is always readable
+- Larger gradients on desktop (32px → 40px)
+- Better contrast with `via-black/60` transition
+
+**Professional Layout:**
+- Consistent padding progression (4 → 8 → 12)
+- Proper spacing between elements
+- Clean overflow handling
+
+### **Mobile Preservation:**
+- Mobile height stayed at 400px (unchanged)
+- Mobile spacing stayed at left-4, bottom-6
+- Mobile gradient height at 32px
+- No changes to mobile user experience
+
+### **Desktop Enhancement:**
+- More appropriate image heights for wide screens
+- Better use of screen real estate
+- Improved text hierarchy with larger sizes
+- Professional spacing with left-12 padding
+- Dual gradients for better overlay effect
+
+### **Result:**
+- Mobile view unchanged (400px height maintained)
+- Desktop view optimized with better proportions (450-550px range)
+- Enhanced readability with dual gradient overlays
+- Professional responsive scaling across all breakpoints
+- Better balance between hero image and content sections
+
+## Homepage Recent Works Mobile Optimization (2025-10-04)
+
+### **Feature Implemented**
+Optimized the Recent Works section on the homepage for better mobile viewing experience with responsive sizing and spacing.
+
+### **Changes Made:**
+
+**File Updated:** `/app/components/sections/RecentWorks.tsx`
+
+### **Mobile Optimizations:**
+
+**Grid Layout:**
+- **Mobile**: Single column stack (`grid-cols-1`)
+- **Desktop**: 3-column grid (`lg:grid-cols-3`)
+- Gap: 6 on mobile → 8 on desktop
+
+**Video Player:**
+- Rounded corners: `rounded-xl` on mobile → `rounded-2xl` on desktop
+- Info padding: `mt-4` on mobile → `mt-6` on desktop
+- Added `px-1` padding for better mobile alignment
+
+**Video Title:**
+- Mobile: `text-lg`
+- Tablet: `text-xl` (md)
+- Desktop: `text-2xl` (lg)
+- Better readability across devices
+
+**Video Stats:**
+- Mobile: `text-sm`
+- Desktop: `text-base` (lg)
+
+**Video List Container:**
+- Height: 400px on mobile → 600px on desktop
+- Padding: `p-3` on mobile → `p-4` on desktop
+- Rounded: `rounded-xl` on mobile → `rounded-2xl` on desktop
+- Spacing: `space-y-3` on mobile → `space-y-4` on desktop
+
+**Video List Items:**
+- Card padding: `p-2` on mobile → `p-3` on desktop
+- Rounded: `rounded-lg` on mobile → `rounded-xl` on desktop
+- Gap between elements: `gap-2` on mobile → `gap-3` on desktop
+
+**Thumbnails:**
+- Mobile: `w-20 h-14` (smaller)
+- Desktop: `w-24 h-16` (larger)
+- Rounded: `rounded-md` on mobile → `rounded-lg` on desktop
+- Play button: `w-5 h-5` on mobile → `w-6 h-6` on desktop
+
+**Text Sizes:**
+- Category: Stays at `text-xs`
+- Title: `text-xs` on mobile → `text-sm` on desktop
+- Stats: Stays at `text-xs`
+- Date: Hidden on mobile (`hidden lg:block`) to save space
+
+**Spacing Adjustments:**
+- Category margin: `mb-0.5` on mobile → `mb-1` on desktop
+- Title margin: `mb-1` on mobile → `mb-2` on desktop
+- Stats spacing: `space-y-0.5` on mobile → `space-y-1` on desktop
+
+### **Responsive Breakpoints:**
+
+```typescript
+// Container
+gap-6 lg:gap-8
+
+// Video info
+mt-4 lg:mt-6
+text-lg md:text-xl lg:text-2xl
+
+// Video list height
+h-[400px] lg:h-[600px]
+
+// List padding
+p-3 lg:p-4
+
+// Thumbnails
+w-20 h-14 lg:w-24 lg:h-16
+
+// Typography
+text-xs lg:text-sm
+text-sm lg:text-base
+```
+
+### **Mobile-Specific Improvements:**
+
+**Compact Design:**
+- Smaller thumbnails (20px width vs 24px desktop)
+- Reduced padding throughout (p-2 vs p-3)
+- Tighter spacing (gap-2 vs gap-3)
+- Hidden date field to reduce clutter
+
+**Touch Optimization:**
+- Maintained tap animations (`whileTap`)
+- Good touch target sizes
+- Clear visual feedback on selection
+
+**Readability:**
+- Appropriately sized text for mobile
+- Good line-height and clamp
+- Clear visual hierarchy
+
+**Efficient Space Usage:**
+- 400px list height instead of 600px
+- Compact card design
+- Smaller rounded corners (xl vs 2xl)
+
+### **Desktop Preservation:**
+- Larger thumbnails for better preview
+- More generous padding and spacing
+- Larger text sizes
+- Shows all metadata including date
+- More prominent rounded corners
+
+### **Benefits:**
+
+**Mobile Experience:**
+- ✅ Better screen space utilization
+- ✅ Faster scrolling with 400px height
+- ✅ Cleaner, more compact card design
+- ✅ Essential information prioritized
+- ✅ Touch-friendly interactions
+
+**Desktop Experience:**
+- ✅ Spacious, comfortable layout
+- ✅ Larger, more visible thumbnails
+- ✅ Complete metadata display
+- ✅ Professional appearance
+
+**Overall:**
+- ✅ Responsive scaling across all devices
+- ✅ Optimized for each screen size
+- ✅ Maintained visual consistency
+- ✅ Better mobile usability
+
+### **Result:**
+- Recent Works section now mobile-optimized with compact design
+- Video list reduced to 400px height on mobile for easier scrolling
+- Smaller, tighter spacing and sizing for mobile screens
+- Desktop maintains spacious, professional layout
+- Smooth responsive transitions between breakpoints
+- Better user experience across all devices
+
+## Highlights Section Horizontal Scroll (2025-10-04)
+
+### **Feature Implemented**
+Converted the Highlights section on artist profile pages from vertical stacking to horizontal scrolling for a more modern, gallery-like experience.
+
+### **Changes Made:**
+
+**Files Updated:**
+- `/app/artists/[slug]/page.tsx` - Highlights section layout
+- `/app/globals.css` - Added scrollbar-hide utility
+
+### **Layout Changes:**
+
+**From Vertical Stack to Horizontal Scroll:**
+
+**Before:**
+```typescript
+<div className="space-y-3">
+  {featuredWorks.slice(0, 3).map(...)}
+</div>
+```
+
+**After:**
+```typescript
+<div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+  <div className="flex gap-3 pb-2">
+    {featuredWorks.slice(0, 6).map(...)}
+  </div>
+</div>
+```
+
+### **Implementation Details:**
+
+**Scroll Container:**
+- `overflow-x-auto` - Enables horizontal scrolling
+- `scrollbar-hide` - Hides scrollbar for cleaner look
+- `-mx-1 px-1` - Negative margin trick for edge-to-edge scroll
+- `pb-2` - Bottom padding for scroll indicator
+
+**Card Layout:**
+- `flex gap-3` - Horizontal flex layout with spacing
+- `flex-shrink-0` - Prevents cards from shrinking
+- Fixed width: `w-[240px] md:w-[280px]`
+- Mobile: 240px wide
+- Desktop: 280px wide
+
+**Visual Enhancements:**
+- Added hover ring: `group-hover:ring-2 group-hover:ring-white/20`
+- Added image zoom: `group-hover:scale-105 transition-transform duration-300`
+- Smooth transitions for better UX
+
+**Card Content:**
+- Title: `line-clamp-2` (allows 2 lines instead of 1)
+- Maintains aspect-video ratio
+- Responsive width adjustments
+
+### **Scrollbar Hide Utility:**
+
+Added custom CSS utility in `globals.css`:
+
+```css
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+```
+
+**Cross-browser Support:**
+- Chrome/Safari/Opera: `::-webkit-scrollbar`
+- IE/Edge: `-ms-overflow-style`
+- Firefox: `scrollbar-width`
+
+### **Increased Display Limit:**
+- Before: 3 highlights shown
+- After: 6 highlights shown
+- Better utilization of horizontal space
+
+### **User Experience:**
+
+**Mobile:**
+- Swipe to scroll horizontally
+- Touch-friendly gesture
+- Clean edge-to-edge scroll
+- 240px card width fits mobile screens well
+
+**Desktop:**
+- Mouse wheel or trackpad scroll
+- Click and drag to scroll
+- Smooth animations on hover
+- Larger 280px cards for better preview
+
+**Interaction:**
+- Cards maintain clickable functionality
+- Opens video in new tab on click
+- Hover effects show visual feedback
+- Smooth scale transition on hover
+
+### **Benefits:**
+
+**Better Space Utilization:**
+- Shows more highlights (6 vs 3)
+- Doesn't take up vertical space
+- Fits sidebar layout better
+- Modern gallery-style presentation
+
+**Improved UX:**
+- Natural scrolling behavior
+- Touch-friendly on mobile
+- Clean, minimal design
+- Instagram/Netflix-style scrolling
+
+**Visual Appeal:**
+- Horizontal gallery aesthetic
+- Hidden scrollbar for cleaner look
+- Smooth hover animations
+- Professional appearance
+
+### **Design Pattern:**
+- Follows modern UI patterns (Instagram, Netflix, Spotify)
+- Horizontal scrolling for media galleries
+- Touch-optimized for mobile devices
+- Clean, minimal interface
+
+### **Result:**
+- Highlights section now scrolls horizontally
+- Shows 6 featured works instead of 3
+- Clean scrolling with hidden scrollbar
+- Smooth hover animations and transitions
+- Better mobile and desktop experience
+- Modern gallery-style presentation

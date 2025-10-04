@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import { Languages, UserCircle, LogOut } from 'lucide-react';
+import { Languages, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { getCurrentUser, signOut, getUserDisplayName } from '@/app/utils/auth';
+import { getCurrentUser, getUserDisplayName } from '@/app/utils/auth';
 import type { User } from '@supabase/supabase-js';
 import AnimatedHamburger from './AnimatedHamburger';
 import MobileMenu from './MobileMenu';
@@ -13,7 +13,6 @@ import MobileMenu from './MobileMenu';
 export default function TopNavBar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const pathname = usePathname();
   const router = useRouter();
@@ -52,13 +51,6 @@ export default function TopNavBar() {
 
   const handleLanguageToggle = () => {
     setLanguage(language === 'ko' ? 'en' : 'ko');
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-    setUser(null);
-    setShowUserMenu(false);
-    router.push('/');
   };
 
   return (
@@ -101,35 +93,15 @@ export default function TopNavBar() {
                   <span className="text-sm font-medium">{language === 'ko' ? 'EN' : '한'}</span>
                 </button>
 
-                {/* Auth Buttons or User Menu */}
+                {/* Auth Buttons or My Page Button */}
                 {user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowUserMenu(!showUserMenu)}
-                      className="flex items-center space-x-2 text-gray-200 hover:text-black transition-colors duration-200 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-gray-300"
-                      aria-label="User menu"
-                    >
-                      <Avatar className="w-8 h-8">
-                        <AvatarFallback className="bg-white text-black text-sm">
-                          {getUserDisplayName(user).charAt(0).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span className="text-sm font-medium">{getUserDisplayName(user)}</span>
-                    </button>
-
-                    {/* User Dropdown Menu */}
-                    {showUserMenu && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2">
-                        <button
-                          onClick={handleSignOut}
-                          className="w-full flex items-center space-x-2 px-4 py-2 text-gray-700 hover:bg-gray-100 transition-colors"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span className="text-sm">{language === 'en' ? 'Sign Out' : '로그아웃'}</span>
-                        </button>
-                      </div>
-                    )}
-                  </div>
+                  <button
+                    onClick={() => router.push('/mypage')}
+                    className="bg-black text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                    aria-label="Go to my page"
+                  >
+                    {getUserDisplayName(user)}
+                  </button>
                 ) : (
                   <>
                     {/* Sign In Button */}
@@ -168,7 +140,7 @@ export default function TopNavBar() {
                 {/* Mobile User Icon or Avatar */}
                 {user ? (
                   <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    onClick={() => router.push('/mypage')}
                     className="p-2 text-gray-200 hover:text-black transition-colors rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-300"
                     aria-label="User account"
                   >

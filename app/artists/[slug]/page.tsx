@@ -131,6 +131,15 @@ export default function ArtistProfilePage() {
 
           if (!teamError && teamMemberships && teamMemberships.length > 0) {
             const teamIds = teamMemberships.map(tm => tm.team_id);
+
+            // Get display order for teams
+            const { data: orderItems } = await supabase
+              .from('display_order_items')
+              .select('item_id, display_order')
+              .eq('item_type', 'team')
+              .in('item_id', teamIds)
+              .order('display_order', { ascending: true });
+
             const { data: teamsData } = await supabase
               .from('teams')
               .select('*')
@@ -138,7 +147,16 @@ export default function ArtistProfilePage() {
               .eq('status', 'active');
 
             if (teamsData) {
-              setTeams(teamsData);
+              // Sort teams by display_order_items if available
+              if (orderItems && orderItems.length > 0) {
+                const orderedIds = orderItems.map(item => item.item_id);
+                const orderedTeams = orderedIds
+                  .map(id => teamsData.find(team => team.id === id))
+                  .filter(team => team !== undefined);
+                setTeams(orderedTeams);
+              } else {
+                setTeams(teamsData);
+              }
             }
           }
         } else {
@@ -283,16 +301,34 @@ export default function ArtistProfilePage() {
   if (artist && profileType === 'artist') {
     return (
       <div className="min-h-screen text-white bg-black">
-          <div className='relative w-full'>
-            <img src={artist.profile_image || ""} alt={artist.name} className='w-full'/>
+          <div className='relative w-full overflow-hidden'>
+            {artist.profile_image ? (
+              <img
+                src={artist.profile_image}
+                alt={artist.name}
+                className='w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] object-cover object-center'
+              />
+            ) : (
+              <div className="w-full h-[400px] md:h-[450px] lg:h-[500px] xl:h-[550px] bg-gradient-to-br from-purple-900 via-zinc-900 to-zinc-950 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="w-32 h-32 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-6xl font-bold">
+                    {artistName.charAt(0)}
+                  </div>
+                  <p className="text-white/40 text-sm">No profile image</p>
+                </div>
+              </div>
+            )}
 
             {/* Gradient overlay for back button */}
-            <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-black to-transparent" />
+            <div className="absolute top-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-b from-black via-black/60 to-transparent" />
+
+            {/* Bottom gradient for name */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 md:h-40 bg-gradient-to-t from-black via-black/60 to-transparent" />
 
             {/* Back Button */}
             <button
               onClick={() => router.push('/artists')}
-              className="absolute top-6 left-4 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors"
+              className="absolute top-6 left-4 md:left-8 lg:left-12 z-10 flex items-center gap-2 text-white/70 hover:text-white transition-colors"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -310,13 +346,144 @@ export default function ArtistProfilePage() {
               <span className="text-sm">Back</span>
             </button>
 
-            <h1 className="text-4xl font-bold mb-4 absolute bottom-2 right-10">{artistName}</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold absolute bottom-6 left-4 md:left-8 lg:left-12 md:bottom-8 lg:bottom-10 right-4 md:right-8 lg:right-12">{artistName}</h1>
           </div>
-        <div className="px-4 flex flex-col gap-8">
-          {/* Teams */}
-          {teams.length > 0 && (
-            <div className="">
-              <h2 className="text-xl font-bold text-white mb-3">Teams</h2>
+
+          {/* Social Buttons Section */}
+          <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-4">
+            <div className="flex gap-3 items-center">
+              {artist.instagram_url && (
+                <a
+                  href={artist.instagram_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition-colors"
+                  aria-label="Instagram"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-white"
+                  >
+                    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+                    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+                  </svg>
+                </a>
+              )}
+
+              {artist.twitter_url && (
+                <a
+                  href={artist.twitter_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition-colors"
+                  aria-label="X (Twitter)"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="text-white"
+                  >
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </a>
+              )}
+
+              {/* Threads - will be visible when URL is added to database */}
+              {/* Placeholder for future Threads URL field */}
+              {false && (
+                <a
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition-colors"
+                  aria-label="Threads"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="text-white"
+                  >
+                    <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 15.527c-.202.488-.54.903-.984 1.204-.444.301-.971.465-1.531.476h-.062c-.946 0-1.794-.411-2.353-1.073-.277.134-.571.231-.877.289-.305.058-.619.087-.938.087-1.446 0-2.698-.745-3.294-1.956-.232-.473-.349-1.003-.349-1.574 0-1.446.847-2.698 2.181-3.294.473-.232 1.003-.349 1.574-.349.571 0 1.101.117 1.574.349.946.465 1.636 1.359 1.869 2.421h2.181c-.117-1.794-.946-3.353-2.305-4.415-1.359-1.062-3.062-1.636-4.872-1.636-2.072 0-3.996.819-5.433 2.305-1.437 1.486-2.247 3.468-2.247 5.589 0 2.121.81 4.103 2.247 5.589 1.437 1.486 3.361 2.305 5.433 2.305 1.81 0 3.513-.574 4.872-1.636 1.359-1.062 2.188-2.621 2.305-4.415h-2.181c-.058.232-.134.457-.232.674z"/>
+                  </svg>
+                </a>
+              )}
+
+              {/* Share Profile Button */}
+              <button
+                onClick={async () => {
+                  const currentUrl = window.location.href;
+
+                  // Try native share API first (mobile)
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: `${artistName} - GRIGO Entertainment`,
+                        url: currentUrl
+                      });
+                    } catch (err) {
+                      // User cancelled or error occurred
+                      console.log('Share cancelled or failed:', err);
+                    }
+                  } else {
+                    // Fallback to clipboard
+                    try {
+                      await navigator.clipboard.writeText(currentUrl);
+                      // You could add a toast notification here
+                      alert('Link copied to clipboard!');
+                    } catch (err) {
+                      console.error('Failed to copy:', err);
+                    }
+                  }
+                }}
+                className="w-10 h-10 rounded-full bg-zinc-900 hover:bg-zinc-800 flex items-center justify-center transition-colors"
+                aria-label="Share profile"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-white"
+                >
+                  <circle cx="18" cy="5" r="3"/>
+                  <circle cx="6" cy="12" r="3"/>
+                  <circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/>
+                  <line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
+          {/* Two Column Layout for Desktop */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            {/* Left Sidebar - Teams, About, Highlights */}
+            <div className="lg:col-span-1 space-y-8">
+              {/* Teams */}
+              {teams.length > 0 && (
+                <div>
+                  <h2 className="text-xl font-bold text-white mb-3">Teams</h2>
               <div className="space-y-4">
                 {teams.map((team) => {
                   const teamName = language === 'en' && team.name_en ? team.name_en : team.name;
@@ -380,86 +547,92 @@ export default function ArtistProfilePage() {
                   );
                 })}
               </div>
-            </div>
-          )}
+                </div>
+              )}
 
-          {/* Artist Introduction */}
-          {artist.introduction && (
-            <div className="">
-              <h2 className="text-2xl font-bold mb-4">About</h2>
-              <p className="text-white/80">{artist.introduction}</p>
-            </div>
-          )}
+              {/* Artist Introduction */}
+              {artist.introduction && (
+                <div>
+                  <h2 className="text-2xl font-bold mb-4">About</h2>
+                  <p className="text-white/80 leading-relaxed">{artist.introduction}</p>
+                </div>
+              )}
 
-          {/* Highlights */}
-          {featuredWorks.length > 0 && (
-            <div className="">
-              <h2 className="text-xl font-bold text-white mb-3">Highlights</h2>
-              <div className="space-y-3">
-                {featuredWorks.slice(0, 3).map((work) => {
-                  const workDate = work.single_date
-                    ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
-                    : work.start_date
-                    ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
-                    : '';
+              {/* Highlights */}
+              {featuredWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl font-bold text-white mb-3">Highlights</h2>
+                  {/* Horizontal Scroll Container */}
+                  <div className="overflow-x-auto scrollbar-hide -mx-1 px-1">
+                    <div className="flex gap-3 pb-2">
+                      {featuredWorks.slice(0, 6).map((work) => {
+                        const workDate = work.single_date
+                          ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                          : work.start_date
+                          ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                          : '';
 
-                  // Extract YouTube video ID for thumbnail
-                  const getYouTubeThumbnail = (url: string | null) => {
-                    if (!url) return null;
-                    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-                    if (videoIdMatch && videoIdMatch[1]) {
-                      return `https://img.youtube.com/vi/${videoIdMatch[1]}/maxresdefault.jpg`;
-                    }
-                    return null;
-                  };
+                        // Extract YouTube video ID for thumbnail
+                        const getYouTubeThumbnail = (url: string | null) => {
+                          if (!url) return null;
+                          const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+                          if (videoIdMatch && videoIdMatch[1]) {
+                            return `https://img.youtube.com/vi/${videoIdMatch[1]}/maxresdefault.jpg`;
+                          }
+                          return null;
+                        };
 
-                  const thumbnailUrl = work.poster_url || getYouTubeThumbnail(work.video_url);
+                        const thumbnailUrl = work.poster_url || getYouTubeThumbnail(work.video_url);
 
-                  return (
-                    <div
-                      key={work.id}
-                      className="group cursor-pointer"
-                      onClick={() => {
-                        if (work.video_url) {
-                          window.open(work.video_url, '_blank');
-                        }
-                      }}
-                    >
-                      {/* Image Container */}
-                      <div className="relative w-full aspect-video rounded-md overflow-hidden bg-zinc-900 mb-2">
-                        {thumbnailUrl ? (
-                          <img
-                            src={thumbnailUrl}
-                            alt={work.title}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <span className="text-4xl opacity-40">🎬</span>
+                        return (
+                          <div
+                            key={work.id}
+                            className="group cursor-pointer flex-shrink-0 w-[240px] md:w-[280px]"
+                            onClick={() => {
+                              if (work.video_url) {
+                                window.open(work.video_url, '_blank');
+                              }
+                            }}
+                          >
+                            {/* Image Container */}
+                            <div className="relative w-full aspect-video rounded-md overflow-hidden bg-zinc-900 mb-2 group-hover:ring-2 group-hover:ring-white/20 transition-all">
+                              {thumbnailUrl ? (
+                                <img
+                                  src={thumbnailUrl}
+                                  alt={work.title}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <span className="text-4xl opacity-40">🎬</span>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Work Info */}
+                            <div className="space-y-0.5">
+                              <h3 className="font-medium text-white text-sm line-clamp-2">
+                                {work.title}
+                              </h3>
+                              <p className="text-white/60 text-xs line-clamp-1">
+                                {work.description} • {workDate}
+                              </p>
+                            </div>
                           </div>
-                        )}
-                      </div>
-
-                      {/* Work Info */}
-                      <div className="space-y-0.5">
-                        <h3 className="font-medium text-white text-sm line-clamp-1">
-                          {work.title}
-                        </h3>
-                        <p className="text-white/60 text-xs line-clamp-1">
-                          {work.description} • {workDate}
-                        </p>
-                      </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
 
-          {/* Choreography Works */}
-          {choreographyWorks.length > 0 && (
-            <div className="">
-              <h2 className="text-xl font-bold text-white mb-3">Choreographies</h2>
+            {/* Right Column - Works Sections */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Choreography Works */}
+              {choreographyWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Choreographies</h2>
               <div className="space-y-3">
                 {choreographyWorks.slice(0, showAllChoreography ? choreographyWorks.length : 5).map((work) => {
                   const workDate = work.single_date
@@ -525,18 +698,18 @@ export default function ArtistProfilePage() {
               {choreographyWorks.length > 5 && (
                 <button
                   onClick={() => setShowAllChoreography(!showAllChoreography)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border rounded-lg"
+                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
                 >
                   {showAllChoreography ? '접기' : `더 보기 (${choreographyWorks.length - 5})`}
                 </button>
               )}
-            </div>
-          )}
+                </div>
+              )}
 
-          {/* Performance Works */}
-          {performanceWorks.length > 0 && (
-            <div className="">
-              <h2 className="text-xl font-bold text-white mb-3">Performances</h2>
+              {/* Performance Works */}
+              {performanceWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Performances</h2>
               <div className="space-y-3">
                 {performanceWorks.slice(0, showAllPerformance ? performanceWorks.length : 5).map((work) => {
                   const workDate = work.single_date
@@ -602,18 +775,18 @@ export default function ArtistProfilePage() {
               {performanceWorks.length > 5 && (
                 <button
                   onClick={() => setShowAllPerformance(!showAllPerformance)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors"
+                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
                 >
                   {showAllPerformance ? '접기' : `더 보기 (${performanceWorks.length - 5})`}
                 </button>
               )}
-            </div>
-          )}
+                </div>
+              )}
 
-          {/* Workshop/Classes */}
-          {workshopWorks.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-xl font-bold text-white mb-3">Classes</h2>
+              {/* Workshop/Classes */}
+              {workshopWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Classes</h2>
               <div className="space-y-1">
                 {workshopWorks.slice(0, showAllWorkshop ? workshopWorks.length : 5).map((work) => {
                   const workDate = work.single_date
@@ -647,13 +820,14 @@ export default function ArtistProfilePage() {
               {workshopWorks.length > 5 && (
                 <button
                   onClick={() => setShowAllWorkshop(!showAllWorkshop)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors"
+                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
                 >
                   {showAllWorkshop ? '접기' : `더 보기 (${workshopWorks.length - 5})`}
                 </button>
               )}
+                </div>
+              )}
             </div>
-          )}
 
           {/* All Career Entries */}
           {/* {careerEntries.length > 0 && (
@@ -664,6 +838,7 @@ export default function ArtistProfilePage() {
               </pre>
             </div>
           )} */}
+          </div>
         </div>
       </div>
     );

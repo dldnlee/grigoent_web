@@ -152,7 +152,7 @@ export default function RecentWorks() {
         </motion.div>
 
         {/* Video Player and List Layout */}
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Main Video Player - Left Side */}
           <motion.div
             className="lg:col-span-2"
@@ -162,7 +162,7 @@ export default function RecentWorks() {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <motion.div
-              className="aspect-video bg-gray-300 rounded-2xl overflow-hidden relative"
+              className="aspect-video bg-gray-300 rounded-xl lg:rounded-2xl overflow-hidden relative"
               whileHover={{ scale: 1.02 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
@@ -178,15 +178,15 @@ export default function RecentWorks() {
 
             {/* Selected Video Info */}
             <motion.div
-              className="mt-6"
+              className="mt-4 lg:mt-6 px-1"
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <h3 className="text-2xl font-bold text-secondary-foreground mb-2 leading-tight">
+              <h3 className="text-lg md:text-xl lg:text-2xl font-bold text-secondary-foreground mb-2 leading-tight">
                 {selectedVideo.title}
               </h3>
-              <div className="flex justify-between items-center text-secondary-foreground/70">
+              <div className="flex justify-between items-center text-sm lg:text-base text-secondary-foreground/70">
                 <span>{selectedVideo.views}</span>
                 <span>{selectedVideo.date}</span>
               </div>
@@ -202,17 +202,17 @@ export default function RecentWorks() {
             transition={{ duration: 0.8, delay: 0.5 }}
           >
             <motion.div
-              className="h-[600px] overflow-y-auto bg-white rounded-2xl p-4 border"
+              className="h-[400px] lg:h-[600px] overflow-y-auto bg-white rounded-xl lg:rounded-2xl p-3 lg:p-4 border"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <div className="space-y-4">
+              <div className="space-y-3 lg:space-y-4">
                 {videos.map((video, index) => (
                   <motion.div
                     key={video.id}
                     onClick={() => setSelectedVideo(video)}
-                    className={`cursor-pointer p-3 rounded-xl transition-all duration-200 ${
+                    className={`cursor-pointer p-2 lg:p-3 rounded-lg lg:rounded-xl transition-all duration-200 ${
                       selectedVideo.id === video.id
                         ? 'border-2 border-black bg-gray-50'
                         : 'border border-gray-200 hover:border-gray-300'
@@ -231,10 +231,10 @@ export default function RecentWorks() {
                     }}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <div className="flex gap-3">
+                    <div className="flex gap-2 lg:gap-3">
                       {/* Video Thumbnail */}
                       <motion.div
-                        className="w-24 h-16 bg-gray-300 rounded-lg flex-shrink-0 overflow-hidden relative"
+                        className="w-20 h-14 lg:w-24 lg:h-16 bg-gray-300 rounded-md lg:rounded-lg flex-shrink-0 overflow-hidden relative"
                         whileHover={{ scale: 1.05 }}
                       >
                         <Image
@@ -242,14 +242,14 @@ export default function RecentWorks() {
                           alt={video.title}
                           fill
                           className="object-cover"
-                          sizes="(max-width: 768px) 96px, 96px"
+                          sizes="(max-width: 768px) 80px, 96px"
                           onError={() => {
                             // Fallback handled by the parent container
                             console.log('Failed to load thumbnail for video:', video.title);
                           }}
                         />
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="w-6 h-6 bg-black/70 rounded-full flex items-center justify-center">
+                          <div className="w-5 h-5 lg:w-6 lg:h-6 bg-black/70 rounded-full flex items-center justify-center">
                             <span className="text-white text-xs">▶</span>
                           </div>
                         </div>
@@ -257,15 +257,15 @@ export default function RecentWorks() {
 
                       {/* Video Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="text-xs text-secondary-foreground/60 mb-1 font-medium">
+                        <div className="text-xs text-secondary-foreground/60 mb-0.5 lg:mb-1 font-medium">
                           {video.category}
                         </div>
-                        <h4 className="text-sm font-semibold text-secondary-foreground leading-tight mb-2 line-clamp-2">
+                        <h4 className="text-xs lg:text-sm font-semibold text-secondary-foreground leading-tight mb-1 lg:mb-2 line-clamp-2">
                           {video.title}
                         </h4>
-                        <div className="text-xs text-secondary-foreground/60 space-y-1">
+                        <div className="text-xs text-secondary-foreground/60 space-y-0.5 lg:space-y-1">
                           <div>{video.views}</div>
-                          <div>{video.date}</div>
+                          <div className="hidden lg:block">{video.date}</div>
                         </div>
                       </div>
                     </div>
