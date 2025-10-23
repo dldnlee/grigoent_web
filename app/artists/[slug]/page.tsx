@@ -92,6 +92,8 @@ export default function ArtistProfilePage() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAllMedia, setShowAllMedia] = useState(false);
+  const [showAllChoreography, setShowAllChoreography] = useState(false);
 
   const slug = params.slug as string;
 
@@ -824,11 +826,8 @@ export default function ArtistProfilePage() {
               {choreographyWorks.length > 0 && (
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Choreographies</h2>
-              <div
-                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-                style={{ maxHeight: choreographyWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
-              >
-                {choreographyWorks.map((work) => {
+              <div className="space-y-3">
+                {(showAllChoreography ? choreographyWorks : choreographyWorks.slice(0, MAX_VISIBLE_ITEMS)).map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : work.start_date
@@ -879,7 +878,26 @@ export default function ArtistProfilePage() {
                 })}
               </div>
               {choreographyWorks.length > MAX_VISIBLE_ITEMS && (
-                <p className="mt-2 text-xs text-white/40">Scroll to see all {choreographyWorks.length} items</p>
+                <button
+                  onClick={() => setShowAllChoreography(!showAllChoreography)}
+                  className="mt-4 w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 text-white/70 hover:text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {showAllChoreography ? '접기' : '더보기'}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`transition-transform ${showAllChoreography ? 'rotate-180' : ''}`}
+                  >
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
               )}
                 </div>
               )}
@@ -1050,15 +1068,12 @@ export default function ArtistProfilePage() {
                 </div>
               )}
 
-              {/* TV Works */}
+              {/* Media (TV Works) */}
               {tvWorks.length > 0 && (
                 <div>
-                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">TV Shows</h2>
-              <div
-                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
-                style={{ maxHeight: tvWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
-              >
-                {tvWorks.map((work) => {
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Media</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {(showAllMedia ? tvWorks : tvWorks.slice(0, MAX_VISIBLE_ITEMS)).map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : work.start_date
@@ -1070,43 +1085,63 @@ export default function ArtistProfilePage() {
                   return (
                     <div
                       key={work.id}
-                      className="group cursor-pointer bg-zinc-900 hover:bg-zinc-800/90 rounded-lg overflow-hidden transition-colors"
+                      className="group cursor-pointer rounded-lg overflow-hidden transition-all hover:scale-[1.02]"
                       onClick={() => {
                         if (work.video_url) {
                           window.open(work.video_url, '_blank');
                         }
                       }}
                     >
-                      <div className="flex items-center gap-3 p-3">
-                        <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
-                          {thumbnailUrl ? (
-                            <Image
-                              src={thumbnailUrl}
-                              alt={work.title}
-                              fill
-                              className="object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <span className="text-2xl opacity-40">📺</span>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-medium text-white text-sm line-clamp-1 mb-0.5">
-                            {work.title}
-                          </h3>
-                          <p className="text-white/60 text-xs line-clamp-1">
-                            {work.description} • {workDate}
-                          </p>
-                        </div>
+                      {/* Thumbnail */}
+                      <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-zinc-900 mb-3">
+                        {thumbnailUrl ? (
+                          <Image
+                            src={thumbnailUrl}
+                            alt={work.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <span className="text-4xl opacity-40">📺</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Work Info */}
+                      <div className="space-y-1">
+                        <h3 className="font-medium text-white text-sm line-clamp-2 leading-snug">
+                          {work.title}
+                        </h3>
+                        <p className="text-white/60 text-xs line-clamp-1">
+                          {work.description} • {workDate}
+                        </p>
                       </div>
                     </div>
                   );
                 })}
               </div>
               {tvWorks.length > MAX_VISIBLE_ITEMS && (
-                <p className="mt-2 text-xs text-white/40">Scroll to see all {tvWorks.length} items</p>
+                <button
+                  onClick={() => setShowAllMedia(!showAllMedia)}
+                  className="mt-4 w-full py-3 px-4 bg-zinc-900 hover:bg-zinc-800 text-white/70 hover:text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                >
+                  {showAllMedia ? '접기' : '더보기'}
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className={`transition-transform ${showAllMedia ? 'rotate-180' : ''}`}
+                  >
+                    <path d="m6 9 6 6 6-6"/>
+                  </svg>
+                </button>
               )}
                 </div>
               )}
