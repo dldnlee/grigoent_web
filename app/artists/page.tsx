@@ -3,9 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/app/components/ui/button';
 import { ArtistSearch } from './components/ArtistSearch';
 import { SectionHeader } from './components/SectionHeader';
 import { DancerGrid } from './components/DancerGrid';
@@ -138,7 +136,6 @@ const pageVariants = {
 
 export default function ArtistsPage() {
   const { t } = useLanguage();
-  const router = useRouter();
   const [dancers, setDancers] = useState<Dancer[]>([]);
   const [teams, setTeams] = useState<Team[]>([]);
   const [isLoading, setIsLoading] = useState(true);

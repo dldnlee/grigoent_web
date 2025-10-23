@@ -6,6 +6,7 @@ import { Languages, UserCircle } from 'lucide-react';
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { getCurrentUser, getUserDisplayName } from '@/app/utils/auth';
+import { createClient } from '@/utils/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import AnimatedHamburger from './AnimatedHamburger';
 import MobileMenu from './MobileMenu';
@@ -18,15 +19,27 @@ export default function TopNavBar() {
   const router = useRouter();
 
   useEffect(() => {
+    const supabase = createClient();
+
     // Check auth state on mount
     getCurrentUser().then(setUser);
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const navItems = [
     { name: t('nav.home'), href: '/', type: 'route' },
-    { name: t('nav.about'), href: '/about', type: 'route' },
+    { name: t('nav.about'), href: '/#about', type: 'route' },
     { name: t('nav.artists'), href: '/artists', type: 'route' },
-    { name: t('nav.works'), href: '/works', type: 'route' },
+    { name: t('nav.works'), href: '/#works', type: 'route' },
     { name: t('nav.contact'), href: '/contact', type: 'route' }
   ];
 

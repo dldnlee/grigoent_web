@@ -8,6 +8,12 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 import { TeamMemberCard } from '../components/TeamMemberCard';
 import { Users, Calendar, Crown, Share2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface Artist {
   id: string;
@@ -224,10 +230,28 @@ export default function ArtistProfilePage() {
   const choreographyWorks = careerEntries.filter(entry => entry.category === 'choreography');
   const performanceWorks = careerEntries.filter(entry => entry.category === 'performance');
   const workshopWorks = careerEntries.filter(entry => entry.category === 'workshop');
-  const [showAllChoreography, setShowAllChoreography] = useState(false);
-  const [showAllPerformance, setShowAllPerformance] = useState(false);
-  const [showAllWorkshop, setShowAllWorkshop] = useState(false);
-  const [showAllMembers, setShowAllMembers] = useState(false);
+  const advertisementWorks = careerEntries.filter(entry => entry.category === 'advertisement');
+  const tvWorks = careerEntries.filter(entry => entry.category === 'tv');
+
+  // Group projects by year for timeline
+  const projectsByYear = careerEntries.reduce((acc, entry) => {
+    const date = entry.single_date || entry.start_date;
+    if (date) {
+      const year = new Date(date).getFullYear();
+      if (!acc[year]) {
+        acc[year] = [];
+      }
+      acc[year].push(entry);
+    }
+    return acc;
+  }, {} as Record<number, CareerEntry[]>);
+
+  const sortedYears = Object.keys(projectsByYear)
+    .map(Number)
+    .sort((a, b) => b - a); // Most recent first
+
+  // Max items to show before scrolling
+  const MAX_VISIBLE_ITEMS = 8;
 
   if (isLoading) {
     return (
@@ -257,7 +281,6 @@ export default function ArtistProfilePage() {
   // Team Profile View
   if (team && profileType === 'team') {
     const leaderMember = teamMembers.find(m => m.id === team.leader_id);
-    const displayedMembers = showAllMembers ? teamMembers : teamMembers.slice(0, 8);
 
     return (
       <div className="min-h-screen text-white bg-black">
@@ -327,7 +350,7 @@ export default function ArtistProfilePage() {
         </div>
 
         {/* Social Buttons Section */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-4">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 pt-6 pb-4">
           <div className="flex gap-3 items-center">
             {/* Share Button */}
             <button
@@ -360,11 +383,11 @@ export default function ArtistProfilePage() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
-          {/* Two Column Layout for Desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12">
-            {/* Left Sidebar - Stats and Info */}
-            <div className="lg:col-span-1 space-y-8">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 md:py-12">
+          {/* Single Column Layout */}
+          <div className="space-y-8">
+            {/* Stats and Info */}
+            <div className="space-y-8">
               {/* Team Stats */}
               <div>
                 <h2 className="text-xl font-bold text-white mb-3">Team Info</h2>
@@ -407,8 +430,8 @@ export default function ArtistProfilePage() {
               </div>
             </div>
 
-            {/* Right Column - Description and Members */}
-            <div className="lg:col-span-3 space-y-8">
+            {/* Description and Members */}
+            <div className="space-y-8">
               {/* Team Description */}
               {team.description && (
                 <div>
@@ -424,8 +447,11 @@ export default function ArtistProfilePage() {
               {/* Team Members Grid */}
               <div>
                 <h2 className="text-2xl font-bold text-white mb-6">Team Members</h2>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                  {displayedMembers.map((member) => (
+                <div
+                  className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                  style={{ maxHeight: teamMembers.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+                >
+                  {teamMembers.map((member) => (
                     <TeamMemberCard
                       key={member.id}
                       member={member}
@@ -434,17 +460,8 @@ export default function ArtistProfilePage() {
                     />
                   ))}
                 </div>
-
-                {/* Show More/Less Button */}
-                {teamMembers.length > 8 && (
-                  <button
-                    onClick={() => setShowAllMembers(!showAllMembers)}
-                    className="mt-6 w-full py-3 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
-                  >
-                    {showAllMembers
-                      ? 'Show Less'
-                      : `Show ${teamMembers.length - 8} More Members`}
-                  </button>
+                {teamMembers.length > MAX_VISIBLE_ITEMS && (
+                  <p className="mt-2 text-xs text-white/40 text-center">Scroll to see all {teamMembers.length} members</p>
                 )}
               </div>
             </div>
@@ -453,6 +470,24 @@ export default function ArtistProfilePage() {
       </div>
     );
   }
+
+  // Helper function to validate image URLs
+  const getValidImageUrl = (posterUrl: string | null, videoUrl: string | null): string | null => {
+    // Check if poster_url is a valid image URL (not Instagram/social media link)
+    if (posterUrl && !posterUrl.includes('instagram.com') && !posterUrl.includes('twitter.com') && !posterUrl.includes('facebook.com')) {
+      return posterUrl;
+    }
+
+    // Fallback to YouTube thumbnail
+    if (videoUrl) {
+      const videoIdMatch = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+      if (videoIdMatch && videoIdMatch[1]) {
+        return `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg`;
+      }
+    }
+
+    return null;
+  };
 
   // Artist Profile View
   if (artist && profileType === 'artist') {
@@ -511,7 +546,7 @@ export default function ArtistProfilePage() {
           </div>
 
           {/* Social Buttons Section */}
-          <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 pb-4">
+          <div className="max-w-3xl mx-auto px-4 md:px-8 pt-6 pb-4">
             <div className="flex gap-3 items-center">
               {artist.instagram_url && (
                 <a
@@ -636,11 +671,11 @@ export default function ArtistProfilePage() {
             </div>
           </div>
 
-        <div className="max-w-7xl mx-auto px-4 md:px-8 py-8 md:py-12">
-          {/* Two Column Layout for Desktop */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-            {/* Left Sidebar - Teams, About, Highlights */}
-            <div className="lg:col-span-1 space-y-8">
+        <div className="max-w-3xl mx-auto px-4 md:px-8 py-8 md:py-12">
+          {/* Single Column Layout */}
+          <div className="space-y-8">
+            {/* Teams, About, Highlights */}
+            <div className="space-y-8">
               {/* Teams */}
               {teams.length > 0 && (
                 <div>
@@ -657,7 +692,7 @@ export default function ArtistProfilePage() {
                       onClick={() => router.push(`/artists/${team.slug}`)}
                     >
                       {/* Team Image */}
-                      <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-gradient-to-br from-purple-500/20 to-pink-500/20">
+                      <div className="relative w-20 h-20 flex-shrink-0 rounded overflow-hidden bg-primary">
                         {team.cover_image || team.logo_url ? (
                           <Image
                             src={team.cover_image || team.logo_url || ''}
@@ -734,17 +769,10 @@ export default function ArtistProfilePage() {
                           ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                           : '';
 
-                        // Extract YouTube video ID for thumbnail
-                        const getYouTubeThumbnail = (url: string | null) => {
-                          if (!url) return null;
-                          const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-                          if (videoIdMatch && videoIdMatch[1]) {
-                            return `https://img.youtube.com/vi/${videoIdMatch[1]}/maxresdefault.jpg`;
-                          }
-                          return null;
-                        };
-
-                        const thumbnailUrl = work.poster_url || getYouTubeThumbnail(work.video_url);
+                        const thumbnailUrl = getValidImageUrl(work.poster_url, work.video_url)
+                          || (work.video_url && work.video_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
+                            ? `https://img.youtube.com/vi/${work.video_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)![1]}/maxresdefault.jpg`
+                            : null);
 
                         return (
                           <div
@@ -790,31 +818,24 @@ export default function ArtistProfilePage() {
               )}
             </div>
 
-            {/* Right Column - Works Sections */}
-            <div className="lg:col-span-2 space-y-8">
+            {/* Works Sections */}
+            <div className="space-y-8">
               {/* Choreography Works */}
               {choreographyWorks.length > 0 && (
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Choreographies</h2>
-              <div className="space-y-3">
-                {choreographyWorks.slice(0, showAllChoreography ? choreographyWorks.length : 5).map((work) => {
+              <div
+                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style={{ maxHeight: choreographyWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+              >
+                {choreographyWorks.map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : work.start_date
                     ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : '';
 
-                  // Extract YouTube video ID for thumbnail
-                  const getYouTubeThumbnail = (url: string | null) => {
-                    if (!url) return null;
-                    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-                    if (videoIdMatch && videoIdMatch[1]) {
-                      return `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg`;
-                    }
-                    return null;
-                  };
-
-                  const thumbnailUrl = work.poster_url || getYouTubeThumbnail(work.video_url);
+                  const thumbnailUrl = getValidImageUrl(work.poster_url, work.video_url);
 
                   return (
                     <div
@@ -857,15 +878,8 @@ export default function ArtistProfilePage() {
                   );
                 })}
               </div>
-
-              {/* Show More Button */}
-              {choreographyWorks.length > 5 && (
-                <button
-                  onClick={() => setShowAllChoreography(!showAllChoreography)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
-                >
-                  {showAllChoreography ? '접기' : `더 보기 (${choreographyWorks.length - 5})`}
-                </button>
+              {choreographyWorks.length > MAX_VISIBLE_ITEMS && (
+                <p className="mt-2 text-xs text-white/40">Scroll to see all {choreographyWorks.length} items</p>
               )}
                 </div>
               )}
@@ -874,25 +888,18 @@ export default function ArtistProfilePage() {
               {performanceWorks.length > 0 && (
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Performances</h2>
-              <div className="space-y-3">
-                {performanceWorks.slice(0, showAllPerformance ? performanceWorks.length : 5).map((work) => {
+              <div
+                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style={{ maxHeight: performanceWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+              >
+                {performanceWorks.map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : work.start_date
                     ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : '';
 
-                  // Extract YouTube video ID for thumbnail
-                  const getYouTubeThumbnail = (url: string | null) => {
-                    if (!url) return null;
-                    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-                    if (videoIdMatch && videoIdMatch[1]) {
-                      return `https://img.youtube.com/vi/${videoIdMatch[1]}/hqdefault.jpg`;
-                    }
-                    return null;
-                  };
-
-                  const thumbnailUrl = work.poster_url || getYouTubeThumbnail(work.video_url);
+                  const thumbnailUrl = getValidImageUrl(work.poster_url, work.video_url);
 
                   return (
                     <div
@@ -935,15 +942,8 @@ export default function ArtistProfilePage() {
                   );
                 })}
               </div>
-
-              {/* Show More Button */}
-              {performanceWorks.length > 5 && (
-                <button
-                  onClick={() => setShowAllPerformance(!showAllPerformance)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
-                >
-                  {showAllPerformance ? '접기' : `더 보기 (${performanceWorks.length - 5})`}
-                </button>
+              {performanceWorks.length > MAX_VISIBLE_ITEMS && (
+                <p className="mt-2 text-xs text-white/40">Scroll to see all {performanceWorks.length} items</p>
               )}
                 </div>
               )}
@@ -952,8 +952,11 @@ export default function ArtistProfilePage() {
               {workshopWorks.length > 0 && (
                 <div>
                   <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Classes</h2>
-              <div className="space-y-1">
-                {workshopWorks.slice(0, showAllWorkshop ? workshopWorks.length : 5).map((work) => {
+              <div
+                className="space-y-1 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style={{ maxHeight: workshopWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+              >
+                {workshopWorks.map((work) => {
                   const workDate = work.single_date
                     ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
                     : work.start_date
@@ -974,36 +977,277 @@ export default function ArtistProfilePage() {
                         {work.title}
                       </h3>
                       <p className="text-white/60 text-sm">
-                        {work.description}
+                        {work.description} • {workDate}
                       </p>
                     </div>
                   );
                 })}
               </div>
+              {workshopWorks.length > MAX_VISIBLE_ITEMS && (
+                <p className="mt-2 text-xs text-white/40">Scroll to see all {workshopWorks.length} items</p>
+              )}
+                </div>
+              )}
 
-              {/* Show More Button */}
-              {workshopWorks.length > 5 && (
-                <button
-                  onClick={() => setShowAllWorkshop(!showAllWorkshop)}
-                  className="mt-3 w-full py-2 text-sm text-white/70 hover:text-white transition-colors border border-white/10 rounded-lg hover:border-white/20"
-                >
-                  {showAllWorkshop ? '접기' : `더 보기 (${workshopWorks.length - 5})`}
-                </button>
+              {/* Advertisement Works */}
+              {advertisementWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">Advertisements</h2>
+              <div
+                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style={{ maxHeight: advertisementWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+              >
+                {advertisementWorks.map((work) => {
+                  const workDate = work.single_date
+                    ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                    : work.start_date
+                    ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                    : '';
+
+                  const thumbnailUrl = getValidImageUrl(work.poster_url, work.video_url);
+
+                  return (
+                    <div
+                      key={work.id}
+                      className="group cursor-pointer bg-zinc-900 hover:bg-zinc-800/90 rounded-lg overflow-hidden transition-colors"
+                      onClick={() => {
+                        if (work.video_url) {
+                          window.open(work.video_url, '_blank');
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3 p-3">
+                        <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
+                          {thumbnailUrl ? (
+                            <Image
+                              src={thumbnailUrl}
+                              alt={work.title}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-2xl opacity-40">📺</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-white text-sm line-clamp-1 mb-0.5">
+                            {work.title}
+                          </h3>
+                          <p className="text-white/60 text-xs line-clamp-1">
+                            {work.description} • {workDate}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {advertisementWorks.length > MAX_VISIBLE_ITEMS && (
+                <p className="mt-2 text-xs text-white/40">Scroll to see all {advertisementWorks.length} items</p>
+              )}
+                </div>
+              )}
+
+              {/* TV Works */}
+              {tvWorks.length > 0 && (
+                <div>
+                  <h2 className="text-xl md:text-2xl font-bold text-white mb-4">TV Shows</h2>
+              <div
+                className="space-y-3 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30"
+                style={{ maxHeight: tvWorks.length > MAX_VISIBLE_ITEMS ? '600px' : 'none' }}
+              >
+                {tvWorks.map((work) => {
+                  const workDate = work.single_date
+                    ? new Date(work.single_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                    : work.start_date
+                    ? new Date(work.start_date).toLocaleDateString('ko-KR', { year: 'numeric', month: '2-digit' })
+                    : '';
+
+                  const thumbnailUrl = getValidImageUrl(work.poster_url, work.video_url);
+
+                  return (
+                    <div
+                      key={work.id}
+                      className="group cursor-pointer bg-zinc-900 hover:bg-zinc-800/90 rounded-lg overflow-hidden transition-colors"
+                      onClick={() => {
+                        if (work.video_url) {
+                          window.open(work.video_url, '_blank');
+                        }
+                      }}
+                    >
+                      <div className="flex items-center gap-3 p-3">
+                        <div className="relative w-24 h-16 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
+                          {thumbnailUrl ? (
+                            <Image
+                              src={thumbnailUrl}
+                              alt={work.title}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <span className="text-2xl opacity-40">📺</span>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="font-medium text-white text-sm line-clamp-1 mb-0.5">
+                            {work.title}
+                          </h3>
+                          <p className="text-white/60 text-xs line-clamp-1">
+                            {work.description} • {workDate}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              {tvWorks.length > MAX_VISIBLE_ITEMS && (
+                <p className="mt-2 text-xs text-white/40">Scroll to see all {tvWorks.length} items</p>
               )}
                 </div>
               )}
             </div>
 
-          {/* All Career Entries */}
-          {/* {careerEntries.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-4">All Works ({careerEntries.length})</h2>
-              <pre className="text-xs text-white/40 overflow-auto max-h-96">
-                {JSON.stringify(careerEntries.slice(0, 5), null, 2)}
-              </pre>
-            </div>
-          )} */}
           </div>
+
+          {/* Project Timeline by Year */}
+          {sortedYears.length > 0 && (
+            <div className="mt-12">
+              <h2 className="text-xl md:text-2xl font-bold text-white mb-4 md:mb-6">Project Timeline</h2>
+              <Accordion type="single" collapsible className="space-y-2">
+                {sortedYears.map((year) => {
+                  const yearProjects = projectsByYear[year];
+                  const categoryCount = yearProjects.reduce((acc, project) => {
+                    acc[project.category] = (acc[project.category] || 0) + 1;
+                    return acc;
+                  }, {} as Record<string, number>);
+
+                  return (
+                    <AccordionItem
+                      key={year}
+                      value={year.toString()}
+                      className="border border-white/10 rounded-lg overflow-hidden bg-zinc-900/50"
+                    >
+                      <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 hover:bg-zinc-800/50 transition-colors [&[data-state=open]]:bg-zinc-800/70">
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between w-full pr-4 gap-2">
+                          <div className="flex items-center gap-3 md:gap-4">
+                            <span className="text-xl md:text-2xl font-bold text-white">{year}</span>
+                            <span className="text-xs md:text-sm text-white/60">
+                              {yearProjects.length} {yearProjects.length === 1 ? 'project' : 'projects'}
+                            </span>
+                          </div>
+                          <div className="flex flex-wrap gap-1.5 md:gap-2">
+                            {Object.entries(categoryCount).map(([category, count]) => (
+                              <Badge
+                                key={category}
+                                variant="secondary"
+                                className="bg-white/10 text-white/80 text-xs capitalize"
+                              >
+                                {category} ({count})
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </AccordionTrigger>
+                      <AccordionContent className="px-3 md:px-6 pb-3 md:pb-4 pt-2">
+                        <div className="space-y-2 md:space-y-3">
+                          {yearProjects.map((project) => {
+                            const projectDate = project.single_date
+                              ? new Date(project.single_date).toLocaleDateString('ko-KR', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                })
+                              : project.start_date && project.end_date
+                              ? `${new Date(project.start_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })} - ${new Date(project.end_date).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' })}`
+                              : project.start_date
+                              ? new Date(project.start_date).toLocaleDateString('ko-KR', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric'
+                                })
+                              : '';
+
+                            const thumbnailUrl = getValidImageUrl(project.poster_url, project.video_url);
+
+                            return (
+                              <div
+                                key={project.id}
+                                className="group cursor-pointer bg-zinc-900 hover:bg-zinc-800 rounded-lg overflow-hidden transition-colors"
+                                onClick={() => {
+                                  if (project.video_url) {
+                                    window.open(project.video_url, '_blank');
+                                  }
+                                }}
+                              >
+                                <div className="flex items-center gap-3 md:gap-4 p-2 md:p-3">
+                                  {/* Thumbnail */}
+                                  <div className="relative w-20 h-14 md:w-28 md:h-20 flex-shrink-0 rounded overflow-hidden bg-zinc-800">
+                                    {thumbnailUrl ? (
+                                      <Image
+                                        src={thumbnailUrl}
+                                        alt={project.title}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    ) : (
+                                      <div className="w-full h-full flex items-center justify-center">
+                                        <span className="text-3xl opacity-40">
+                                          {project.category === 'choreography' ? '💃' :
+                                           project.category === 'performance' ? '🎭' :
+                                           project.category === 'workshop' ? '📚' :
+                                           project.category === 'tv' ? '📺' :
+                                           project.category === 'advertisement' ? '📺' : '🎬'}
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Project Info */}
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex flex-wrap items-center gap-1.5 md:gap-2 mb-1">
+                                      <Badge
+                                        variant="outline"
+                                        className="border-white/20 text-white/70 text-[10px] md:text-xs capitalize"
+                                      >
+                                        {project.category}
+                                      </Badge>
+                                      {project.is_featured && (
+                                        <Badge
+                                          variant="secondary"
+                                          className="bg-yellow-500/20 text-yellow-300 text-[10px] md:text-xs border-none"
+                                        >
+                                          ⭐ Featured
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <h3 className="font-semibold text-white text-sm md:text-base line-clamp-1 mb-0.5 md:mb-1">
+                                      {project.title}
+                                    </h3>
+                                    <p className="text-white/60 text-xs md:text-sm line-clamp-1 md:line-clamp-2 mb-0.5 md:mb-1">
+                                      {project.description}
+                                    </p>
+                                    <p className="text-white/40 text-[10px] md:text-xs">
+                                      {projectDate}
+                                      {project.country && ` • ${project.country}`}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </div>
+          )}
         </div>
       </div>
     );

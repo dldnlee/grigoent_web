@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run dev:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run build:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__list_extensions",
+      "mcp__supabase__list_migrations",
+      "mcp__supabase__execute_sql",
+      "Bash(claude-mcp-client --server shadcn-ui-expert \"I need to research and create a comprehensive design plan for a Spotify-style artist page for GRIGO Entertainment. \n\nThe requirements are:\n1. A search section at the top for searching dancers by English or Korean names\n2. Two main sections: ''Solo Dancers'' and ''Team Dancers''\n3. Each section should display dancer cards with their information\n4. Overall design should follow Spotify''s aesthetic - dark theme, clean typography, card-based layouts\n\nContext file: .claude/tasks/context_session_2.md\n\nPlease research Spotify''s UI patterns and provide:\n- Detailed design recommendations for the artist page layout\n- Specific shadcn/ui components to use\n- Color scheme and styling approach\n- Search component design\n- Card layout for dancers\n- Navigation and section organization\n\nCreate comprehensive documentation with component specifications and implementation guidance. This is for a Next.js 15 + TypeScript + Supabase project.\")",
+      "WebFetch(domain:developer.spotify.com)",
+      "WebSearch",
+      "Bash(cat:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
+}

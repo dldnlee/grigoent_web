@@ -208,9 +208,9 @@ export default function MyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-primary text-white pt-20 md:pt-24">
+    <div className="min-h-screen bg-primary text-white pt-20 md:pt-30">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-zinc-950/80 backdrop-blur-lg border-b border-white/10">
+      <div className="sticky top-0 z-10 backdrop-blur-lg border-b border-white/10">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold">{language === 'en' ? 'My Page' : '마이 페이지'}</h1>
